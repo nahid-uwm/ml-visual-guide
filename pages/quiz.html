@@ -88,18 +88,25 @@
 <body>
 <nav class="navbar">
   <a href="../index.html" class="nav-brand">ML Visual Guide</a>
-  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
-  <div class="nav-links">
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+  <div class="nav-links" id="navLinks">
     <a href="neural-networks.html">Neural Nets</a>
     <a href="deep-learning.html">Deep Learning</a>
     <a href="cnn.html">CNNs</a>
     <a href="generative-ai.html">Generative AI</a>
     <a href="attention.html">Attention</a>
-    <a href="reinforcement.html">Reinforcement</a>
+    <a href="reinforcement.html">RL</a>
     <a href="unsupervised.html">Unsupervised</a>
     <a href="quiz.html" class="active">Quiz</a>
+    <a href="evolution.html">Evolution</a>
+    <a href="final-exam.html">Final Exam</a>
   </div>
 </nav>
+<script>
+document.getElementById('navToggle').addEventListener('click',function(){
+  document.getElementById('navLinks').classList.toggle('open');
+});
+</script>
 
 <header class="topic-header quiz-header-bg" style="background:linear-gradient(135deg,#080b14 0%,#0f1a2e 50%,#1a0a2e 100%);">
   <div class="topic-header-content">
