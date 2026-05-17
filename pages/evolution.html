@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML Evolution Flow — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+:root {
+  --c1:#00d4ff; --c2:#a855f7; --c3:#f472b6; --c4:#8b5cf6;
+  --c5:#10b981; --c6:#ef4444; --c7:#14b8a6; --c8:#eab308;
+}
+.evo-hero { text-align:center; padding:3rem 1rem 2rem; background:linear-gradient(180deg,#080b14,#0a0f1e); border-bottom:1px solid var(--border); }
+.evo-hero h1 { font-size:clamp(1.8rem,4vw,3rem); font-weight:900; background:linear-gradient(90deg,var(--primary),var(--secondary),#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:0.75rem; }
+.evo-hero p { color:var(--text-muted); max-width:600px; margin:0 auto 1.5rem; font-size:1rem; line-height:1.6; }
+
+.chain-nav { display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center; padding:1.5rem 1rem; background:var(--bg); border-bottom:1px solid var(--border); position:sticky; top:60px; z-index:99; }
+.chain-pill { padding:0.35rem 0.9rem; border-radius:2rem; font-size:0.78rem; font-weight:700; cursor:pointer; border:2px solid transparent; transition:all 0.2s; opacity:0.7; }
+.chain-pill:hover { opacity:1; transform:translateY(-1px); }
+
+.chains-wrap { max-width:900px; margin:0 auto; padding:2rem 1rem 6rem; }
+
+.chain-block { margin-bottom:4rem; }
+.chain-header { display:flex; align-items:center; gap:1rem; padding:1rem 1.5rem; border-radius:1rem; margin-bottom:1.5rem; border:1px solid; }
+.chain-header .ch-num { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; opacity:0.8; }
+.chain-header .ch-title { font-size:1.1rem; font-weight:800; }
+.chain-header .ch-desc { font-size:0.82rem; opacity:0.75; margin-top:0.2rem; }
+
+/* method node */
+.method-node { background:var(--card); border:1px solid var(--border); border-radius:1rem; overflow:hidden; transition:box-shadow 0.2s; }
+.method-node:hover { box-shadow:0 0 0 1px var(--nc,var(--primary)), 0 4px 24px rgba(0,0,0,0.4); }
+.node-header { padding:1rem 1.5rem 0.75rem; cursor:pointer; display:flex; align-items:flex-start; gap:1rem; }
+.node-badge { padding:0.25rem 0.75rem; border-radius:2rem; font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap; flex-shrink:0; margin-top:0.15rem; }
+.node-title { font-size:1rem; font-weight:700; line-height:1.3; }
+.node-toggle { margin-left:auto; font-size:1rem; transition:transform 0.25s; flex-shrink:0; color:var(--text-muted); }
+.method-node.open .node-toggle { transform:rotate(180deg); }
+
+.node-pills { display:flex; flex-wrap:wrap; gap:0.5rem; padding:0 1.5rem 1rem; }
+.npill { font-size:0.72rem; padding:0.2rem 0.6rem; border-radius:4px; font-weight:600; }
+.npill-fix { background:rgba(16,185,129,0.12); color:var(--green); }
+.npill-arch { background:rgba(0,212,255,0.1); color:var(--primary); }
+.npill-pro { background:rgba(168,85,247,0.1); color:var(--secondary); }
+
+.node-body { padding:0 1.5rem 1.25rem; display:none; border-top:1px solid var(--border); padding-top:1rem; }
+.method-node.open .node-body { display:block; }
+
+.node-section { margin-bottom:0.9rem; }
+.ns-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.35rem; }
+.ns-text { font-size:0.875rem; line-height:1.6; color:rgba(255,255,255,0.8); }
+.ns-text ul { margin:0.3rem 0 0 1rem; padding:0; }
+.ns-text li { margin-bottom:0.25rem; }
+
+.pros-cons { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:0.5rem; }
+.pc-box { padding:0.75rem; border-radius:0.6rem; }
+.pc-box h4 { font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.4rem; }
+.pc-box ul { margin:0 0 0 1rem; padding:0; font-size:0.82rem; line-height:1.6; }
+.pros-box { background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); }
+.pros-box h4 { color:var(--green); }
+.cons-box { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); }
+.cons-box h4 { color:var(--red); }
+
+/* connector between nodes */
+.chain-connector { display:flex; flex-direction:column; align-items:center; padding:0.5rem 0; gap:0.3rem; }
+.conn-line { width:2px; height:20px; background:linear-gradient(180deg,var(--nc,var(--primary)),transparent); }
+.conn-limit { background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); border-radius:0.6rem; padding:0.5rem 1rem; font-size:0.8rem; color:var(--accent); max-width:480px; width:100%; text-align:center; }
+.conn-limit::before { content:'⚠ Still can\'t: '; font-weight:700; }
+.conn-arrow { font-size:0.75rem; color:var(--text-muted); display:flex; align-items:center; gap:0.4rem; }
+.conn-arrow::after { content:'↓'; font-size:1.1rem; color:var(--nc,var(--primary)); }
+
+@media(max-width:600px){
+  .pros-cons { grid-template-columns:1fr; }
+  .chain-nav { top:56px; }
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">ML Visual Guide</a>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+  <div class="nav-links">
+    <a href="neural-networks.html">Neural Nets</a>
+    <a href="deep-learning.html">Deep Learning</a>
+    <a href="cnn.html">CNNs</a>
+    <a href="generative-ai.html">Generative AI</a>
+    <a href="attention.html">Attention</a>
+    <a href="reinforcement.html">Reinforcement</a>
+    <a href="unsupervised.html">Unsupervised</a>
+    <a href="quiz.html">Quiz</a>
+  </div>
+</nav>
+
+<div class="evo-hero">
+  <h1>ML Evolution Flow</h1>
+  <p>Every method exists because the previous one had a specific failure. Follow the chains to see how each breakthrough solves a named problem — and introduces the next one.</p>
+  <p style="font-size:0.82rem;color:var(--text-muted);">Click any node to expand architecture · pros · cons · and why it was invented</p>
+</div>
+
+<div class="chain-nav" id="chainNav"></div>
+
+<div class="chains-wrap" id="chainsWrap"></div>
+
+<script>
+const CHAINS = [
+  { id:'c1', color:'#00d4ff', title:'From a Single Neuron to a Deep Network',
+    desc:'How the perceptron grew into trainable deep networks',
+    nodes:[
+      { name:'Perceptron', arch:'Single neuron · step activation · binary output · update rule: wᵢ ← wᵢ + η(y−ŷ)xᵢ',
+        fixed:'No learnable model existed at all — weights were hand-tuned',
+        how:'The (y−ŷ) term only fires when prediction is wrong. xᵢ concentrates correction on active inputs. Perceptron convergence theorem: always finds a solution if one exists.',
+        pros:['Simple and fast', 'Provably converges for linearly separable data', 'Foundation of all neural nets'],
+        cons:['Only linear decision boundaries', 'Cannot solve XOR or any non-linearly separable problem', 'Step function is not differentiable'],
+        limit:'learn anything that is NOT linearly separable — most famously XOR' },
+
+      { name:'Multi-Layer Neural Network (MLP) with Sigmoid', arch:'Input → Hidden layers → Output · sigmoid activation σ(x)=1/(1+e⁻ˣ) · backpropagation via chain rule',
+        fixed:'Single-layer perceptron could only draw straight decision boundaries',
+        how:'Non-linear activation between linear layers makes the composition non-linear. Universal approximation theorem: a single hidden layer can represent any bounded continuous function.',
+        pros:['Solves XOR and non-linear problems', 'Universal approximator', 'Differentiable → gradient-based training'],
+        cons:['Sigmoid derivative ≤ 0.25 → vanishing gradients in deep nets', 'Saturates at extremes (near 0 or 1)', 'Slow to train deep networks'],
+        limit:'train deep — sigmoid\'s max derivative is 0.25, so gradients shrink by 75% per layer (0.25ᴸ → 0)' },
+
+      { name:'ReLU Activation', arch:'f(x) = max(0, x) · derivative = 1 for x>0, 0 otherwise · replaces sigmoid in hidden layers',
+        fixed:'Sigmoid\'s derivative ≤ 0.25 kills gradients after ~4 layers',
+        how:'Derivative of 1 means the gradient signal passes through unchanged for active neurons. No shrinkage across layers. Also computationally cheap — just a max() call.',
+        pros:['Enables very deep networks (100+ layers)', 'Sparse activation (efficient)', 'Fast to compute', 'No vanishing gradient for active neurons'],
+        cons:['Dying ReLU: neurons stuck outputting 0 forever if pre-activation always negative', 'Output not zero-centered', 'Unbounded upper range'],
+        limit:'prevent dead neurons — a neuron whose pre-activation is always negative has zero gradient permanently' },
+
+      { name:'Leaky ReLU / Parametric ReLU', arch:'f(x) = max(αx, x) · α=0.01 for Leaky, α learned for PReLU · small negative slope',
+        fixed:'Standard ReLU: neurons with always-negative input become permanently dead (zero gradient)',
+        how:'Non-zero slope for x<0 guarantees a non-zero gradient, allowing dead neurons to recover when input distribution shifts.',
+        pros:['No permanently dead neurons', 'PReLU adapts slope per neuron', 'Retains ReLU\'s fast computation'],
+        cons:['α is a hyperparameter to tune', 'Still unbounded', 'Minor improvement over ReLU in practice'],
+        limit:'address overfitting — deep networks with millions of weights still memorize their training set' },
+
+      { name:'Dropout + Early Stopping', arch:'Dropout: zero each neuron with prob p during training · scale weights by (1−p) at test time · Early stopping: halt when val loss stops improving for N epochs (patience)',
+        fixed:'Deep networks easily memorize training data — validation loss rises while train loss falls',
+        how:'Dropout trains an implicit ensemble of thinned sub-networks, preventing co-adaptation. Early stopping saves the generalization peak before overfitting deepens.',
+        pros:['Dropout: strong regularizer, no extra parameters', 'Early stopping: free — just monitor val loss', 'Both work with any architecture'],
+        cons:['Adds training time (more epochs needed)', 'Dropout disabled at test — slight train/test mismatch', 'Does not fix structural problems like processing images with dense layers'],
+        limit:null },
+    ]
+  },
+
+  { id:'c2', color:'#f59e0b', title:'From Dense Layers to CNNs for Images',
+    desc:'Why spatial structure demands weight-sharing filters',
+    nodes:[
+      { name:'Convolutional Neural Network (CNN)', arch:'Conv layer: slide F×F filter across input · same weights at every position · output = feature map · stride S · padding P · Out=⌊(W−F+2P)/S⌋+1',
+        fixed:'Dense layers on images: ~1 billion weights for a 1000×1000 image, treat every pixel as independent, cannot transfer pattern from one corner to another',
+        how:'Weight sharing: same 9-number filter detects an edge wherever it appears. Local receptive fields respect spatial structure. Translation equivariance: shift input → shift feature map by same amount.',
+        pros:['Drastically fewer parameters', 'Detects patterns anywhere in the image', 'Hierarchical feature learning (edges → textures → objects)', 'State of art for vision tasks'],
+        cons:['Feature map positions still matter exactly — not shift-invariant', 'Needs lots of labeled data', 'Computationally heavy for large images'],
+        limit:'be robust to small spatial shifts — the exact position of a feature still affects the output' },
+
+      { name:'Pooling Layer (Max-Pooling)', arch:'2×2 max-pool: take maximum value in each non-overlapping 2×2 window · halves spatial dimensions · no learned weights',
+        fixed:'Convolution has translation equivariance but not invariance — moving input by 1 pixel moves the output by 1 pixel',
+        how:'Within each pooling window, exact location of the maximum stops mattering — only whether the feature was present. Also reduces feature map size, cutting computation for later layers.',
+        pros:['Translation invariance to small shifts', 'Reduces spatial dimensions (less computation)', 'No parameters to learn', 'Preserves strongest activations'],
+        cons:['Discards exact location info (sometimes useful)', 'Fixed window size', 'Average pooling sometimes better'],
+        limit:'provide enough labeled training data — CNNs from scratch need millions of examples' },
+
+      { name:'Transfer Learning + Pretrained CNNs', arch:'Take CNN pretrained on ImageNet (VGG, ResNet, EfficientNet) · freeze early layers · retrain only top 1–2 layers + classifier head on small dataset',
+        fixed:'Training CNN from scratch on small datasets: immediately overfits — too many parameters, too little data',
+        how:'Early CNN layers learn universal image features (edges, textures, blobs) that transfer across virtually any natural image task. Only the task-specific head needs new training.',
+        pros:['Achieves high accuracy with hundreds instead of millions of examples', 'Faster training (frozen layers)', 'Lower compute cost', 'Works across domains'],
+        cons:['Domain gap: features from ImageNet may not suit medical/satellite images', 'Feature extractors frozen = limited adaptation', 'License constraints on pretrained weights'],
+        limit:'produce genuinely NEW examples — transfer learning only recombines existing learned features' },
+
+      { name:'Data Augmentation', arch:'Random flips, rotations, crops, zooms, color jitter, cutout, mixup — applied on-the-fly during training · label preserved',
+        fixed:'Fixed training set: model memorizes specific pixel patterns rather than learning robust features',
+        how:'Every transformation of a cat is still a cat. Exposing the model to all augmented variants forces robustness to those variations — acts as a regularizer without changing the label.',
+        pros:['Free: no extra labeling needed', 'Significant accuracy gains', 'Works alongside transfer learning', 'Reduces overfitting'],
+        cons:['Cannot invent semantically new examples', 'Wrong augmentations can hurt (e.g., flipping medical scans)', 'Adds preprocessing complexity'],
+        limit:null },
+    ]
+  },
+
+  { id:'c3', color:'#f472b6', title:'Beyond Image Classification',
+    desc:'From one label per image to pixel-level and multi-object understanding',
+    nodes:[
+      { name:'Image Segmentation — U-Net', arch:'Encoder (Conv+Pool downsampling) → bottleneck → Decoder (transpose conv upsampling) · skip connections carry fine detail from encoder to matching decoder layers',
+        fixed:'Standard CNNs output one class label per image — useless for tasks needing per-pixel labels (medical imaging, self-driving)',
+        how:'Encoder captures what is present. Decoder reconstructs where it is at full resolution. Skip connections rescue fine spatial detail that pooling destroys at the bottleneck.',
+        pros:['Per-pixel predictions', 'Works with very small labeled datasets (medical)', 'Skip connections preserve detail', 'Architecture scales well'],
+        cons:['Computationally heavier than classifier CNNs', 'Requires pixel-level labels (expensive)', 'Does not give bounding boxes or object counts'],
+        limit:'locate and classify multiple distinct objects with bounding boxes' },
+
+      { name:'Object Detection — YOLO', arch:'Divide image into S×S grid · each cell predicts B bounding boxes (x,y,w,h,confidence) + C class probabilities · single forward pass',
+        fixed:'Classifiers say what; segmentation labels pixels; neither outputs a list of object identities with bounding-box locations',
+        how:'Earlier detectors (R-CNN) ran a classifier on thousands of region proposals — too slow for video. YOLO\'s single-pass grid predictor is fast enough for real-time inference.',
+        pros:['Real-time speed', 'End-to-end trainable', 'Global context for each prediction', 'Simple unified architecture'],
+        cons:['Struggles with very small objects or dense clusters', 'Grid cells can only predict B boxes', 'Lower precision than two-stage detectors'],
+        limit:'learn useful feature representations from unlabeled data' },
+
+      { name:'Autoencoder', arch:'Input → Encoder (shrinks) → Bottleneck z (bottleneck dimension << input) → Decoder (expands) → Reconstructed input · loss = MSE(input, output)',
+        fixed:'No labels available — supervised learning requires targets but most real-world data is unlabeled',
+        how:'To reconstruct the input through a narrow bottleneck, the encoder must compress it into its most informative bits. The bottleneck representation is a useful feature vector for downstream tasks.',
+        pros:['Unsupervised — no labels needed', 'Learned features useful for downstream tasks', 'Anomaly detection via reconstruction error', 'Denoising (train with noisy input, clean output)'],
+        cons:['Reconstructions tend to be blurry averages', 'Does not generate convincingly novel samples', 'Latent space may be irregular (not smooth for generation)'],
+        limit:null },
+    ]
+  },
+
+  { id:'c4', color:'#a855f7', title:'From One-Hot Words to LLMs',
+    desc:'How language representations evolved from lookup tables to trillion-parameter models',
+    nodes:[
+      { name:'Word Embeddings (Word2Vec / GloVe)', arch:'Map each word to a dense d-dim vector (d≈100–300) · trained so similar-context words get similar vectors · king−man+woman≈queen',
+        fixed:'One-hot vectors: 40,000+ dimensions, all orthogonal — "cat" and "dog" are as different as "cat" and "democracy"',
+        how:'Distributional hypothesis: words with similar contexts have similar meanings. Neural network learns vectors so that dot products reflect semantic similarity.',
+        pros:['Dense and low-dimensional', 'Captures semantic similarity and analogy', 'Train once, reuse everywhere', 'Dramatically reduces vocabulary space'],
+        cons:['One vector per word regardless of context — "bank" always same vector', 'Cannot distinguish polysemy', 'Static after training'],
+        limit:'distinguish context-dependent meanings of the same word ("bank" the money vs. the river)' },
+
+      { name:'Self-Attention (Q, K, V)', arch:'For each token: Q=WqX, K=WkX, V=WvX · attention = softmax(QKᵀ/√dₖ)V · new representation = weighted sum of all other tokens\' values',
+        fixed:'Static embeddings give each word one fixed vector — "bank" near "money" and "bank" near "river" produce identical representations',
+        how:'Each word\'s new representation is a mix of other words\' values, weighted by query-key compatibility. The same word produces different Q,K,V projections, so context changes the output.',
+        pros:['Context-sensitive representations', 'Captures long-range dependencies in O(1) steps', 'Fully differentiable', 'No sequential bottleneck'],
+        cons:['O(n²) computation in sequence length', 'Single head captures only one type of relation', 'No built-in sense of word order'],
+        limit:'capture multiple types of relationships simultaneously — one head sees one kind of similarity' },
+
+      { name:'Multi-Head Attention', arch:'Run h attention heads in parallel with separate Wq,Wk,Wv projections · concatenate h outputs · project with Wo · param count preserved via dₖ=d/h',
+        fixed:'Single attention head can only specialize in one type of relationship (syntactic OR semantic OR positional, not all at once)',
+        how:'Each head learns different projections → specializes in different relations. Concatenation combines all perspectives into a single rich representation.',
+        pros:['Multiple specializations per layer', 'Empirically outperforms single-head consistently', 'Each head interpretable (some track syntax, coreference, position)'],
+        cons:['More hyperparameters (num heads)', 'Still O(n²)', 'Still needs positional information'],
+        limit:'handle sequences efficiently — still O(n²) memory and compute, and no built-in word order awareness' },
+
+      { name:'Transformer (Encoder + Decoder)', arch:'Encoder: N × [Multi-head self-attn → Add&Norm → FFN → Add&Norm] · Decoder: N × [Masked self-attn → Cross-attn → FFN → Add&Norm] · Positional encoding: PE(pos,2i)=sin(pos/10000^(2i/d))',
+        fixed:'RNNs/LSTMs: process one token at a time (no GPU parallelism), struggle with long contexts via sequential gradient flow',
+        how:'Attention sees every token at once — fully parallel on GPUs. Positional encodings inject order. Same Q,K,V matrices reused at all positions so param count is independent of sequence length.',
+        pros:['Fully parallelizable training', 'Handles long-range dependencies easily', 'Scales to billions of parameters', 'Foundation of all modern NLP'],
+        cons:['O(n²) attention cost for long sequences', 'Needs positional encoding (not intrinsic)', 'Each downstream task still needed labeled data + from-scratch training'],
+        limit:'be cheap per NLP task — each downstream task still needed its own labeled dataset and full training run' },
+
+      { name:'BERT (Encoder-only, Pretrain + Fine-tune)', arch:'12–24 encoder layers · pretrained on Masked LM (predict 15% masked tokens) + Next Sentence Prediction · fine-tune with a small task-specific head',
+        fixed:'Training a separate transformer for every NLP task is expensive — requires labeled data and full compute per task',
+        how:'Pretraining absorbs general language knowledge from billions of words (unlabeled). Fine-tuning cheaply specializes that knowledge. One backbone, many heads.',
+        pros:['Near-human on many NLP benchmarks with little labeled data', 'Bidirectional = sees full context', 'Reusable across dozens of tasks', 'Open weights'],
+        cons:['Cannot generate fluent free text', 'Bidirectional masking incompatible with left-to-right generation', 'MLM pretraining slightly mismatches fine-tuning tasks'],
+        limit:'generate fluent, open-ended text — BERT sees future tokens during pretraining which makes it incompatible with autoregressive generation' },
+
+      { name:'LLM / GPT (Decoder-only)', arch:'Decoder-only transformer (no encoder) · causal masking in self-attention · pretrained on next-token prediction on trillions of tokens · scales to 7B–1T parameters',
+        fixed:'BERT cannot generate text — its bidirectionality is incompatible with left-to-right generation',
+        how:'Next-token prediction at massive scale teaches grammar, facts, reasoning implicitly. In-context learning: describe task in prompt, no fine-tuning needed.',
+        pros:['Generates fluent, coherent long-form text', 'In-context learning (GPT-3 effect)', 'One model → many tasks via prompting', 'Emergent capabilities at scale'],
+        cons:['Hallucinations — trained to predict likely tokens, not truthful ones', 'No built-in fact-checking', 'Expensive to train and run', 'Can be unsafe or biased'],
+        limit:'distinguish truthful from fabricated text — trained to predict likely continuations, not verify facts' },
+
+      { name:'RAG + Chain-of-Thought', arch:'RAG: retrieval system (dense retrieval + vector DB) injects relevant documents into context before generation · CoT: prompt includes "Think step by step" to elicit reasoning traces',
+        fixed:'LLMs hallucinate confidently and fail on multi-step reasoning because they have no fact-check and no incentive to show intermediate work',
+        how:'RAG turns the LLM into a reader of a vetted, up-to-date knowledge base. CoT activates latent reasoning by letting the model use intermediate tokens as a scratchpad.',
+        pros:['RAG: reduces hallucinations, citable answers, knowledge can be updated without retraining', 'CoT: dramatic accuracy gains on math/logic', 'Both are inference-time (no retraining needed)'],
+        cons:['RAG adds retrieval latency and infrastructure', 'CoT increases token cost', 'Still relies on the base LLM\'s capabilities'],
+        limit:'be consistently helpful, safe, and aligned with user intent — output tone and safety still unconstrained' },
+
+      { name:'Alignment — RLHF', arch:'Collect human pairwise preference data → train reward model R(prompt, response) → fine-tune LLM with PPO reinforcement learning to maximize R',
+        fixed:'Vanilla pretrained LLMs are fluent but not helpful, harmless, or honest — no notion of user intent or appropriateness',
+        how:'Reward model captures human values that next-token objective cannot. RL fine-tuning steers model toward responses humans actually prefer.',
+        pros:['Dramatically more helpful and safe outputs', 'Reduces harmful content', 'Can encode complex values beyond simple metrics'],
+        cons:['Reward hacking: model finds ways to get high reward that humans didn\'t intend', 'Expensive human annotation', 'Jailbreaks and edge-case hallucinations remain open problems'],
+        limit:null },
+    ]
+  },
+
+  { id:'c5', color:'#10b981', title:'From Discriminators to Generators',
+    desc:'How generative models evolved from blurry reconstructions to photorealistic synthesis',
+    nodes:[
+      { name:'Generative Adversarial Network (GAN)', arch:'Generator G: z → fake image · Discriminator D: image → real/fake probability · Minimax: min_G max_D [E logD(x) + E log(1−D(G(z)))] · alternating gradient updates',
+        fixed:'Autoencoders reconstruct inputs but produce blurry averages of training data — no convincingly novel images',
+        how:'D\'s gradient signal pushes G toward images D can\'t distinguish from real. Because D keeps improving, the target moves, forcing G to keep getting better.',
+        pros:['Sharp, high-quality image generation', 'No explicit density estimation needed', 'Wide application: super-resolution, style transfer, data augmentation'],
+        cons:['Training instability: D and G must be balanced carefully', 'Mode collapse: G ignores parts of the data distribution', 'No explicit likelihood — hard to evaluate objectively'],
+        limit:'guarantee training stability or diverse outputs — mode collapse and oscillation are common failures' },
+
+      { name:'Conditional GAN (CGAN)', arch:'Feed class label y (or image, text) as extra input to both G and D · G: (z, y) → fake image of class y · D: (image, y) → real/fake given class y',
+        fixed:'Vanilla GAN generates any image from the distribution — no way to say "generate a cat specifically"',
+        how:'With the condition visible to both networks, the adversarial game encourages G to produce realistic images of the requested class.',
+        pros:['Controlled generation (specify class, style, attribute)', 'Useful for image-to-image translation (pix2pix)', 'Conditional diversity possible'],
+        cons:['Mode collapse and instability persist', 'Condition must be present at both train and test time', 'Training still fragile'],
+        limit:'train stably — all GAN variants share fundamental instability and potential collapse' },
+
+      { name:'Diffusion Model (DDPM)', arch:'Forward: add Gaussian noise over T=1000 steps xₜ=√ᾱₜ x₀+√(1−ᾱₜ)ε · Reverse: U-Net learns ε_θ(xₜ,t) to predict and subtract noise · DDIM for faster sampling',
+        fixed:'GANs are hard to balance — adversarial training collapses, no likelihood, poor coverage of data distribution',
+        how:'Each denoising step is a simple supervised regression problem (predict the noise). No adversarial dynamics, no mode collapse. Iterative refinement gives high quality and broad coverage.',
+        pros:['No mode collapse', 'Stable training (just regression)', 'State-of-the-art image/audio/video quality', 'Evaluable via likelihood', 'Foundation of Stable Diffusion, DALL-E 2/3'],
+        cons:['Slow sampling: needs 100–1000 forward passes per image', 'DDIM and distillation partially address speed', 'Higher compute than GAN inference'],
+        limit:null },
+    ]
+  },
+
+  { id:'c6', color:'#ef4444', title:'From Supervised Labels to Reward Signals',
+    desc:'How agents learn to act without explicit correct-action labels',
+    nodes:[
+      { name:'Reinforcement Learning Setup (MDP)', arch:'State s, Action a, Reward r, Transition P(s\'|s,a) · Policy π(a|s) · Objective: maximize E[Σ γᵗrₜ] · discount γ∈(0,1)',
+        fixed:'Supervised learning needs per-step correct-action labels — unavailable in sequential decision problems (games, robotics)',
+        how:'Reward as a learning signal is weaker than labels but applicable to a far wider class of problems. The agent discovers good behavior by trying actions and observing consequences.',
+        pros:['No per-step labels needed', 'Discovers strategies humans never considered (AlphaGo)', 'Applicable to any problem with measurable outcomes'],
+        cons:['Sparse rewards make learning slow', 'Requires many environment interactions (sample inefficient)', 'No value estimate yet — pure exploration is blind'],
+        limit:'numerically compare action quality from any given state — exploration without value estimates is blind trial-and-error' },
+
+      { name:'Q-Learning (Tabular)', arch:'Q-table: Q(s,a) for all (s,a) pairs · TD update: Q(s,a) ← (1−α)Q(s,a) + α[r + γ max_{a\'} Q(s\',a\')] · ε-greedy policy for exploration',
+        fixed:'Without a numeric estimate of action quality, the agent cannot reliably choose the best action in a state',
+        how:'Once Q is known, optimal policy = argmax_a Q(s,a). TD update bootstraps from current estimates and converges for any MDP with enough exploration.',
+        pros:['Off-policy: learns from others\' experience', 'Convergence guarantees for tabular settings', 'Simple and interpretable Q-table'],
+        cons:['Q-table scales as |S|×|A| — impossible for chess (10¹²⁰ states)', 'Does not generalize across similar states', 'Cannot handle continuous actions'],
+        limit:'scale to large or continuous state spaces — a chess board has more states than atoms in the universe' },
+
+      { name:'Deep Q-Network (DQN)', arch:'Neural network Q_θ(s) → [Q(s,a₁),...,Q(s,aₙ)] · Experience replay buffer (decorrelates updates) · Target network (stable TD targets) · Input: raw pixels',
+        fixed:'Tabular Q-learning cannot store or generalize across the astronomically large state spaces of real problems',
+        how:'The network generalizes across similar states — it predicts reasonable Q-values for states it has never seen. Experience replay breaks temporal correlations. Target network stabilizes training.',
+        pros:['Handles raw pixel inputs', 'Generalizes across similar states', 'Human-level Atari performance', 'Foundation of modern deep RL'],
+        cons:['Still discrete actions only', 'Still needs millions of environment steps', 'Struggles with very sparse rewards', 'Actor-critic and policy gradient methods needed for continuous actions'],
+        limit:null },
+    ]
+  },
+
+  { id:'c7', color:'#14b8a6', title:'Finding Structure Without Labels',
+    desc:'Clustering algorithms and their evolution from simple centroids to hierarchies',
+    nodes:[
+      { name:'K-Means Clustering', arch:'1) Place K random centroids · 2) Assign each point to nearest centroid · 3) Move centroid to mean of cluster · 4) Repeat until stable · Objective: minimize Σ||xᵢ−μₖ||²',
+        fixed:'Supervised learning needs labels — most real-world data has none, yet we want to find natural groupings',
+        how:'Each step greedily decreases the squared-distance objective. Guaranteed to converge (objective decreases each step). Result: K compact clusters in feature space.',
+        pros:['Simple and fast O(nKd) per iteration', 'Scales to large datasets', 'Easy to implement', 'Works well for spherical clusters'],
+        cons:['K must be specified manually', 'Sensitive to initialization — can get stuck in local optima', 'Assumes spherical, equal-size clusters', 'Poor on non-convex shapes'],
+        limit:'choose K automatically, escape bad random seeds, or handle non-spherical clusters' },
+
+      { name:'K-Means++ Init + Elbow / Silhouette', arch:'K-means++: seed 1st centroid randomly, each next centroid chosen with prob ∝ d(x, nearest centroid)² · Elbow: plot inertia vs K, find the bend · Silhouette: s=(b−a)/max(a,b), a=within-cluster, b=nearest-other-cluster distance',
+        fixed:'Random K-means seeds often land in the same true cluster → bad local optima; choosing K is guesswork',
+        how:'Spread-out seeds dramatically reduce chances of two centroids in same cluster. Internal metrics (silhouette, inertia) let you score clusterings for different K without ground truth.',
+        pros:['K-means++ cuts iterations and final cost significantly', 'Silhouette score is interpretable (−1 to +1)', 'Elbow gives visual intuition', 'No labels needed to evaluate'],
+        cons:['Still assumes spherical clusters', 'Silhouette is slow for large n', 'Elbow may be ambiguous'],
+        limit:'discover non-spherical, elongated, or hierarchical cluster structure — K-means assumes convex clusters by design' },
+
+      { name:'Hierarchical Agglomerative Clustering (HAC)', arch:'Start: each point = own cluster · Repeatedly merge two closest clusters · Linkage: single (min), complete (max), average, Ward (minimize variance increase) · Result: dendrogram',
+        fixed:'K-means requires fixed K up front and assumes spherical clusters — some datasets have nested or elongated structure for which no single K is right',
+        how:'The dendrogram exposes structure at every scale. Single-link can capture elongated chains. You can cut the tree at any level to choose K after the fact.',
+        pros:['No K required upfront', 'Dendrogram reveals structure at all scales', 'Single-link handles non-convex shapes', 'Deterministic'],
+        cons:['O(n³) time and O(n²) memory — impractical for large datasets', 'Merges are irreversible (greedy)', 'Sensitive to linkage choice and outliers'],
+        limit:null },
+    ]
+  },
+
+  { id:'c8', color:'#eab308', title:'Classical Methods Chain',
+    desc:'Each classical algorithm fixed a specific flaw in its predecessor',
+    nodes:[
+      { name:'Linear Regression', arch:'ŷ = wᵀx + b · minimize MSE (xᵀx)⁻¹xᵀy closed form · basis functions extend to polynomial · strong baseline for continuous outputs',
+        fixed:'No automated fitting — parameters were hand-set',
+        how:'Least squares closed form gives exact optimal weights for MSE. Simple, interpretable, fast.',
+        pros:['Exact closed-form solution', 'Interpretable coefficients', 'Works well when relationship is truly linear'],
+        cons:['Only fits straight-line (or polynomial with basis expansion) relationships', 'Outputs unbounded real numbers — not probabilities or class labels'],
+        limit:'output a probability or class label — produces unbounded real values' },
+
+      { name:'Logistic Regression', arch:'log(p/(1−p)) = wᵀx + b · p = σ(wᵀx+b) · cross-entropy loss · trained via gradient descent or Newton\'s method',
+        fixed:'Linear regression outputs any real number including negatives — no notion of probability for binary classification',
+        how:'The logistic function squashes the linear score to (0,1) probability. Clean theory: log-likelihood is convex. Threshold at 0.5 for binary decision.',
+        pros:['Outputs valid probabilities', 'Convex loss — one global minimum', 'Interpretable: log-odds change linearly with features'],
+        cons:['Linear decision boundary in feature space', 'Cannot handle XOR, circles, or non-linear class boundaries without feature engineering'],
+        limit:'handle non-linear decision boundaries without manually adding polynomial features' },
+
+      { name:'Support Vector Machine (SVM)', arch:'Find hyperplane wᵀx+b=0 maximizing margin 2/||w|| · support vectors: points on margin boundary · kernel trick: K(xᵢ,xⱼ) replaces xᵀx for non-linear boundaries',
+        fixed:'Many linear separators classify training data correctly; logistic regression / perceptron may pick one that barely generalizes',
+        how:'Maximum margin: the hyperplane farthest from all training points. Larger margin → better generalization. Kernel trick maps data to high-dimensional space implicitly.',
+        pros:['Strong theoretical guarantees (VC dimension, margin theory)', 'Works well in high dimensions', 'Kernel trick = non-linear boundaries for free', 'Robust to irrelevant features in some settings'],
+        cons:['Does not scale to very large datasets (O(n²)−O(n³) training)', 'Kernel and C hyperparameters sensitive', 'Black box with kernels'],
+        limit:null },
+
+      { name:'Naïve Bayes', arch:'P(y|x) ∝ P(y) Πᵢ P(xᵢ|y) · estimate P(y) and P(xᵢ|y) by counting in one data pass · Gaussian NB for continuous features',
+        fixed:'Iterative gradient-based training is wasteful for large datasets with simple structure',
+        how:'Counting is O(n), trivially parallelizable. Feature independence assumption is almost never true but often hurts accuracy little while enabling extreme speed.',
+        pros:['Single pass over data — extremely fast', 'Works with tiny training sets', 'Strong baseline for text classification', 'Handles missing features naturally'],
+        cons:['Independence assumption is always violated to some degree', 'Cannot capture feature interactions', 'Poorly calibrated probabilities'],
+        limit:null },
+    ]
+  },
+];
+
+// Build chain nav
+const nav = document.getElementById('chainNav');
+CHAINS.forEach((c,i) => {
+  const pill = document.createElement('button');
+  pill.className = 'chain-pill';
+  pill.style.cssText = `background:${c.color}22;color:${c.color};border-color:${c.color}44;`;
+  pill.textContent = `Chain ${i+1}: ${c.title.split(' ').slice(0,4).join(' ')}…`;
+  pill.onclick = () => document.getElementById(c.id).scrollIntoView({behavior:'smooth',block:'start'});
+  nav.appendChild(pill);
+});
+
+// Build chains
+const wrap = document.getElementById('chainsWrap');
+CHAINS.forEach((chain, ci) => {
+  const block = document.createElement('div');
+  block.className = 'chain-block';
+  block.id = chain.id;
+
+  // Chain header
+  const hdr = document.createElement('div');
+  hdr.className = 'chain-header';
+  hdr.style.cssText = `background:${chain.color}0f;border-color:${chain.color}33;color:${chain.color};`;
+  hdr.innerHTML = `<div><div class="ch-num">Chain ${ci+1}</div><div class="ch-title" style="color:${chain.color}">${chain.title}</div><div class="ch-desc" style="color:${chain.color}99">${chain.desc}</div></div>`;
+  block.appendChild(hdr);
+
+  chain.nodes.forEach((node, ni) => {
+    // method node
+    const mNode = document.createElement('div');
+    mNode.className = 'method-node';
+    mNode.style.setProperty('--nc', chain.color);
+    mNode.style.borderColor = chain.color + '30';
+
+    const prosHtml = node.pros.map(p => `<li>${p}</li>`).join('');
+    const consHtml = node.cons.map(c => `<li>${c}</li>`).join('');
+
+    mNode.innerHTML = `
+      <div class="node-header" onclick="this.parentElement.classList.toggle('open')">
+        <div>
+          <span class="node-badge" style="background:${chain.color}18;color:${chain.color};">
+            ${ci === 0 ? 'Neural Nets' : ci === 1 ? 'CNNs' : ci === 2 ? 'Vision+' : ci === 3 ? 'NLP/LLM' : ci === 4 ? 'Generative' : ci === 5 ? 'RL' : ci === 6 ? 'Unsupervised' : 'Classical'}
+          </span>
+          <div class="node-title" style="color:${chain.color};margin-top:0.4rem;">${node.name}</div>
+        </div>
+        <span class="node-toggle">▾</span>
+      </div>
+      <div class="node-pills">
+        <span class="npill npill-fix">🔧 Fixed: ${node.fixed.substring(0,60)}${node.fixed.length>60?'…':''}</span>
+      </div>
+      <div class="node-body">
+        <div class="node-section">
+          <div class="ns-label" style="color:${chain.color};">Architecture</div>
+          <div class="ns-text">${node.arch}</div>
+        </div>
+        <div class="node-section">
+          <div class="ns-label" style="color:#10b981;">Why It Works</div>
+          <div class="ns-text">${node.how}</div>
+        </div>
+        <div class="pros-cons">
+          <div class="pc-box pros-box">
+            <h4>Pros</h4>
+            <ul>${prosHtml}</ul>
+          </div>
+          <div class="pc-box cons-box">
+            <h4>Cons / Limits</h4>
+            <ul>${consHtml}</ul>
+          </div>
+        </div>
+      </div>`;
+    block.appendChild(mNode);
+
+    // connector (if not last node)
+    if (ni < chain.nodes.length - 1 && node.limit) {
+      const conn = document.createElement('div');
+      conn.className = 'chain-connector';
+      conn.style.setProperty('--nc', chain.color);
+      conn.innerHTML = `
+        <div class="conn-line"></div>
+        <div class="conn-limit">${node.limit}</div>
+        <div class="conn-arrow">which raises a new problem</div>
+        <div class="conn-line"></div>`;
+      block.appendChild(conn);
+    } else if (ni < chain.nodes.length - 1) {
+      const conn = document.createElement('div');
+      conn.className = 'chain-connector';
+      conn.style.setProperty('--nc', chain.color);
+      conn.innerHTML = `<div class="conn-line" style="height:30px"></div>
+        <div class="conn-arrow">leads to</div>
+        <div class="conn-line" style="height:30px"></div>`;
+      block.appendChild(conn);
+    }
+  });
+
+  wrap.appendChild(block);
+});
+</script>
+</body>
+</html>
