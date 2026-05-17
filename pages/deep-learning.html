@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Learning — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+<style>
+.gradient-bar-wrap { display:flex; flex-direction:column; gap:6px; }
+.gradient-bar-row { display:flex; align-items:center; gap:10px; }
+.gradient-bar-label { font-size:0.75rem; color:var(--text3); min-width:60px; font-family:monospace; }
+.gradient-bar { height:18px; border-radius:4px; transition:width 0.5s ease, background 0.5s; display:flex; align-items:center; padding:0 6px; font-size:0.65rem; font-weight:700; color:white; min-width:4px; }
+.gradient-val { font-size:0.72rem; color:var(--text3); min-width:70px; font-family:monospace; }
+.training-canvas { width:100%; height:250px; border-radius:8px; background:#0d1220; }
+.dropout-canvas { width:100%; height:280px; border-radius:8px; background:#0d1220; }
+.comparison-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.act-compare { border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem; }
+.act-compare canvas { width:100%; height:160px; background:#0d1220; border-radius:6px; }
+.driver-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1.2rem; }
+.driver-icon { font-size:1.8rem; margin-bottom:0.5rem; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo"><div class="dot"></div><a href="../index.html" style="color:white;font-weight:800;">ML Visual Guide</a></div>
+  <div class="nav-links">
+    <a href="neural-networks.html">Neural Nets</a>
+    <a href="deep-learning.html" class="active">Deep Learning</a>
+    <a href="cnn.html">CNNs</a>
+    <a href="generative-ai.html">Generative AI</a>
+    <a href="attention.html">Attention</a>
+    <a href="reinforcement.html">RL</a>
+    <a href="unsupervised.html">Unsupervised</a>
+    <a href="quiz.html">Quiz</a>
+  </div>
+  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="neural-networks.html">🧠 Neural Networks</a>
+  <a href="deep-learning.html">🔥 Deep Learning</a>
+  <a href="cnn.html">🖼️ CNNs</a>
+  <a href="generative-ai.html">✨ Generative AI</a>
+  <a href="attention.html">👁️ Attention</a>
+  <a href="reinforcement.html">🎮 RL</a>
+  <a href="unsupervised.html">🔍 Unsupervised</a>
+  <a href="quiz.html">📝 Quiz</a>
+</div>
+
+<div class="page-header">
+  <canvas id="headerBg" class="hero-canvas" style="opacity:0.4;"></canvas>
+  <div style="position:relative;z-index:1;">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span>/</span>Deep Learning</div>
+    <span class="topic-icon">🔥</span>
+    <h1>Deep Learning</h1>
+    <p>Vanishing gradients, ReLU variants, dropout, early stopping, and what makes deep nets tick.</p>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- 1. What is Deep Learning -->
+  <div class="section-header">
+    <h4>Part 1</h4>
+    <h2 class="section-title">What is Deep Learning?</h2>
+  </div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>Definition</h3>
+      <div class="concept-box" style="margin-bottom:1rem;">
+        <p><strong>Deep Learning</strong> = neural networks with <em>several hidden layers</em> ("depth" = many stacked layers).</p>
+      </div>
+      <p>Unlike a shallow network (1 hidden layer), deep networks learn hierarchical features automatically:</p>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;margin-top:0.8rem;">
+        <div style="display:flex;gap:0.5rem;align-items:center;"><span style="background:var(--primary-dim);padding:3px 10px;border-radius:4px;font-size:0.78rem;color:var(--primary);">Early Layers</span><span style="font-size:0.85rem;color:var(--text2);">Edges, blobs, low-level features</span></div>
+        <div style="display:flex;gap:0.5rem;align-items:center;"><span style="background:var(--secondary-dim);padding:3px 10px;border-radius:4px;font-size:0.78rem;color:var(--secondary);">Middle Layers</span><span style="font-size:0.85rem;color:var(--text2);">Shapes, textures, parts</span></div>
+        <div style="display:flex;gap:0.5rem;align-items:center;"><span style="background:var(--green-dim);padding:3px 10px;border-radius:4px;font-size:0.78rem;color:var(--green);">Deep Layers</span><span style="font-size:0.85rem;color:var(--text2);">Eyes, faces, objects (high-level)</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Three Drivers of Deep Learning's Success</h3>
+      <div style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.5rem;">
+        <div class="driver-card"><div class="driver-icon">🧮</div><strong>Algorithmic Advances</strong><p style="font-size:0.85rem;margin-top:0.3rem;">ReLU, dropout, batch normalization, residual connections — made deep nets trainable.</p></div>
+        <div class="driver-card"><div class="driver-icon">📊</div><strong>Massive Data</strong><p style="font-size:0.85rem;margin-top:0.3rem;">Large supervised + crowdsourced + self-supervised datasets (ImageNet, Common Crawl).</p></div>
+        <div class="driver-card"><div class="driver-icon">🖥️</div><strong>GPUs</strong><p style="font-size:0.85rem;margin-top:0.3rem;">NNs are highly parallel → GPUs train them much faster than CPUs. The GPU/AI hardware boom.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-top:1.5rem;">
+    <div class="card">
+      <h3>Specialized Architectures</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Architecture</th><th>Best For</th></tr></thead>
+          <tbody>
+            <tr><td><strong>CNNs</strong></td><td>Images</td></tr>
+            <tr><td><strong>Transformers</strong></td><td>Speech, NLP, LLMs</td></tr>
+            <tr><td><strong>Deep RL</strong></td><td>Game playing, control</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Pros of Neural Networks</h3>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.88rem;">
+        <div>✅ <strong>Noise tolerance</strong> — graceful degradation</div>
+        <div>✅ <strong>No assumptions</strong> about input relationships</div>
+        <div>✅ <strong>Versatile</strong> — many real-world applications</div>
+        <div>✅ <strong>Fast testing</strong> — inference = just forward pass</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Cons of Neural Networks</h3>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.88rem;">
+        <div>❌ <strong>No guarantees</strong> — backprop may not find global minimum</div>
+        <div>❌ <strong>Slow training</strong> — hours/days for large networks</div>
+        <div>❌ <strong>Opacity</strong> — "black box", hard to interpret</div>
+        <div>❌ <strong>Millions of weights</strong> → high overfitting risk</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 2. Vanishing Gradient -->
+  <div class="section-header">
+    <h4>Part 2</h4>
+    <h2 class="section-title">The Vanishing Gradient Problem</h2>
+    <p class="section-subtitle">The deeper the network, the worse it gets — gradients shrink exponentially as they travel back through layers.</p>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <h3>The Cause</h3>
+      <p>Recall the hidden-unit error signal:</p>
+      <div class="formula">
+        <div class="formula-label">Hidden delta</div>
+        \[\delta_j = o_j(1-o_j)\sum_k \delta_k w_{kj}\]
+      </div>
+      <p>The factor \(o_j(1-o_j)\) is the <strong>derivative of the logistic function</strong>:</p>
+      <div class="formula purple">
+        <div class="formula-label">Sigmoid Derivative</div>
+        \[\frac{d}{dx}\sigma(x) = \sigma(x)(1-\sigma(x))\]
+      </div>
+      <div class="concept-box red" style="margin-top:1rem;">
+        <p>Maximum value = <strong>0.25</strong> (at x=0). Always in [0, 0.25].</p>
+        <p style="margin-top:0.5rem;">Going back <strong>L layers</strong>, error scaled by up to 0.25<sup>L</sup>!</p>
+      </div>
+      <div class="table-wrap" style="margin-top:1rem;">
+        <table>
+          <thead><tr><th>Layers Back</th><th>Max Scaling</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>0.25</td></tr>
+            <tr><td>3</td><td>0.0156</td></tr>
+            <tr><td>5</td><td>0.00098</td></tr>
+            <tr><td>10</td><td>≈ 10⁻⁶</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Vanishing Gradient Visualizer</div>
+      <div class="control-row" style="margin-bottom:1rem;">
+        <span class="control-label">Num Layers</span>
+        <input type="range" id="numLayers" min="2" max="20" step="1" value="8">
+        <span class="control-value" id="numLayersV">8</span>
+      </div>
+      <div class="control-row" style="margin-bottom:1rem;">
+        <span class="control-label">Activation</span>
+        <select id="actType" style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:white;font-size:0.85rem;">
+          <option value="sigmoid">Sigmoid (max deriv = 0.25)</option>
+          <option value="relu">ReLU (deriv = 1)</option>
+        </select>
+      </div>
+      <div class="gradient-bar-wrap" id="gradBars"></div>
+      <div id="gradSummary" style="margin-top:1rem;" class="output-display"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3. ReLU -->
+  <div class="section-header">
+    <h4>Part 3</h4>
+    <h2 class="section-title">ReLU: The Fix</h2>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <h3>Rectified Linear Unit</h3>
+      <div class="formula green">
+        <div class="formula-label">ReLU</div>
+        \[f(x) = \max(0, x)\]
+      </div>
+      <div class="formula green" style="margin-top:0.5rem;">
+        <div class="formula-label">Derivative</div>
+        \[f'(x) = \begin{cases} 1 & x > 0 \\ 0 & x \leq 0 \end{cases}\]
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Why ReLU Fixes Vanishing Gradients</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>Benefit</th></tr></thead>
+            <tbody>
+              <tr><td>Gradient = 1 for active nodes</td><td>Error propagates back <strong>without downscaling</strong></td></tr>
+              <tr><td>Faster compute</td><td>Just a max — no exponentials</td></tr>
+              <tr><td>Non-linear</td><td>The kink at 0 is enough to enable non-linear function approximation</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="concept-box green" style="margin-top:1rem;">
+          <p>Logistic dominated NNs for decades. <strong>ReLU (and variants) is now the default</strong> in deep networks.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="comparison-row">
+        <div class="act-compare">
+          <h4 style="margin-bottom:0.5rem;color:var(--red);">Sigmoid</h4>
+          <canvas id="sigCompare" width="300" height="160"></canvas>
+          <p style="font-size:0.8rem;margin-top:0.5rem;color:var(--red);">Max gradient: 0.25 → shrinks fast</p>
+        </div>
+        <div class="act-compare">
+          <h4 style="margin-bottom:0.5rem;color:var(--green);">ReLU</h4>
+          <canvas id="reluCompare" width="300" height="160"></canvas>
+          <p style="font-size:0.8rem;margin-top:0.5rem;color:var(--green);">Gradient: 0 or 1 → no shrinkage!</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Dying ReLU Problem</h3>
+        <p>ReLU outputs 0 for half its domain (x ≤ 0). On average, ~half the neurons may be <em>inactive</em>.</p>
+        <div class="concept-box red" style="margin-top:0.8rem;">
+          <p>If a neuron outputs 0 for ALL training examples in an iteration, it can <strong>never recover</strong> — it's dead. Lost capacity.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>ReLU Variants</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Variant</th><th>Negative slope</th><th>Comment</th></tr></thead>
+            <tbody>
+              <tr><td>ReLU</td><td>0 (flat)</td><td>Original; can die</td></tr>
+              <tr><td>Leaky ReLU</td><td>Fixed α</td><td>User chooses α</td></tr>
+              <tr><td>PReLU</td><td>Learned α</td><td>Network adapts α</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 4. Overfitting & Early Stopping -->
+  <div class="section-header">
+    <h4>Part 4</h4>
+    <h2 class="section-title">Preventing Overfitting</h2>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <div class="card">
+        <h3>The Problem</h3>
+        <p>Deep nets have <em>millions of weights</em>. With that capacity, severe risk of overfitting — memorizing training data instead of generalizing.</p>
+        <div class="concept-box red" style="margin-top:0.8rem;">
+          <p><strong>Typical curve:</strong> Training error keeps dropping, but <em>validation error eventually rises</em> as the model memorizes noise.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Early Stopping</h3>
+        <p>Monitor validation error during training; stop when it stops improving. Keep the model at the lowest validation point.</p>
+        <h4 style="margin-top:1rem;">Method 1: Stop on First Increase</h4>
+        <p style="font-size:0.85rem;">Stop the moment validation error goes up compared to the previous epoch.</p>
+        <div style="display:flex;gap:1rem;font-size:0.82rem;margin-top:0.5rem;">
+          <div><strong style="color:var(--green);">Pro:</strong> Simple</div>
+          <div><strong style="color:var(--red);">Con:</strong> No tolerance for natural fluctuations — noisy curves may trigger premature stopping</div>
+        </div>
+        <h4 style="margin-top:1rem;">Method 2: Patience Parameter</h4>
+        <div class="formula amber">
+          <div class="formula-label">Patience p</div>
+          \[\text{Stop if } p \text{ consecutive epochs fail to beat } E^* \text{ (best so far)}\]
+        </div>
+        <div class="concept-box amber" style="margin-top:0.8rem;">
+          <p>Patience makes early stopping <strong>robust to fluctuations</strong>. The standard choice in modern training.</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Training Curve Simulator</div>
+      <div class="control-row" style="margin-bottom:0.8rem;">
+        <span class="control-label">Patience</span>
+        <input type="range" id="patience" min="1" max="10" step="1" value="3">
+        <span class="control-value" id="patienceV">3</span>
+      </div>
+      <div class="control-row" style="margin-bottom:1rem;">
+        <span class="control-label">Noise Level</span>
+        <input type="range" id="noiseLevel" min="0" max="0.1" step="0.005" value="0.03">
+        <span class="control-value" id="noiseLevelV">0.030</span>
+      </div>
+      <canvas id="trainingCanvas" class="training-canvas" width="600" height="250"></canvas>
+      <div id="trainingInfo" class="output-display" style="margin-top:0.8rem;"></div>
+      <button class="btn btn-sm btn-outline" id="rerunTraining" style="margin-top:0.8rem;">↺ Re-run Simulation</button>
+      <div class="concept-box" style="margin-top:1rem;">
+        <p><strong>Worked example</strong> (p=3): Validation errors: 0.23→0.21→0.20→0.18→0.19→0.17→0.16→0.15→0.16→0.<br>Best=0.15 at epoch 8. Epochs 9,10,11 all exceed 0.15 → patience exhausted → stop. Return epoch-8 model.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 5. Dropout -->
+  <div class="section-header">
+    <h4>Part 5</h4>
+    <h2 class="section-title">Dropout</h2>
+    <p class="section-subtitle">Randomly deactivate neurons during training to prevent co-adaptation and force robust feature learning.</p>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <div class="card">
+        <h3>How Dropout Works</h3>
+        <ol style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.6rem;font-size:0.9rem;color:var(--text2);">
+          <li>For each training example, randomly <strong>drop (zero out)</strong> neurons with probability p (e.g., 0.5)</li>
+          <li>Run forward pass and backprop <strong>only on the surviving sub-network</strong></li>
+          <li>Dropped neurons output 0; their weights don't update for this example</li>
+          <li>Repeat with a fresh random mask for the next example</li>
+          <li><strong>At test time</strong>: use the <em>entire network</em> (no dropout)</li>
+        </ol>
+        <div class="formula" style="margin-top:1rem;">
+          <div class="formula-label">Dropout probability</div>
+          \[\text{Keep each neuron with probability } (1-p)\]
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Why Dropout Prevents Overfitting</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Effect</th><th>Why It Prevents Overfitting</th></tr></thead>
+            <tbody>
+              <tr><td>Smaller sub-networks</td><td>Less complex → less prone to overfit</td></tr>
+              <tr><td>Different network per example</td><td>Effectively trains an <em>ensemble</em> of many networks</td></tr>
+              <tr><td>Same input, different masks</td><td>Network can't memorize specific examples</td></tr>
+              <tr><td>Stability</td><td>Output becomes robust to small input perturbations</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Dropout Visualizer</div>
+      <div class="control-row" style="margin-bottom:0.8rem;">
+        <span class="control-label">Dropout rate</span>
+        <input type="range" id="dropRate" min="0" max="0.8" step="0.1" value="0.5">
+        <span class="control-value" id="dropRateV">0.50</span>
+      </div>
+      <div style="display:flex;gap:0.8rem;margin-bottom:1rem;">
+        <button class="btn btn-sm btn-primary" id="dropBtn">Apply New Mask</button>
+        <button class="btn btn-sm btn-outline" id="testBtn">Test Mode (no dropout)</button>
+      </div>
+      <canvas id="dropoutCanvas" class="dropout-canvas" width="500" height="280"></canvas>
+      <div id="dropoutInfo" class="output-display" style="margin-top:0.8rem;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 6. Regularization Summary -->
+  <div class="section-header">
+    <h4>Part 6</h4>
+    <h2 class="section-title">Regularization</h2>
+  </div>
+  <div class="concept-box">
+    <p><strong>Regularization</strong> = any technique that modifies the learning process to prevent overfitting, typically by encouraging the model to be stable under small input changes.</p>
+  </div>
+  <div class="grid grid-3" style="margin-top:1.5rem;">
+    <div class="card">
+      <h3 style="color:var(--primary);">Early Stopping</h3>
+      <p>Stop training before memorization sets in. Monitor validation error. Keep best model.</p>
+      <div class="badge badge-blue" style="margin-top:0.8rem;">Method: Patience</div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--secondary);">Dropout</h3>
+      <p>Randomly remove neurons during training. Full network at test time. Acts as ensemble.</p>
+      <div class="badge badge-purple" style="margin-top:0.8rem;">Standard technique</div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent);">Weight Decay (L1/L2)</h3>
+      <p>Add penalty for large weights to the loss function. Keeps weights small and model simple.</p>
+      <div class="formula amber" style="margin-top:0.8rem; padding:0.6rem;">\(E_{reg} = E + \lambda\sum w_i^2\)</div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="divider"></div>
+  <div class="section-header">
+    <h4>Quiz 7 & 8 — Practice</h4>
+    <h2>Deep Learning Quiz Questions</h2>
+  </div>
+  <div class="quiz-grid" id="dlQuiz"></div>
+
+</div>
+
+<footer class="footer">
+  <p>← <a href="neural-networks.html">Neural Networks</a> · <a href="cnn.html">CNNs →</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/contrib/auto-render.min.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/three-bg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderMathInElement(document.body, {
+    delimiters: [{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}]
+  });
+  initNeuralNetBg('headerBg', { layers:[2,4,4,4,1], camZ:14, xSpread:4, ySpread:1.4, nodeR:0.2 });
+
+  // ── Vanishing Gradient Bars ──
+  function updateGradBars() {
+    const L = +document.getElementById('numLayers').value;
+    const act = document.getElementById('actType').value;
+    document.getElementById('numLayersV').textContent = L;
+    const maxDeriv = act === 'sigmoid' ? 0.25 : 1.0;
+    const container = document.getElementById('gradBars');
+    container.innerHTML = '';
+    const maxBarW = 300;
+    for (let i = 1; i <= L; i++) {
+      const grad = Math.pow(maxDeriv, i);
+      const pct = Math.min(grad / 1.0, 1);
+      const barW = Math.max(pct * maxBarW, 2);
+      const color = act === 'sigmoid'
+        ? `hsl(${200 - (i/L)*160}, 80%, 55%)`
+        : `hsl(${120}, 70%, 50%)`;
+      const row = document.createElement('div');
+      row.className = 'gradient-bar-row';
+      row.innerHTML = `
+        <span class="gradient-bar-label">Layer ${i}</span>
+        <div class="gradient-bar" style="width:${barW}px;background:${color};"></div>
+        <span class="gradient-val">${grad < 0.0001 ? grad.toExponential(2) : grad.toFixed(4)}</span>`;
+      container.appendChild(row);
+    }
+    const finalGrad = Math.pow(maxDeriv, L);
+    document.getElementById('gradSummary').innerHTML = `
+      <span class="label">After ${L} layers (${act === 'sigmoid' ? 'sigmoid' : 'ReLU'}):</span><br>
+      <span class="value ${act==='relu'?'green':'red'}">${finalGrad < 1e-10 ? '≈ 0 (vanished!)' : finalGrad.toExponential(3)}</span><br>
+      <span class="label">${act==='sigmoid'?'⚠️ Gradient has vanished — early layers barely update!':'✅ Gradient intact — all layers update effectively!'}</span>`;
+  }
+  document.getElementById('numLayers').addEventListener('input', updateGradBars);
+  document.getElementById('actType').addEventListener('change', updateGradBars);
+  updateGradBars();
+
+  // ── Activation Comparison Plots ──
+  function miniPlot(canvasId, fnName, color, derivColor) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width || 300, H = canvas.height || 160;
+    canvas.width = W; canvas.height = H;
+    ctx.fillStyle = '#0d1220'; ctx.fillRect(0,0,W,H);
+    const cx = W/2, cy = H/2;
+    const sx = W/8, sy = H/2.5;
+    // Axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+    const fns = {sigmoid, relu, tanh: tanh_fn};
+    const derivs = {sigmoid: sigmoid_d, relu: relu_d, tanh: tanh_d};
+    const fn = fns[fnName]; const dfn = derivs[fnName];
+    // Draw function
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.shadowColor = color; ctx.shadowBlur = 6;
+    ctx.beginPath();
+    for (let i=0; i<=200; i++) {
+      const x = -4 + i*8/200;
+      const px = cx+x*sx, py = cy-fn(x)*sy;
+      i===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // Draw derivative
+    ctx.strokeStyle = derivColor; ctx.lineWidth = 1.5; ctx.shadowBlur = 0;
+    ctx.beginPath();
+    for (let i=0; i<=200; i++) {
+      const x = -4 + i*8/200;
+      const px = cx+x*sx, py = cy-dfn(x)*sy;
+      i===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    // Max deriv label
+    if (fnName === 'sigmoid') {
+      ctx.fillStyle = '#ef4444'; ctx.font = 'bold 10px monospace'; ctx.textAlign = 'left';
+      ctx.fillText('max deriv = 0.25', 8, 16);
+    } else if (fnName === 'relu') {
+      ctx.fillStyle = '#10b981'; ctx.font = 'bold 10px monospace'; ctx.textAlign = 'left';
+      ctx.fillText('deriv = 0 or 1', 8, 16);
+    }
+  }
+  miniPlot('sigCompare','sigmoid','#ef4444','rgba(239,68,68,0.4)');
+  miniPlot('reluCompare','relu','#10b981','rgba(16,185,129,0.4)');
+
+  // ── Training Curve ──
+  let trainingData = null;
+  function generateTraining() {
+    const patience = +document.getElementById('patience').value;
+    const noise = +document.getElementById('noiseLevel').value;
+    document.getElementById('patienceV').textContent = patience;
+    document.getElementById('noiseLevelV').textContent = noise.toFixed(3);
+
+    const epochs = 35;
+    const trainErr = [], valErr = [];
+    let bestVal = Infinity, bestEpoch = 0, stoppedEpoch = epochs, patienceCount = 0;
+    for (let e=0; e<epochs; e++) {
+      // Train error always decreases
+      const te = 0.5 * Math.exp(-e*0.12) + 0.02;
+      trainErr.push(te);
+      // Validation error decreases then increases (overfitting), with noise
+      let ve;
+      if (e < 18) ve = 0.45 * Math.exp(-e*0.13) + 0.08;
+      else ve = 0.08 + (e-18)*0.006;
+      ve += (Math.random()-0.5)*noise*2;
+      ve = Math.max(0.04, ve);
+      valErr.push(ve);
+
+      if (ve < bestVal) { bestVal = ve; bestEpoch = e; patienceCount = 0; }
+      else { patienceCount++; if (patienceCount >= patience && stoppedEpoch === epochs) stoppedEpoch = e; }
+    }
+    trainingData = { trainErr, valErr, bestEpoch, stoppedEpoch, bestVal, patience };
+    drawTraining();
+  }
+
+  function drawTraining() {
+    if (!trainingData) return;
+    const { trainErr, valErr, bestEpoch, stoppedEpoch, bestVal } = trainingData;
+    const canvas = document.getElementById('trainingCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width || 600, H = canvas.height || 250;
+    ctx.fillStyle = '#0d1220'; ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)'; ctx.lineWidth = 1;
+    for (let i=1; i<5; i++) { ctx.beginPath(); ctx.moveTo(0,H*i/5); ctx.lineTo(W,H*i/5); ctx.stroke(); }
+    // Axes
+    const PAD = {l:40,r:20,t:20,b:30};
+    const cW = W-PAD.l-PAD.r, cH = H-PAD.t-PAD.b;
+    const n = trainErr.length;
+    const maxE = Math.max(...trainErr, ...valErr);
+
+    const px = (i) => PAD.l + (i/(n-1))*cW;
+    const py = (v) => PAD.t + (1-v/maxE)*cH;
+
+    // Early stop line
+    if (stoppedEpoch < n) {
+      ctx.strokeStyle = 'rgba(245,158,11,0.5)'; ctx.lineWidth = 1.5; ctx.setLineDash([5,3]);
+      ctx.beginPath(); ctx.moveTo(px(stoppedEpoch),PAD.t); ctx.lineTo(px(stoppedEpoch),H-PAD.b); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(245,158,11,0.9)'; ctx.font = 'bold 10px monospace'; ctx.textAlign = 'center';
+      ctx.fillText('STOP', px(stoppedEpoch), PAD.t+10);
+    }
+
+    // Best model marker
+    ctx.strokeStyle = 'rgba(16,185,129,0.4)'; ctx.lineWidth = 1; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(px(bestEpoch),PAD.t); ctx.lineTo(px(bestEpoch),H-PAD.b); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Train curve
+    ctx.strokeStyle = '#00d4ff'; ctx.lineWidth = 2; ctx.shadowColor = '#00d4ff'; ctx.shadowBlur = 6;
+    ctx.beginPath();
+    trainErr.forEach((v,i) => i===0 ? ctx.moveTo(px(i),py(v)) : ctx.lineTo(px(i),py(v)));
+    ctx.stroke();
+
+    // Val curve
+    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 6;
+    ctx.beginPath();
+    valErr.forEach((v,i) => i===0 ? ctx.moveTo(px(i),py(v)) : ctx.lineTo(px(i),py(v)));
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Best val dot
+    ctx.fillStyle = '#10b981'; ctx.shadowColor = '#10b981'; ctx.shadowBlur = 10;
+    ctx.beginPath(); ctx.arc(px(bestEpoch), py(bestVal), 5, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Axis labels
+    ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+    ctx.fillText('Epoch', W/2, H-2);
+    // Legend
+    ctx.fillStyle = '#00d4ff'; ctx.font = 'bold 10px monospace'; ctx.textAlign = 'left';
+    ctx.fillText('— Train Error', PAD.l, H-4);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillText('— Val Error', PAD.l+90, H-4);
+    ctx.fillStyle = '#10b981';
+    ctx.fillText('● Best Model', PAD.l+180, H-4);
+
+    document.getElementById('trainingInfo').innerHTML = `
+      <span class="label">Best validation error: </span><span class="value green">${bestVal.toFixed(4)}</span> at epoch ${bestEpoch+1}<br>
+      <span class="label">Early stop: </span><span class="value">${stoppedEpoch < n ? 'Epoch ' + (stoppedEpoch+1) : 'No stop (full training)'}</span>
+    `;
+  }
+
+  document.getElementById('patience').addEventListener('input', generateTraining);
+  document.getElementById('noiseLevel').addEventListener('input', generateTraining);
+  document.getElementById('rerunTraining').addEventListener('click', generateTraining);
+  generateTraining();
+
+  // ── Dropout Visualizer ──
+  const NET = { layers: [3, 5, 4, 2] };
+  let dropMask = null; let testMode = false;
+
+  function applyDropout() {
+    const rate = +document.getElementById('dropRate').value;
+    document.getElementById('dropRateV').textContent = rate.toFixed(2);
+    dropMask = NET.layers.map(n => Array.from({length:n}, () => testMode ? true : Math.random() > rate));
+    drawDropout();
+  }
+
+  function drawDropout() {
+    const canvas = document.getElementById('dropoutCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width || 500, H = canvas.height || 280;
+    ctx.fillStyle = '#0d1220'; ctx.fillRect(0,0,W,H);
+    if (!dropMask) return;
+
+    const colors = ['#00d4ff','#a855f7','#a855f7','#10b981'];
+    const xPos = NET.layers.map((_,i) => 50 + i*(W-100)/(NET.layers.length-1));
+    const nodeR = 18;
+    const nodePositions = NET.layers.map((n,li) => Array.from({length:n},(_,ni) => ({
+      x: xPos[li], y: H/2 + (ni-(n-1)/2)*46
+    })));
+
+    // Edges
+    for (let li=0; li<NET.layers.length-1; li++) {
+      nodePositions[li].forEach((src,si) => {
+        nodePositions[li+1].forEach((dst,di) => {
+          const active = dropMask[li][si] && dropMask[li+1][di];
+          ctx.strokeStyle = active ? `${colors[li]}44` : 'rgba(255,255,255,0.04)';
+          ctx.lineWidth = active ? 1.5 : 0.5;
+          ctx.beginPath(); ctx.moveTo(src.x, src.y); ctx.lineTo(dst.x, dst.y); ctx.stroke();
+        });
+      });
+    }
+
+    // Nodes
+    nodePositions.forEach((layer, li) => {
+      layer.forEach((n, ni) => {
+        const alive = dropMask[li][ni];
+        ctx.beginPath(); ctx.arc(n.x, n.y, nodeR, 0, Math.PI*2);
+        if (alive) {
+          ctx.fillStyle = colors[li]+'33';
+          ctx.fill();
+          ctx.strokeStyle = colors[li]; ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.shadowColor = colors[li]; ctx.shadowBlur = 10;
+          ctx.beginPath(); ctx.arc(n.x, n.y, nodeR, 0, Math.PI*2); ctx.stroke();
+          ctx.shadowBlur = 0;
+        } else {
+          ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.fill();
+          ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1; ctx.stroke();
+          ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText('✕', n.x, n.y);
+        }
+        ctx.textBaseline = 'alphabetic';
+      });
+    });
+
+    // Labels
+    const labels = ['Input','Hidden 1','Hidden 2','Output'];
+    xPos.forEach((x,i) => {
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+      ctx.fillText(labels[i]||'', x, H-8);
+    });
+
+    const totalNodes = NET.layers.reduce((s,n)=>s+n,0);
+    const activeNodes = dropMask.flat().filter(Boolean).length;
+    document.getElementById('dropoutInfo').innerHTML = `
+      <span class="label">Mode: </span><span class="value ${testMode?'green':''}">${testMode?'Test (all neurons active)':'Training'}</span>&nbsp;&nbsp;
+      <span class="label">Active neurons: </span><span class="value">${activeNodes}/${totalNodes}</span>&nbsp;&nbsp;
+      <span class="label">Drop rate: </span><span class="value">${(+document.getElementById('dropRate').value*100).toFixed(0)}%</span>`;
+  }
+
+  document.getElementById('dropRate').addEventListener('input', applyDropout);
+  document.getElementById('dropBtn').addEventListener('click', () => { testMode = false; applyDropout(); });
+  document.getElementById('testBtn').addEventListener('click', () => { testMode = true; applyDropout(); });
+  applyDropout();
+
+  // ── Quiz ──
+  const questions = [
+    {q:"If early stopping with patience = 3 is used, training will stop at the end of which validation error sequence?", a:"0.3 → 0.4 → 0.35 → 0.4", exp:"Best so far = 0.3. Then 0.4 (no improvement, count=1), 0.35 (no improvement, count=2), 0.4 (no improvement, count=3). Three consecutive epochs without improvement → stop."},
+    {q:"The reason behind the vanishing gradient problem is:", a:"The derivative of the logistic function is always less than 1.", exp:"The sigmoid derivative maxes out at 0.25. Backpropagating through many layers means multiplying many values < 1 together, causing gradients to shrink exponentially."},
+    {q:"What is an advantage of using multiple hidden layers?", a:"They can automatically learn higher-level features relevant for the task.", exp:"Each layer builds on the previous one, learning increasingly abstract representations — edges → shapes → parts → objects. Hierarchical feature learning is the key advantage of depth."},
+    {q:"In a neural network with 100 layers, each using logistic activation, which will be true?", a:"The weights in the layers near the input layer will hardly update over iterations.", exp:"Classic vanishing gradient: gradients shrink as they travel backward through 100 sigmoid layers. By the time they reach the first few layers, they are essentially zero."},
+    {q:"Neural networks are amenable for parallel processing.", a:"True.", exp:"The core operations in forward and backward passes are matrix multiplications, which can be massively parallelized on GPUs."},
+    {q:"By replacing logistic activation function with ReLU in a neural network, we lose non-linearity.", a:"False.", exp:"ReLU(x) = max(0, x) is non-linear — it behaves differently for positive vs. negative inputs. Non-linearity is fully preserved."},
+    {q:"What will be the ReLU activation value when its input is equal to −2.3?", a:"0.", exp:"ReLU(x) = max(0, x). Since −2.3 < 0, the output is 0."},
+    {q:"What makes a neural network deep?", a:"Several hidden layers.", exp:"'Deep' specifically refers to the number of layers (depth), not the number of neurons per layer (width), inputs, or outputs."},
+    {q:"What problem is overcome using ReLU instead of logistic?", a:"Vanishing gradient.", exp:"The ReLU derivative is either 0 or 1 — not a small fraction like sigmoid's (max 0.25). This prevents the multiplicative shrinkage of gradients during backprop."},
+    {q:"For image classification, giving pixel values as features will be a good idea for which method?", a:"Deep neural network.", exp:"Deep nets (especially CNNs) learn hierarchical spatial features directly from raw pixels. Other methods struggle with the high dimensionality."},
+    {q:"Overfitting in neural networks can be prevented with:", a:"Dropout.", exp:"Dropout randomly deactivates a fraction of neurons during each training step. This prevents neurons from co-adapting too tightly and forces the network to learn more distributed, robust features."},
+    {q:"Leaky ReLU is designed to remedy:", a:"Dying ReLU problem.", exp:"Standard ReLU outputs 0 for any negative input. If a neuron's input is always negative, it permanently outputs 0 and stops learning ('dies'). Leaky ReLU allows a small gradient (αx) for negatives."},
+  ];
+  const container = document.getElementById('dlQuiz');
+  questions.forEach((q,i) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `<div class="quiz-card-inner">
+      <div class="quiz-front"><div><div class="quiz-qnum">Q${i+1} — Deep Learning</div><div class="quiz-q">${q.q}</div></div><div class="quiz-hint">👆 Click to reveal</div></div>
+      <div class="quiz-back"><div><div class="quiz-answer-label">✓ Answer</div><div class="quiz-answer">${q.a}</div></div><div class="quiz-explanation">${q.exp}</div></div>
+    </div>`;
+    card.addEventListener('click', ()=>card.classList.toggle('flipped'));
+    container.appendChild(card);
+  });
+
+  initAllTabs();
+  const h = document.getElementById('hamburger'), m = document.getElementById('mobileNav');
+  if(h) h.addEventListener('click', ()=>m.classList.toggle('open'));
+});
+</script>
+</body>
+</html>

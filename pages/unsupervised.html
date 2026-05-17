@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unsupervised Learning — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+<style>
+.cluster-canvas{width:100%;height:360px;border-radius:12px;border:1px solid var(--border);cursor:crosshair;background:#0d1220;}
+.pca-canvas{width:100%;height:280px;border-radius:12px;border:1px solid var(--border);background:#0d1220;}
+.vs-card{border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;background:var(--card);}
+.method-badge{display:inline-block;font-size:0.68rem;font-weight:700;padding:3px 10px;border-radius:50px;letter-spacing:0.05em;margin-bottom:0.5rem;}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo"><div class="dot"></div><a href="../index.html" style="color:white;font-weight:800;">ML Visual Guide</a></div>
+  <div class="nav-links">
+    <a href="neural-networks.html">Neural Nets</a><a href="deep-learning.html">Deep Learning</a>
+    <a href="cnn.html">CNNs</a><a href="generative-ai.html">Generative AI</a>
+    <a href="attention.html">Attention</a><a href="reinforcement.html">RL</a>
+    <a href="unsupervised.html" class="active">Unsupervised</a><a href="quiz.html">Quiz</a>
+  </div>
+  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="neural-networks.html">🧠 Neural Nets</a><a href="deep-learning.html">🔥 Deep Learning</a>
+  <a href="cnn.html">🖼️ CNNs</a><a href="generative-ai.html">✨ Generative AI</a>
+  <a href="attention.html">👁️ Attention</a><a href="reinforcement.html">🎮 RL</a>
+  <a href="unsupervised.html">🔍 Unsupervised</a><a href="quiz.html">📝 Quiz</a>
+</div>
+
+<div class="page-header">
+  <canvas id="headerBg" class="hero-canvas" style="opacity:0.4;"></canvas>
+  <div style="position:relative;z-index:1;">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span>/</span>Unsupervised Learning</div>
+    <span class="topic-icon">🔍</span>
+    <h1>Unsupervised Learning</h1>
+    <p>Clustering, dimensionality reduction, autoencoders — finding structure without labels.</p>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- Overview -->
+  <div class="section-header">
+    <h4>Overview</h4>
+    <h2>Learning Without Labels</h2>
+    <p class="section-subtitle">Unsupervised learning finds hidden patterns or intrinsic structure in data — no target labels required.</p>
+  </div>
+
+  <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));margin-bottom:2rem;">
+    <div class="card">
+      <div class="method-badge" style="background:rgba(0,212,255,0.15);color:var(--primary);">Clustering</div>
+      <h3>Group similar items</h3>
+      <p style="font-size:0.88rem;">K-means, DBSCAN, hierarchical clustering. No labels — discover natural groupings.</p>
+    </div>
+    <div class="card">
+      <div class="method-badge" style="background:rgba(168,85,247,0.15);color:var(--secondary);">Dimensionality Reduction</div>
+      <h3>Compress to essentials</h3>
+      <p style="font-size:0.88rem;">PCA, t-SNE, UMAP. Reduce high-dimensional data to 2D/3D for visualization or downstream tasks.</p>
+    </div>
+    <div class="card">
+      <div class="method-badge" style="background:rgba(16,185,129,0.15);color:var(--green);">Generative Models</div>
+      <h3>Learn the data distribution</h3>
+      <p style="font-size:0.88rem;">Autoencoders, VAEs, GANs. Learn to generate new samples similar to training data.</p>
+    </div>
+    <div class="card">
+      <div class="method-badge" style="background:rgba(245,158,11,0.15);color:var(--accent);">Anomaly Detection</div>
+      <h3>Find the unusual</h3>
+      <p style="font-size:0.88rem;">High reconstruction error in an autoencoder signals an anomaly. Useful for fraud detection, quality control.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- K-Means -->
+  <div class="section-header">
+    <h4>Part 1</h4>
+    <h2>K-Means Clustering</h2>
+    <p class="section-subtitle">Partition data into K clusters by iteratively assigning points to nearest centroid and updating centroids.</p>
+  </div>
+
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>Algorithm</h3>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span class="badge badge-blue" style="flex-shrink:0;margin-top:2px;">1</span><div><strong>Initialize</strong> K centroids randomly (or use K-means++ for better init)</div></div>
+          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span class="badge badge-purple" style="flex-shrink:0;margin-top:2px;">2</span><div><strong>Assign</strong> each point to the nearest centroid (by Euclidean distance)</div></div>
+          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span class="badge badge-green" style="flex-shrink:0;margin-top:2px;">3</span><div><strong>Update</strong> each centroid to the mean of its assigned points</div></div>
+          <div style="display:flex;gap:0.6rem;align-items:flex-start;"><span class="badge badge-amber" style="flex-shrink:0;margin-top:2px;">4</span><div><strong>Repeat</strong> steps 2–3 until convergence (centroids stop moving)</div></div>
+        </div>
+        <div class="formula" style="margin-top:1rem;">
+          <div class="formula-label">Objective (minimize inertia)</div>
+          \[J = \sum_{k=1}^K \sum_{x \in C_k} \|x - \mu_k\|^2\]
+        </div>
+        <p style="font-size:0.85rem;margin-top:0.5rem;">μ_k = centroid of cluster k. Minimize total within-cluster sum of squares.</p>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Choosing K — Elbow Method</h3>
+        <canvas id="elbowCanvas" width="350" height="160" style="width:100%;border-radius:8px;"></canvas>
+        <p style="font-size:0.82rem;margin-top:0.5rem;color:var(--text2);">Plot inertia vs K. Look for the "elbow" where adding more clusters gives diminishing returns.</p>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Pros & Cons</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;">
+          <div>
+            <div style="color:var(--green);font-weight:700;font-size:0.82rem;margin-bottom:0.4rem;">✓ Pros</div>
+            <div style="font-size:0.82rem;display:flex;flex-direction:column;gap:0.3rem;color:var(--text2);">
+              <div>Simple & fast</div><div>Scales to large data</div><div>Easy to implement</div>
+            </div>
+          </div>
+          <div>
+            <div style="color:var(--red);font-weight:700;font-size:0.82rem;margin-bottom:0.4rem;">✗ Cons</div>
+            <div style="font-size:0.82rem;display:flex;flex-direction:column;gap:0.3rem;color:var(--text2);">
+              <div>Must choose K</div><div>Sensitive to init</div><div>Assumes spherical clusters</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Interactive K-Means Clustering</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:0.8rem;">Click canvas to add points. Control K and watch centroids converge.</p>
+      <div class="control-row" style="margin-bottom:0.5rem;">
+        <span class="control-label" style="font-size:0.78rem;">K clusters</span>
+        <input type="range" id="kSlider" min="2" max="6" step="1" value="3">
+        <span class="control-value" id="kVal">3</span>
+      </div>
+      <canvas id="kmeansCanvas" class="cluster-canvas" width="500" height="360"></canvas>
+      <div style="display:flex;gap:0.6rem;margin-top:0.8rem;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-primary" id="kmeansStep">Step</button>
+        <button class="btn btn-sm btn-outline" id="kmeansRun">▶ Auto-run</button>
+        <button class="btn btn-sm btn-outline" id="kmeansReset">↺ Reset</button>
+        <button class="btn btn-sm btn-outline" id="kmeansRandom">Random Data</button>
+      </div>
+      <div id="kmeansInfo" class="output-display" style="margin-top:0.8rem;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PCA -->
+  <div class="section-header">
+    <h4>Part 2</h4>
+    <h2>Principal Component Analysis (PCA)</h2>
+    <p class="section-subtitle">Find the directions of maximum variance in high-dimensional data and project onto a lower-dimensional subspace.</p>
+  </div>
+
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>The Idea</h3>
+        <p>High-dimensional data often lies near a low-dimensional manifold. PCA finds orthogonal directions (principal components) that capture the most variance.</p>
+        <div class="formula" style="margin-top:1rem;">
+          <div class="formula-label">Covariance Matrix</div>
+          \[\Sigma = \frac{1}{n}\sum_{i=1}^n (x_i - \bar{x})(x_i - \bar{x})^T\]
+        </div>
+        <div class="formula green" style="margin-top:0.5rem;">
+          <div class="formula-label">Eigenvector decomposition</div>
+          \[\Sigma v = \lambda v\]
+        </div>
+        <p style="font-size:0.85rem;margin-top:0.5rem;">Eigenvectors = principal components. Eigenvalues λ = variance explained. Sort by λ, take top d.</p>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Algorithm Steps</h3>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.88rem;">
+          <div style="display:flex;gap:0.5rem;"><span class="badge badge-blue">1</span>Center the data (subtract mean)</div>
+          <div style="display:flex;gap:0.5rem;"><span class="badge badge-purple">2</span>Compute covariance matrix Σ</div>
+          <div style="display:flex;gap:0.5rem;"><span class="badge badge-green">3</span>Compute eigenvectors & eigenvalues</div>
+          <div style="display:flex;gap:0.5rem;"><span class="badge badge-amber">4</span>Sort by eigenvalue (descending)</div>
+          <div style="display:flex;gap:0.5rem;"><span class="badge badge-red">5</span>Project data onto top-d eigenvectors</div>
+        </div>
+        <div class="concept-box" style="margin-top:1rem;">
+          <p><strong>Variance explained ratio:</strong> The fraction of total variance captured by keeping the top d components. Choose d so that ≥95% variance is retained.</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">PCA Visualization</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:0.8rem;">2D data with principal components shown. PC1 (cyan) = max variance direction. PC2 (purple) = orthogonal.</p>
+      <canvas id="pcaCanvas" class="pca-canvas" width="480" height="280"></canvas>
+      <div class="control-row" style="margin-top:0.8rem;">
+        <span class="control-label" style="font-size:0.78rem;">Data spread</span>
+        <input type="range" id="pcaSpread" min="10" max="80" step="5" value="40">
+        <span class="control-value" id="pcaSpreadV">40</span>
+      </div>
+      <div class="control-row">
+        <span class="control-label" style="font-size:0.78rem;">Correlation</span>
+        <input type="range" id="pcaCorr" min="0" max="0.99" step="0.05" value="0.7">
+        <span class="control-value" id="pcaCorrV">0.70</span>
+      </div>
+      <div id="pcaInfo" class="output-display" style="margin-top:0.8rem;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Other Methods -->
+  <div class="section-header">
+    <h4>Part 3</h4>
+    <h2>Other Unsupervised Methods</h2>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));">
+    <div class="card">
+      <h3 style="color:var(--primary);">DBSCAN</h3>
+      <p>Density-Based Spatial Clustering. Groups points that are closely packed; marks outliers as noise.</p>
+      <div class="concept-box" style="margin-top:0.8rem;"><p><strong>Advantage over K-means:</strong> Finds arbitrary-shaped clusters. No need to specify K. Robust to outliers.</p></div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--secondary);">t-SNE / UMAP</h3>
+      <p>Non-linear dimensionality reduction for visualization. Preserves local neighborhood structure.</p>
+      <div class="concept-box purple" style="margin-top:0.8rem;"><p><strong>Use case:</strong> Visualize high-dimensional data (word embeddings, image features) in 2D. Not for downstream ML tasks.</p></div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--green);">Autoencoders</h3>
+      <p>Neural network-based dimensionality reduction. Encoder compresses, decoder reconstructs. Bottleneck = learned representation.</p>
+      <div class="concept-box green" style="margin-top:0.8rem;"><p><strong>Advantage over PCA:</strong> Can learn <em>non-linear</em> manifolds, unlike PCA which is linear.</p></div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent);">Gaussian Mixture Models</h3>
+      <p>Probabilistic clustering. Each cluster is a Gaussian distribution. Soft assignments — each point has probability of belonging to each cluster.</p>
+      <div class="concept-box amber" style="margin-top:0.8rem;"><p>Trained with <strong>Expectation-Maximization (EM)</strong>. More flexible than K-means (elliptical clusters).</p></div>
+    </div>
+  </div>
+
+  <!-- Supervised vs Unsupervised -->
+  <div class="divider"></div>
+  <div class="section-header"><h4>Comparison</h4><h2>Supervised vs Unsupervised</h2></div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div class="vs-card">
+      <div class="method-badge" style="background:rgba(0,212,255,0.15);color:var(--primary);">Supervised</div>
+      <h3>Labeled Data Required</h3>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.88rem;margin-top:0.5rem;">
+        <div>📦 Has input X and target y pairs</div>
+        <div>🎯 Goal: learn f(x) → y</div>
+        <div>📊 Examples: classification, regression</div>
+        <div>✅ Clear evaluation metric (accuracy, MSE)</div>
+        <div>❌ Requires expensive human labeling</div>
+      </div>
+    </div>
+    <div class="vs-card">
+      <div class="method-badge" style="background:rgba(168,85,247,0.15);color:var(--secondary);">Unsupervised</div>
+      <h3>No Labels Needed</h3>
+      <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.88rem;margin-top:0.5rem;">
+        <div>📦 Has only input X</div>
+        <div>🎯 Goal: find structure in X</div>
+        <div>📊 Examples: clustering, PCA, autoencoders</div>
+        <div>✅ Works on unlabeled data (abundant!)</div>
+        <div>❌ Harder to evaluate, subjective quality</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <p>← <a href="reinforcement.html">Reinforcement Learning</a> · <a href="quiz.html">Full Quiz →</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/contrib/auto-render.min.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/three-bg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderMathInElement(document.body, { delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}] });
+  initTopicHeaderBg('headerBg', 0x06b6d4, 0xa855f7);
+
+  // ── K-Means ──
+  const COLORS = ['#00d4ff','#a855f7','#10b981','#f59e0b','#ef4444','#ec4899'];
+  let points=[], centroids=[], assignments=[], iteration=0, kRunning=false, kTimer=null;
+
+  function randomPoints(n=60) {
+    points=[];
+    const K=+document.getElementById('kSlider').value;
+    for(let k=0;k<K;k++){
+      const cx=80+Math.random()*(420-160), cy=60+Math.random()*(300-120);
+      for(let i=0;i<Math.ceil(n/K);i++) {
+        points.push({x:cx+(Math.random()-0.5)*80, y:cy+(Math.random()-0.5)*80});
+      }
+    }
+    points=points.slice(0,n);
+    initCentroids();
+  }
+
+  function initCentroids() {
+    const K=+document.getElementById('kSlider').value;
+    centroids=Array.from({length:K},()=>({x:50+Math.random()*400,y:40+Math.random()*280}));
+    assignments=points.map(()=>0); iteration=0;
+    drawKMeans();
+  }
+
+  function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+
+  function kmeansStep() {
+    if(!points.length){randomPoints();return;}
+    // Assign
+    let changed=false;
+    points.forEach((p,i)=>{
+      const nearest=centroids.reduce((best,c,ci)=>dist(p,c)<dist(p,centroids[best])?ci:best,0);
+      if(assignments[i]!==nearest){assignments[i]=nearest;changed=true;}
+    });
+    // Update centroids
+    centroids.forEach((c,ci)=>{
+      const clusterPts=points.filter((_,i)=>assignments[i]===ci);
+      if(clusterPts.length){
+        c.x=clusterPts.reduce((s,p)=>s+p.x,0)/clusterPts.length;
+        c.y=clusterPts.reduce((s,p)=>s+p.y,0)/clusterPts.length;
+      }
+    });
+    iteration++;
+    drawKMeans();
+    // Compute inertia
+    const inertia=points.reduce((s,p,i)=>s+dist(p,centroids[assignments[i]])**2,0);
+    document.getElementById('kmeansInfo').innerHTML=`<span class="label">Iteration: </span><span class="value">${iteration}</span>&nbsp;<span class="label">Inertia: </span><span class="value">${inertia.toFixed(1)}</span>${!changed?'&nbsp;<span class="value green">Converged!</span>':''}`;
+    if(!changed&&kRunning){clearInterval(kTimer);kRunning=false;document.getElementById('kmeansRun').textContent='▶ Auto-run';}
+    return changed;
+  }
+
+  function drawKMeans() {
+    const canvas=document.getElementById('kmeansCanvas');
+    const ctx=canvas.getContext('2d');
+    const W=canvas.width, H=canvas.height;
+    ctx.fillStyle='#0d1220'; ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+    for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    // Voronoi-like colored regions (by centroid ownership)
+    if(centroids.length){
+      for(let x=0;x<W;x+=8) for(let y=0;y<H;y+=8){
+        const nearest=centroids.reduce((b,c,ci)=>Math.hypot(x-c.x,y-c.y)<Math.hypot(x-centroids[b].x,y-centroids[b].y)?ci:b,0);
+        ctx.fillStyle=COLORS[nearest%COLORS.length]+'0d';
+        ctx.fillRect(x,y,8,8);
+      }
+    }
+    // Points
+    points.forEach((p,i)=>{
+      const col=centroids.length?COLORS[assignments[i]%COLORS.length]:'rgba(255,255,255,0.5)';
+      ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);
+      ctx.fillStyle=col+'cc';ctx.fill();
+    });
+    // Centroids
+    centroids.forEach((c,ci)=>{
+      ctx.beginPath();ctx.arc(c.x,c.y,10,0,Math.PI*2);
+      ctx.fillStyle=COLORS[ci%COLORS.length]+'44';ctx.fill();
+      ctx.strokeStyle=COLORS[ci%COLORS.length];ctx.lineWidth=2.5;ctx.stroke();
+      ctx.fillStyle=COLORS[ci%COLORS.length];ctx.font='bold 12px monospace';ctx.textAlign='center';
+      ctx.fillText('✕',c.x,c.y+4);
+    });
+    // Legend
+    centroids.forEach((c,ci)=>{
+      const cnt=points.filter((_,i)=>assignments[i]===ci).length;
+      ctx.fillStyle=COLORS[ci%COLORS.length];ctx.font='10px monospace';ctx.textAlign='left';
+      ctx.fillText(`C${ci+1}: ${cnt} pts`,8,16+ci*14);
+    });
+  }
+
+  // Click to add point
+  document.getElementById('kmeansCanvas').addEventListener('click', e=>{
+    const r=e.target.getBoundingClientRect();
+    const x=(e.clientX-r.left)*(e.target.width/r.width), y=(e.clientY-r.top)*(e.target.height/r.height);
+    points.push({x,y});
+    if(!assignments.length||assignments.length<points.length) assignments.push(0);
+    drawKMeans();
+  });
+
+  document.getElementById('kSlider').addEventListener('input', e=>{document.getElementById('kVal').textContent=e.target.value;initCentroids();});
+  document.getElementById('kmeansStep').addEventListener('click',kmeansStep);
+  document.getElementById('kmeansRun').addEventListener('click',()=>{
+    if(kRunning){clearInterval(kTimer);kRunning=false;document.getElementById('kmeansRun').textContent='▶ Auto-run';return;}
+    kRunning=true;document.getElementById('kmeansRun').textContent='⏹ Stop';
+    kTimer=setInterval(()=>{if(!kmeansStep()){clearInterval(kTimer);kRunning=false;document.getElementById('kmeansRun').textContent='▶ Auto-run';}},400);
+  });
+  document.getElementById('kmeansReset').addEventListener('click',initCentroids);
+  document.getElementById('kmeansRandom').addEventListener('click',()=>randomPoints());
+  randomPoints();
+
+  // ── Elbow Chart ──
+  (function drawElbow(){
+    const canvas=document.getElementById('elbowCanvas');
+    const ctx=canvas.getContext('2d');
+    const W=canvas.width,H=canvas.height;
+    ctx.fillStyle='#0d1220';ctx.fillRect(0,0,W,H);
+    const inertias=[1200,700,380,300,270,255,248,242];
+    const ks=Array.from({length:8},(_,i)=>i+1);
+    const PAD={l:35,r:15,t:15,b:25};
+    const cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
+    const maxI=1200, minI=240;
+    const px=i=>PAD.l+(i/(ks.length-1))*cW;
+    const py=v=>PAD.t+(1-(v-minI)/(maxI-minI))*cH;
+    // Grid
+    ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;
+    for(let i=1;i<4;i++){ctx.beginPath();ctx.moveTo(PAD.l,PAD.t+cH*i/4);ctx.lineTo(PAD.l+cW,PAD.t+cH*i/4);ctx.stroke();}
+    // Line
+    ctx.strokeStyle='#00d4ff';ctx.lineWidth=2;ctx.shadowColor='#00d4ff';ctx.shadowBlur=6;
+    ctx.beginPath();inertias.forEach((v,i)=>i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v)));ctx.stroke();ctx.shadowBlur=0;
+    // Points
+    inertias.forEach((v,i)=>{
+      ctx.beginPath();ctx.arc(px(i),py(v),4,0,Math.PI*2);
+      ctx.fillStyle=i===2?'#f59e0b':'#00d4ff';ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='10px monospace';ctx.textAlign='center';
+      ctx.fillText(ks[i],px(i),H-5);
+    });
+    // Elbow marker
+    ctx.strokeStyle='rgba(245,158,11,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(px(2),PAD.t);ctx.lineTo(px(2),H-PAD.b);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#f59e0b';ctx.font='bold 9px monospace';ctx.textAlign='center';ctx.fillText('elbow',px(2),PAD.t+8);
+    // Axis labels
+    ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='9px monospace';ctx.textAlign='center';ctx.fillText('K',W/2,H-1);
+    ctx.save();ctx.translate(10,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('Inertia',0,0);ctx.restore();
+  })();
+
+  // ── PCA Visualization ──
+  function drawPCA() {
+    const canvas=document.getElementById('pcaCanvas');
+    const ctx=canvas.getContext('2d');
+    const W=canvas.width, H=canvas.height;
+    const spread=+document.getElementById('pcaSpread').value;
+    const corr=+document.getElementById('pcaCorr').value;
+    document.getElementById('pcaSpreadV').textContent=spread;
+    document.getElementById('pcaCorrV').textContent=corr.toFixed(2);
+
+    ctx.fillStyle='#0d1220';ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+    for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    const cx=W/2, cy=H/2;
+    // Generate correlated points
+    const pts=[];
+    for(let i=0;i<120;i++){
+      const z1=(Math.random()-0.5)*2, z2=(Math.random()-0.5)*2;
+      const x=z1*spread;
+      const y=corr*z1*spread/1.5+(1-corr)*z2*spread/2;
+      pts.push({x:cx+x,y:cy+y});
+    }
+    // Draw points
+    pts.forEach(p=>{
+      ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,212,255,0.5)';ctx.fill();
+    });
+    // Estimate PCA direction (simplified: angle = corr-based)
+    const pc1Angle=Math.atan2(corr,1);
+    const pc2Angle=pc1Angle+Math.PI/2;
+    const pc1Len=spread*1.8, pc2Len=spread*(1-corr)*0.8+8;
+    // PC1
+    ctx.strokeStyle='#00d4ff';ctx.lineWidth=2.5;ctx.shadowColor='#00d4ff';ctx.shadowBlur=8;
+    ctx.beginPath();
+    ctx.moveTo(cx-Math.cos(pc1Angle)*pc1Len,cy-Math.sin(pc1Angle)*pc1Len);
+    ctx.lineTo(cx+Math.cos(pc1Angle)*pc1Len,cy+Math.sin(pc1Angle)*pc1Len);
+    ctx.stroke();
+    // PC2
+    ctx.strokeStyle='#a855f7';ctx.lineWidth=2;ctx.shadowColor='#a855f7';
+    ctx.beginPath();
+    ctx.moveTo(cx-Math.cos(pc2Angle)*pc2Len,cy-Math.sin(pc2Angle)*pc2Len);
+    ctx.lineTo(cx+Math.cos(pc2Angle)*pc2Len,cy+Math.sin(pc2Angle)*pc2Len);
+    ctx.stroke();ctx.shadowBlur=0;
+    // Labels
+    ctx.fillStyle='#00d4ff';ctx.font='bold 11px monospace';ctx.textAlign='center';
+    ctx.fillText('PC1',cx+Math.cos(pc1Angle)*pc1Len+12,cy+Math.sin(pc1Angle)*pc1Len);
+    ctx.fillStyle='#a855f7';
+    ctx.fillText('PC2',cx+Math.cos(pc2Angle)*pc2Len+12,cy+Math.sin(pc2Angle)*pc2Len);
+
+    const var1=Math.round((0.5+corr*0.45)*100);
+    const var2=100-var1;
+    document.getElementById('pcaInfo').innerHTML=`<span class="label">Variance explained — </span><span class="value" style="color:var(--primary)">PC1: ${var1}%</span><span class="label"> | </span><span class="value" style="color:var(--secondary)">PC2: ${var2}%</span><br><span class="label">PC1 captures the direction of max variance (the main "spread" of data).</span>`;
+  }
+
+  document.getElementById('pcaSpread').addEventListener('input',drawPCA);
+  document.getElementById('pcaCorr').addEventListener('input',drawPCA);
+  drawPCA();
+
+  const h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');
+  if(h)h.addEventListener('click',()=>m.classList.toggle('open'));
+});
+</script>
+</body>
+</html>

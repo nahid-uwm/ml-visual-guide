@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Networks — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+<style>
+.perceptron-svg { width: 100%; max-width: 500px; display: block; margin: 0 auto; }
+.live-calc { background: rgba(0,0,0,0.5); border-radius: var(--radius-sm); padding: 1.2rem; font-family: monospace; font-size: 0.92rem; line-height: 2; }
+.live-calc .var { color: var(--primary); }
+.live-calc .eq { color: var(--text2); }
+.live-calc .result { color: var(--green); font-size: 1.2rem; font-weight: 700; }
+.live-calc .result.fire { color: var(--green); }
+.live-calc .result.nofire { color: var(--red); }
+.activation-tab-wrap canvas { border-radius: 8px; background: #0d1220; }
+.backprop-step { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 0.8rem; background: var(--card); border: 1px solid var(--border); }
+.backprop-step .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-dim); border: 1px solid var(--primary); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+.delta-box { background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem 1rem; margin: 0.5rem 0; }
+.nn-arch-row { display: flex; justify-content: center; align-items: center; gap: 0; position: relative; padding: 1.5rem 0; overflow: hidden; }
+.arch-layer { display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1; }
+.arch-label { font-size: 0.7rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.arch-node { width: 40px; height: 40px; border-radius: 50%; border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; transition: all 0.3s; }
+.arch-node.i { border-color: var(--primary); background: var(--primary-dim); color: var(--primary); }
+.arch-node.h { border-color: var(--secondary); background: var(--secondary-dim); color: var(--secondary); }
+.arch-node.o { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+.arch-conn { width: 60px; height: 2px; background: linear-gradient(90deg, rgba(0,212,255,0.3), rgba(168,85,247,0.3)); position: relative; flex-shrink: 0; }
+.quiz-mini { margin-top: 2rem; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo"><div class="dot"></div><a href="../index.html" style="color:white;font-weight:800;">ML Visual Guide</a></div>
+  <div class="nav-links">
+    <a href="neural-networks.html" class="active">Neural Nets</a>
+    <a href="deep-learning.html">Deep Learning</a>
+    <a href="cnn.html">CNNs</a>
+    <a href="generative-ai.html">Generative AI</a>
+    <a href="attention.html">Attention</a>
+    <a href="reinforcement.html">RL</a>
+    <a href="unsupervised.html">Unsupervised</a>
+    <a href="quiz.html">Quiz</a>
+  </div>
+  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="neural-networks.html">🧠 Neural Networks</a>
+  <a href="deep-learning.html">🔥 Deep Learning</a>
+  <a href="cnn.html">🖼️ CNNs</a>
+  <a href="generative-ai.html">✨ Generative AI</a>
+  <a href="attention.html">👁️ Attention</a>
+  <a href="reinforcement.html">🎮 RL</a>
+  <a href="unsupervised.html">🔍 Unsupervised</a>
+  <a href="quiz.html">📝 Quiz</a>
+</div>
+
+<!-- Header -->
+<div class="page-header">
+  <canvas id="headerBg" class="hero-canvas" style="opacity:0.4;"></canvas>
+  <div style="position:relative;z-index:1;">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span>/</span>Neural Networks</div>
+    <span class="topic-icon">🧠</span>
+    <h1>Neural Networks</h1>
+    <p>From biological neurons to multi-layer perceptrons, backpropagation, and classification.</p>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- 1. Biological Inspiration -->
+  <div class="section-header">
+    <h4>Part 1</h4>
+    <h2 class="section-title">Biological Inspiration</h2>
+    <p class="section-subtitle">Neural networks mimic how biological brains process information through connected neurons.</p>
+  </div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3 style="color:var(--primary);">Biological Neuron</h3>
+      <div style="margin: 1rem 0;">
+        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:flex;gap:0.8rem;align-items:center;"><span style="color:var(--primary);font-size:1.2rem;">🌿</span><div><strong>Dendrites</strong> — receive signals from other neurons</div></div>
+          <div style="display:flex;gap:0.8rem;align-items:center;"><span style="color:var(--secondary);font-size:1.2rem;">⚡</span><div><strong>Axon</strong> — sends signal (if it fires)</div></div>
+          <div style="display:flex;gap:0.8rem;align-items:center;"><span style="color:var(--accent);font-size:1.2rem;">🔗</span><div><strong>Synapse</strong> — connection between neurons; has a strength</div></div>
+          <div style="display:flex;gap:0.8rem;align-items:center;"><span style="color:var(--green);font-size:1.2rem;">📚</span><div><strong>Learning</strong> = changing the strength of synaptic connections</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--secondary);">Artificial Neuron (Perceptron)</h3>
+      <div style="margin: 1rem 0;">
+        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:flex;gap:0.8rem;align-items:center;"><span style="color:var(--primary);font-size:1.2rem;">📊</span><div><strong>Inputs x<sub>i</sub></strong> ≡ dendrites (features)</div></div>
+          <div style="display:flex;gap:0.8rem;align-items:center;"><span style="color:var(--accent);font-size:1.2rem;">⚖️</span><div><strong>Weights w<sub>i</sub></strong> ≡ synaptic strengths</div></div>
+          <div style="display:flex;gap:0.8rem;align-items:center;"><span style="color:var(--secondary);font-size:1.2rem;">🔢</span><div><strong>Net input</strong> = weighted sum of inputs</div></div>
+          <div style="display:flex;gap:0.8rem;align-items:center;"><span style="color:var(--green);font-size:1.2rem;">🎯</span><div><strong>Output y</strong> = fire (1) or don't fire (0)</div></div>
+        </div>
+      </div>
+      <div class="concept-box">
+        <p>A stronger synapse = a larger weight. <strong>Brain learning = changing the strength of synaptic connections.</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 2. Perceptron Math -->
+  <div class="section-header">
+    <h4>Part 2</h4>
+    <h2 class="section-title">The Perceptron</h2>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <h3>Net Input Formula</h3>
+      <p>The perceptron computes a weighted sum of its inputs:</p>
+      <div class="formula">
+        <div class="formula-label">Net Input</div>
+        \[\text{net} = \sum_i w_i \cdot x_i = w_1 x_1 + w_2 x_2 + \cdots\]
+      </div>
+      <h3 style="margin-top:1.5rem;">Step Function Output</h3>
+      <div class="formula purple">
+        <div class="formula-label">Output</div>
+        \[y = \begin{cases} 1 & \text{if net} \geq T \text{ (fires)}\\ 0 & \text{if net} < T \text{ (doesn't fire)} \end{cases}\]
+      </div>
+      <p style="margin-top:0.8rem;">Where <strong>T</strong> is the threshold. The threshold can be absorbed as a <em>bias</em>: \(b = w_0\) with \(x_0 = 1\).</p>
+      <div class="formula green">
+        <div class="formula-label">With Bias</div>
+        \[\text{Output} = \frac{1}{1+e^{-(\sum_i w_i x_i)}}\]
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Interactive Perceptron</div>
+      <div class="controls">
+        <div class="control-row">
+          <span class="control-label">x₁ (input 1)</span>
+          <input type="range" id="px1" min="-5" max="5" step="0.1" value="1">
+          <span class="control-value" id="px1v">1.0</span>
+        </div>
+        <div class="control-row">
+          <span class="control-label">x₂ (input 2)</span>
+          <input type="range" id="px2" min="-5" max="5" step="0.1" value="2">
+          <span class="control-value" id="px2v">2.0</span>
+        </div>
+        <div class="control-row">
+          <span class="control-label">w₁ (weight 1)</span>
+          <input type="range" id="pw1" min="-3" max="3" step="0.1" value="0.5">
+          <span class="control-value" id="pw1v">0.5</span>
+        </div>
+        <div class="control-row">
+          <span class="control-label">w₂ (weight 2)</span>
+          <input type="range" id="pw2" min="-3" max="3" step="0.1" value="0.8">
+          <span class="control-value" id="pw2v">0.8</span>
+        </div>
+        <div class="control-row">
+          <span class="control-label">T (threshold)</span>
+          <input type="range" id="pT" min="-3" max="3" step="0.1" value="1">
+          <span class="control-value" id="pTv">1.0</span>
+        </div>
+      </div>
+      <div class="live-calc" id="percCalc" style="margin-top:1rem;">
+        <!-- filled by JS -->
+      </div>
+      <canvas id="percCanvas" width="400" height="200" style="margin-top:1rem;border-radius:8px;width:100%;"></canvas>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3. Perceptron Learning -->
+  <div class="section-header">
+    <h4>Part 3</h4>
+    <h2 class="section-title">Perceptron Learning Rule</h2>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <div class="card">
+        <h3>Weight Update Rule</h3>
+        <div class="formula">
+          <div class="formula-label">Weight Update</div>
+          \[w_i \leftarrow w_i + \eta(y - \hat{y})x_i\]
+        </div>
+        <div class="formula purple" style="margin-top:0.5rem;">
+          <div class="formula-label">Threshold Update</div>
+          \[T \leftarrow T - \eta(y - \hat{y})\]
+        </div>
+        <p style="margin-top:0.8rem;">Where η = learning rate, y = correct output, ŷ = model's prediction, x<sub>i</sub> = input value.</p>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>When Does It Update?</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Situation</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Correct output</strong></td><td>Do nothing (y−ŷ = 0)</td></tr>
+              <tr><td>Predicted <strong>1</strong>, should be 0</td><td>Lower weights on active inputs</td></tr>
+              <tr><td>Predicted <strong>0</strong>, should be 1</td><td>Raise weights on active inputs</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Learning Rate η</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>η Value</th><th>Effect</th></tr></thead>
+            <tbody>
+              <tr><td>Typical range</td><td>Chosen between 0 and 1</td></tr>
+              <tr><td>Too small</td><td>Very slow learning (too many iterations)</td></tr>
+              <tr><td>Too large</td><td>Oscillations; may never converge</td></tr>
+              <tr><td>Just right</td><td>Smooth convergence in reasonable epochs</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Convergence Theorems</h3>
+        <div class="concept-box">
+          <p><strong>Convergence Theorem:</strong> If data is <em>linearly separable</em>, the Perceptron algorithm will <strong>eventually converge</strong>.</p>
+        </div>
+        <div class="concept-box red" style="margin-top:0.8rem;">
+          <p><strong>Cycling Theorem:</strong> If data is <em>NOT</em> linearly separable, the algorithm will cycle forever (no solution exists).</p>
+        </div>
+        <div class="concept-box amber" style="margin-top:0.8rem;">
+          <p><strong>Practical fix:</strong> Monitor for repeated weight+threshold combinations to detect cycling and guarantee termination.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 4. Activation Functions -->
+  <div class="section-header">
+    <h4>Part 4</h4>
+    <h2 class="section-title">Activation Functions</h2>
+    <p class="section-subtitle">Non-linear activations give neural networks their expressive power. Without them, stacking linear layers = one linear layer.</p>
+  </div>
+
+  <div class="demo-container" data-tabs>
+    <div class="tabs">
+      <button class="tab active" data-tab="act-sigmoid">Sigmoid</button>
+      <button class="tab" data-tab="act-relu">ReLU</button>
+      <button class="tab" data-tab="act-leaky">Leaky ReLU</button>
+      <button class="tab" data-tab="act-tanh">Tanh</button>
+      <button class="tab" data-tab="act-step">Step</button>
+    </div>
+    <div class="tab-content active" id="act-sigmoid">
+      <div class="grid grid-2">
+        <div><canvas id="canvSigmoid" width="400" height="260"></canvas></div>
+        <div>
+          <h3>Logistic (Sigmoid)</h3>
+          <div class="formula">\[\sigma(x) = \frac{1}{1+e^{-x}}\]</div>
+          <p><strong>Range:</strong> (0, 1) — outputs always between 0 and 1.</p>
+          <p><strong>Derivative:</strong> \(\sigma'(x) = \sigma(x)(1-\sigma(x))\)</p>
+          <p><strong>Max derivative:</strong> 0.25 (at x=0)</p>
+          <div class="concept-box red" style="margin-top:0.8rem;"><p><strong>Problem:</strong> Derivative always ≤ 0.25 → vanishing gradients in deep nets!</p></div>
+          <div class="concept-box"><p><strong>Key use:</strong> Binary classification output layer, gates in LSTMs.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="act-relu">
+      <div class="grid grid-2">
+        <div><canvas id="canvRelu" width="400" height="260"></canvas></div>
+        <div>
+          <h3>ReLU (Rectified Linear Unit)</h3>
+          <div class="formula green">\[f(x) = \max(0, x)\]</div>
+          <p><strong>Range:</strong> [0, ∞)</p>
+          <p><strong>Derivative:</strong> 1 if x > 0, else 0</p>
+          <div class="concept-box green" style="margin-top:0.8rem;"><p><strong>Why it works:</strong> Gradient = 1 for active neurons — no downscaling! Fixes vanishing gradients.</p></div>
+          <div class="concept-box red" style="margin-top:0.8rem;"><p><strong>Dying ReLU:</strong> If input is always negative, neuron permanently outputs 0 and stops learning.</p></div>
+          <p><strong>ReLU is non-linear</strong> — it behaves differently for positive vs. negative inputs!</p>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="act-leaky">
+      <div class="grid grid-2">
+        <div><canvas id="canvLeaky" width="400" height="260"></canvas></div>
+        <div>
+          <h3>Leaky ReLU</h3>
+          <div class="formula amber">\[f(x) = \begin{cases} x & x > 0 \\ \alpha x & x \leq 0 \end{cases}\]</div>
+          <p>With α = small constant (e.g., 0.01)</p>
+          <p><strong>Range:</strong> (-∞, ∞)</p>
+          <div class="concept-box amber" style="margin-top:0.8rem;"><p><strong>Fixes Dying ReLU:</strong> Negative inputs get a small non-zero gradient (αx), so dead neurons can recover!</p></div>
+          <div class="table-wrap" style="margin-top:0.8rem;">
+            <table>
+              <thead><tr><th>Variant</th><th>Negative slope</th></tr></thead>
+              <tbody>
+                <tr><td>ReLU</td><td>0 (flat)</td></tr>
+                <tr><td>Leaky ReLU</td><td>Fixed α</td></tr>
+                <tr><td>PReLU</td><td>Learned α</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="act-tanh">
+      <div class="grid grid-2">
+        <div><canvas id="canvTanh" width="400" height="260"></canvas></div>
+        <div>
+          <h3>Tanh (Hyperbolic Tangent)</h3>
+          <div class="formula purple">\[\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\]</div>
+          <p><strong>Range:</strong> (-1, 1) — zero-centered (advantage over sigmoid!)</p>
+          <p><strong>Derivative:</strong> \(1 - \tanh^2(x)\), max = 1 at x=0</p>
+          <div class="concept-box purple" style="margin-top:0.8rem;"><p>Zero-centered helps gradient descent — positive and negative signals. Still saturates, but stronger gradients than sigmoid.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content" id="act-step">
+      <div class="grid grid-2">
+        <div><canvas id="canvStep" width="400" height="260"></canvas></div>
+        <div>
+          <h3>Step Function</h3>
+          <div class="formula red">\[y = \begin{cases} 1 & \text{if net} \geq T \\ 0 & \text{otherwise} \end{cases}\]</div>
+          <p><strong>Range:</strong> {0, 1}</p>
+          <p><strong>Derivative:</strong> 0 everywhere (except undefined at T)</p>
+          <div class="concept-box red" style="margin-top:0.8rem;"><p><strong>Problem:</strong> Non-differentiable — cannot use gradient descent! Used only in original perceptron, not in modern NNs.</p></div>
+          <div class="concept-box"><p>This is why we need smooth activations (sigmoid, ReLU) for backpropagation to work.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 5. Multi-Layer Networks -->
+  <div class="section-header">
+    <h4>Part 5</h4>
+    <h2 class="section-title">Multi-Layer Networks</h2>
+    <p class="section-subtitle">Stacking layers with non-linear activations allows learning complex, non-linear decision boundaries.</p>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <div class="card">
+        <h3>Why Multi-Layer?</h3>
+        <div class="concept-box red" style="margin-bottom:1rem;">
+          <p><strong>Perceptron limit:</strong> Cannot learn XOR — no single line can separate the 4 XOR examples.</p>
+        </div>
+        <div class="concept-box green">
+          <p><strong>Multi-layer fix:</strong> Stack layers + non-linear activation → can learn ANY function!</p>
+        </div>
+        <div style="margin-top:1rem;">
+          <h4 style="margin-bottom:0.8rem;">Why Linear Layers Alone Aren't Enough</h4>
+          <div class="formula">
+            <div class="formula-label">Linear stacking = still linear</div>
+            \[O = (w_5w_1 + w_6w_3)x_1 + (w_5w_2 + w_6w_4)x_2\]
+          </div>
+          <p style="font-size:0.88rem;">This is still a linear combination of x₁ and x₂ — equivalent to a single perceptron. A non-linear activation is <strong>required</strong>.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Representational Power</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Architecture</th><th>Can Approximate</th></tr></thead>
+            <tbody>
+              <tr><td>2-layer (1 hidden + output)</td><td>Any Boolean function</td></tr>
+              <tr><td>2-layer</td><td>Any bounded continuous function</td></tr>
+              <tr><td>3-layer (2 hidden + output)</td><td>Any function (to any ε)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="concept-box amber" style="margin-top:0.8rem;">
+          <p><strong>Universal Approximation Theorem:</strong> A single hidden layer with enough neurons can approximate any continuous function!</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="demo-container">
+        <div class="demo-title">Network Architecture</div>
+        <div id="networkDiagram" style="overflow-x:auto;"></div>
+        <div style="margin-top:1rem;">
+          <div class="control-row">
+            <span class="control-label">Hidden nodes</span>
+            <input type="range" id="hiddenNodes" min="1" max="8" step="1" value="4">
+            <span class="control-value" id="hiddenNodesV">4</span>
+          </div>
+          <div class="control-row">
+            <span class="control-label">Hidden layers</span>
+            <input type="range" id="hiddenLayers" min="1" max="4" step="1" value="2">
+            <span class="control-value" id="hiddenLayersV">2</span>
+          </div>
+        </div>
+        <div id="networkStats" style="margin-top:1rem;" class="output-display"></div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Hidden Layers As Feature Detectors</h3>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:0.5rem;">
+          <div style="display:flex;gap:0.5rem;align-items:center;"><span style="background:var(--primary-dim);padding:3px 10px;border-radius:4px;font-size:0.78rem;color:var(--primary);">Layer 1</span><span style="font-size:0.85rem;color:var(--text2);">Detects edges and simple patterns</span></div>
+          <div style="display:flex;gap:0.5rem;align-items:center;"><span style="background:var(--secondary-dim);padding:3px 10px;border-radius:4px;font-size:0.78rem;color:var(--secondary);">Layer 2</span><span style="font-size:0.85rem;color:var(--text2);">Combines into shapes and textures</span></div>
+          <div style="display:flex;gap:0.5rem;align-items:center;"><span style="background:var(--accent-dim);padding:3px 10px;border-radius:4px;font-size:0.78rem;color:var(--accent);">Layer N</span><span style="font-size:0.85rem;color:var(--text2);">High-level concepts (faces, objects)</span></div>
+        </div>
+        <div class="concept-box" style="margin-top:1rem;">
+          <p>Hidden nodes can be viewed as <strong>new features constructed from the given features</strong> — they transform the input space into a learned representation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 6. Backpropagation -->
+  <div class="section-header">
+    <h4>Part 6</h4>
+    <h2 class="section-title">Backpropagation</h2>
+    <p class="section-subtitle">Backprop is the algorithm that learns weights by computing how much each weight contributes to the error, then adjusting.</p>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <h3>Error Function</h3>
+      <div class="formula">
+        <div class="formula-label">Total Squared Error</div>
+        \[E(W) = \sum_{d \in D} \sum_{k \in K} (t_{kd} - o_{kd})^2\]
+      </div>
+      <p>Where D = training set, K = output units, t<sub>kd</sub> = correct, o<sub>kd</sub> = model output.</p>
+
+      <h3 style="margin-top:1.5rem;">Weight Update (Gradient Descent)</h3>
+      <div class="formula green">
+        <div class="formula-label">Backprop Update</div>
+        \[\Delta w_{ji} = \eta \delta_j o_i\]
+      </div>
+
+      <h3 style="margin-top:1.5rem;">Error Signal δ</h3>
+      <div class="formula purple">
+        <div class="formula-label">Delta for Output Unit</div>
+        \[\delta_j = o_j(1-o_j)(t_j - o_j)\]
+      </div>
+      <div class="formula amber" style="margin-top:0.5rem;">
+        <div class="formula-label">Delta for Hidden Unit</div>
+        \[\delta_j = o_j(1-o_j)\sum_k \delta_k w_{kj}\]
+      </div>
+      <p style="font-size:0.85rem;margin-top:0.5rem;">Hidden unit error is <em>propagated back</em> from downstream units via the chain rule.</p>
+
+      <h3 style="margin-top:1.5rem;">Logistic Derivative Identity</h3>
+      <div class="formula">
+        <div class="formula-label">Key Identity</div>
+        \[\frac{d\,\text{logistic}(x)}{dx} = \text{logistic}(x) \cdot (1 - \text{logistic}(x))\]
+      </div>
+      <p style="font-size:0.85rem;">This is what enables efficient computation of δ<sub>j</sub>!</p>
+    </div>
+    <div>
+      <h3>Three-Step Backprop Process</h3>
+      <div class="backprop-step">
+        <div class="step-num">1</div>
+        <div><strong>Forward Pass</strong><br><span style="color:var(--text2);font-size:0.88rem;">Compute output of every node from input to output layer. Get final predictions.</span></div>
+      </div>
+      <div class="backprop-step">
+        <div class="step-num" style="background:var(--secondary-dim);border-color:var(--secondary);color:var(--secondary);">2</div>
+        <div><strong>Compute Output δ</strong><br><span style="color:var(--text2);font-size:0.88rem;">Calculate δ<sub>j</sub> = o<sub>j</sub>(1−o<sub>j</sub>)(t<sub>j</sub>−o<sub>j</sub>) for each output unit.</span></div>
+      </div>
+      <div class="backprop-step">
+        <div class="step-num" style="background:var(--accent-dim);border-color:var(--accent);color:var(--accent);">3</div>
+        <div><strong>Propagate Back</strong><br><span style="color:var(--text2);font-size:0.88rem;">Compute hidden δ, update all weights: Δw<sub>ji</sub> = η δ<sub>j</sub> o<sub>i</sub></span></div>
+      </div>
+
+      <div class="demo-container" style="margin-top:1.5rem;">
+        <div class="demo-title">Worked Example — δ Computation</div>
+        <div class="controls">
+          <div class="control-row">
+            <span class="control-label">o<sub>j</sub> (output)</span>
+            <input type="range" id="oj" min="0.01" max="0.99" step="0.01" value="0.2">
+            <span class="control-value" id="ojv">0.20</span>
+          </div>
+          <div class="control-row">
+            <span class="control-label">t<sub>j</sub> (target)</span>
+            <input type="range" id="tj" min="0" max="1" step="1" value="1">
+            <span class="control-value" id="tjv">1.0</span>
+          </div>
+        </div>
+        <div class="output-display" id="deltaCalc" style="margin-top:1rem;"></div>
+      </div>
+
+      <div class="card" style="margin-top:1rem;">
+        <h3>Softmax + Cross-Entropy δ</h3>
+        <div class="formula">
+          <div class="formula-label">Simplified δ for Softmax output</div>
+          \[\delta_j = \begin{cases} 1 - o_j & \text{if } j \text{ is correct class} \\ -o_j & \text{otherwise} \end{cases}\]
+        </div>
+        <p style="font-size:0.85rem;margin-top:0.5rem;">Much cleaner than sigmoid cross-entropy — no o(1-o) saturation factor!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 7. Multi-Class -->
+  <div class="section-header">
+    <h4>Part 7</h4>
+    <h2 class="section-title">Multi-Class Classification</h2>
+  </div>
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>One-Hot Encoding</h3>
+      <p>For target Y ∈ {Red, Blue, Green}, encode each label as a binary vector:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Class</th><th>Red out</th><th>Blue out</th><th>Green out</th></tr></thead>
+          <tbody>
+            <tr><td>Red</td><td>1</td><td>0</td><td>0</td></tr>
+            <tr><td>Blue</td><td>0</td><td>1</td><td>0</td></tr>
+            <tr><td>Green</td><td>0</td><td>0</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="concept-box" style="margin-top:1rem;">
+        <p>Use <strong>one output neuron per class</strong>. The class with highest output probability = predicted class.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Softmax Output</h3>
+      <div class="formula">
+        <div class="formula-label">Softmax</div>
+        \[P(\text{class}_k) = \frac{e^{z_k}}{\sum_j e^{z_j}}\]
+      </div>
+      <p>Converts raw scores to probabilities summing to 1.</p>
+      <div class="demo-container" style="margin-top:1rem;">
+        <div class="demo-title">Softmax Calculator</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">
+          <div><div style="font-size:0.72rem;color:var(--text3);margin-bottom:3px;">z₁ (Red)</div><input type="number" id="z1" value="-0.1" step="0.1" style="width:70px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:white;font-size:0.9rem;"></div>
+          <div><div style="font-size:0.72rem;color:var(--text3);margin-bottom:3px;">z₂ (Blue)</div><input type="number" id="z2" value="0.7" step="0.1" style="width:70px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:white;font-size:0.9rem;"></div>
+          <div><div style="font-size:0.72rem;color:var(--text3);margin-bottom:3px;">z₃ (Green)</div><input type="number" id="z3" value="1.9" step="0.1" style="width:70px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:white;font-size:0.9rem;"></div>
+        </div>
+        <div id="softmaxResult" class="output-display"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Questions -->
+  <div class="divider"></div>
+  <div class="section-header">
+    <h4>Quiz 6 — Practice</h4>
+    <h2>Neural Network Quiz Questions</h2>
+  </div>
+  <div class="quiz-mini">
+    <div class="quiz-grid" id="nnQuiz"></div>
+  </div>
+
+</div><!-- end section -->
+
+<footer class="footer">
+  <p>← <a href="../index.html">Back to Home</a> · Next: <a href="deep-learning.html">Deep Learning →</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/contrib/auto-render.min.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/three-bg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderMathInElement(document.body, {
+    delimiters: [{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true},{left:'$$',right:'$$',display:true}]
+  });
+  initNeuralNetBg('headerBg', { layers:[2,3,3,1], camZ:12, xSpread:3.5, ySpread:1.5, nodeR:0.2 });
+
+  // ── Perceptron Calculator ──
+  const sliders = ['px1','px2','pw1','pw2','pT'];
+  function updatePerc() {
+    const x1 = +document.getElementById('px1').value;
+    const x2 = +document.getElementById('px2').value;
+    const w1 = +document.getElementById('pw1').value;
+    const w2 = +document.getElementById('pw2').value;
+    const T  = +document.getElementById('pT').value;
+    sliders.forEach(id => {
+      const v = +document.getElementById(id).value;
+      document.getElementById(id+'v').textContent = v.toFixed(1);
+    });
+    const net = w1*x1 + w2*x2;
+    const fires = net >= T;
+    const sig = 1/(1+Math.exp(-net));
+    document.getElementById('percCalc').innerHTML = `
+      <span class="var">net</span><span class="eq"> = w₁·x₁ + w₂·x₂</span><br>
+      <span class="eq">    = (${w1.toFixed(1)})(${x1.toFixed(1)}) + (${w2.toFixed(1)})(${x2.toFixed(1)})</span><br>
+      <span class="eq">    = ${(w1*x1).toFixed(2)} + ${(w2*x2).toFixed(2)}</span><br>
+      <span class="var">net</span><span class="eq"> = </span><strong style="color:var(--accent)">${net.toFixed(3)}</strong><br>
+      <span class="var">T</span><span class="eq"> = ${T.toFixed(1)}</span><br>
+      <span class="var">σ(net)</span><span class="eq"> = ${sig.toFixed(4)}</span><br>
+      <strong>Output: </strong><span class="result ${fires?'fire':'nofire'}">${fires?'🔥 FIRES (1)':'💤 NO FIRE (0)'}</span>
+      <span class="eq"> (net ${fires?'≥':'<'} T)</span>
+    `;
+    drawPercViz(x1, x2, w1, w2, T, net, fires);
+  }
+  sliders.forEach(id => document.getElementById(id).addEventListener('input', updatePerc));
+  updatePerc();
+
+  function drawPercViz(x1, x2, w1, w2, T, net, fires) {
+    const canvas = document.getElementById('percCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.fillStyle = '#0d1220'; ctx.fillRect(0,0,W,H);
+    // Draw perceptron diagram
+    const nodes = [{x:60,y:80,label:`x₁=${x1.toFixed(1)}`,color:'#00d4ff'},{x:60,y:160,label:`x₂=${x2.toFixed(1)}`,color:'#00d4ff'},{x:240,y:120,label:`net=${net.toFixed(2)}`,color:fires?'#10b981':'#ef4444'}];
+    const weights = [{w:w1,from:0,to:2},{w:w2,from:1,to:2}];
+    // Draw edges
+    weights.forEach(e => {
+      const from = nodes[e.from], to = nodes[e.to];
+      const thickness = Math.abs(e.w) * 2 + 0.5;
+      ctx.strokeStyle = e.w > 0 ? 'rgba(0,212,255,0.6)' : 'rgba(239,68,68,0.6)';
+      ctx.lineWidth = Math.min(thickness, 5);
+      ctx.beginPath(); ctx.moveTo(from.x+24,from.y); ctx.lineTo(to.x-24,to.y); ctx.stroke();
+      // Weight label
+      const mx = (from.x+to.x)/2, my = (from.y+to.y)/2;
+      ctx.fillStyle = e.w > 0 ? '#00d4ff' : '#ef4444';
+      ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
+      ctx.fillText(`w=${e.w.toFixed(1)}`, mx, my-6);
+    });
+    // Draw nodes
+    nodes.forEach((n,i) => {
+      ctx.beginPath(); ctx.arc(n.x, n.y, 24, 0, Math.PI*2);
+      ctx.fillStyle = n.color+'22'; ctx.fill();
+      ctx.strokeStyle = n.color; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = n.color; ctx.font = 'bold 9px monospace'; ctx.textAlign = 'center';
+      const lines = n.label.split('=');
+      ctx.fillText(lines[0]||n.label, n.x, n.y-4);
+      if(lines[1]) ctx.fillText('='+lines[1], n.x, n.y+8);
+    });
+    // Output arrow and label
+    ctx.strokeStyle = fires?'#10b981':'#ef4444'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(264,120); ctx.lineTo(350,120); ctx.stroke();
+    ctx.fillStyle = fires?'#10b981':'#ef4444';
+    ctx.font = 'bold 13px monospace'; ctx.textAlign = 'left';
+    ctx.fillText(fires?'y=1':'y=0', 356, 124);
+    // Threshold label
+    ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '10px monospace';
+    ctx.textAlign = 'center'; ctx.fillText(`T=${T.toFixed(1)}`, 240, 165);
+  }
+
+  // ── Activation plots ──
+  function plotAct(id, name) {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    canvas.width = canvas.parentElement.clientWidth || 400;
+    plotActivation(id, name);
+  }
+  plotAct('canvSigmoid','sigmoid'); plotAct('canvRelu','relu');
+  plotAct('canvLeaky','leaky'); plotAct('canvTanh','tanh'); plotAct('canvStep','step');
+
+  // Tab switching updates plot
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      setTimeout(() => {
+        plotAct('canvSigmoid','sigmoid'); plotAct('canvRelu','relu');
+        plotAct('canvLeaky','leaky'); plotAct('canvTanh','tanh'); plotAct('canvStep','step');
+      }, 50);
+    });
+  });
+
+  // ── Network Diagram ──
+  function renderNetDiagram() {
+    const hNodes = +document.getElementById('hiddenNodes').value;
+    const hLayers = +document.getElementById('hiddenLayers').value;
+    document.getElementById('hiddenNodesV').textContent = hNodes;
+    document.getElementById('hiddenLayersV').textContent = hLayers;
+    const layers = [2, ...Array(hLayers).fill(hNodes), 1];
+    let totalParams = 0;
+    for(let i=0;i<layers.length-1;i++) totalParams += layers[i]*layers[i+1] + layers[i+1];
+
+    const wrap = document.getElementById('networkDiagram');
+    wrap.innerHTML = '';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    const nodeR = 14, xGap = 70, yGap = 34;
+    const maxNodes = Math.max(...layers);
+    const svgH = maxNodes * yGap + 40;
+    const svgW = layers.length * xGap + 20;
+    svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+    svg.setAttribute('width','100%');
+    svg.style.maxHeight = '220px';
+
+    const colors = ['#00d4ff',...Array(hLayers).fill('#a855f7'),'#10b981'];
+    const nodePositions = layers.map((count,li)=>{
+      const x = li*xGap+30;
+      return Array.from({length:count},(_,ni)=>({x, y: (svgH/2)+(ni-(count-1)/2)*yGap}));
+    });
+
+    // Edges
+    for(let li=0;li<layers.length-1;li++) {
+      nodePositions[li].forEach(src=>{
+        nodePositions[li+1].forEach(dst=>{
+          const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+          line.setAttribute('x1',src.x); line.setAttribute('y1',src.y);
+          line.setAttribute('x2',dst.x); line.setAttribute('y2',dst.y);
+          line.setAttribute('stroke','rgba(255,255,255,0.08)'); line.setAttribute('stroke-width','1');
+          svg.appendChild(line);
+        });
+      });
+    }
+    // Nodes
+    nodePositions.forEach((layer,li)=>{
+      layer.forEach(n=>{
+        const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c.setAttribute('cx',n.x); c.setAttribute('cy',n.y); c.setAttribute('r',nodeR);
+        c.setAttribute('fill',colors[li]+'22'); c.setAttribute('stroke',colors[li]); c.setAttribute('stroke-width','1.5');
+        svg.appendChild(c);
+      });
+    });
+    wrap.appendChild(svg);
+    document.getElementById('networkStats').innerHTML = `<span class="label">Architecture</span><br><span class="value">${layers.join(' → ')}</span><br><br><span class="label">Total Parameters</span><br><span class="value green">${totalParams.toLocaleString()}</span>`;
+  }
+  document.getElementById('hiddenNodes').addEventListener('input', renderNetDiagram);
+  document.getElementById('hiddenLayers').addEventListener('input', renderNetDiagram);
+  renderNetDiagram();
+
+  // ── Delta Calculator ──
+  function updateDelta() {
+    const oj = +document.getElementById('oj').value;
+    const tj = +document.getElementById('tj').value;
+    document.getElementById('ojv').textContent = oj.toFixed(2);
+    document.getElementById('tjv').textContent = tj.toFixed(0);
+    const delta = oj*(1-oj)*(tj-oj);
+    const dw = 0.1 * delta * oj;
+    document.getElementById('deltaCalc').innerHTML = `
+      <span class="label">o_j = ${oj.toFixed(2)}, t_j = ${tj.toFixed(0)}</span><br>
+      <span class="label">δ_j = o_j(1-o_j)(t_j - o_j)</span><br>
+      <span class="label">    = ${oj.toFixed(2)}·${(1-oj).toFixed(2)}·${(tj-oj).toFixed(2)}</span><br>
+      <span class="value ${delta>0?'green':'red'}">${delta.toFixed(4)}</span><br>
+      <span class="label">Δw = η·δ·o_i (η=0.1, o_i=${oj.toFixed(2)})</span><br>
+      <span class="value">${dw.toFixed(4)}</span>
+    `;
+  }
+  document.getElementById('oj').addEventListener('input', updateDelta);
+  document.getElementById('tj').addEventListener('input', updateDelta);
+  updateDelta();
+
+  // ── Softmax Calculator ──
+  function updateSoftmax() {
+    const z = [+document.getElementById('z1').value, +document.getElementById('z2').value, +document.getElementById('z3').value];
+    const m = Math.max(...z);
+    const e = z.map(v => Math.exp(v - m));
+    const s = e.reduce((a,b)=>a+b,0);
+    const p = e.map(v => v/s);
+    const labels = ['Red','Blue','Green']; const cols = ['#ef4444','#3b82f6','#10b981'];
+    document.getElementById('softmaxResult').innerHTML = labels.map((l,i)=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span class="label">${l}</span>
+        <div style="flex:1;margin:0 10px;background:var(--bg3);height:6px;border-radius:3px;">
+          <div style="width:${(p[i]*100).toFixed(1)}%;height:100%;background:${cols[i]};border-radius:3px;transition:width 0.3s;"></div>
+        </div>
+        <span class="value" style="color:${cols[i]};min-width:52px;">${(p[i]*100).toFixed(1)}%</span>
+      </div>`).join('') + `<div style="font-size:0.78rem;color:var(--text3);margin-top:6px;">Predicted: <strong style="color:${cols[p.indexOf(Math.max(...p))]}">${labels[p.indexOf(Math.max(...p))]}</strong></div>`;
+  }
+  ['z1','z2','z3'].forEach(id => document.getElementById(id).addEventListener('input', updateSoftmax));
+  updateSoftmax();
+
+  // ── Quiz Cards ──
+  const questions = [
+    {q:"The perceptron training algorithm repeats the same weights on a dataset. What can you conclude?", a:"The data is not linearly separable.", exp:"If the perceptron cycles through the same weights without settling, no linear hyperplane can perfectly separate the two classes. Convergence is only guaranteed when the data is linearly separable."},
+    {q:"A weight is updated in perceptron learning proportionally to:", a:"The corresponding input.", exp:"The update rule is Δwᵢ = η·(y − ŷ)·xᵢ. The change in weight scales directly with the input value xᵢ — larger input means a larger weight adjustment."},
+    {q:"A weight will NOT get updated in perceptron learning while processing an example if:", a:"The error is zero.", exp:"The update rule is Δw = η·error·x. If error = 0 (prediction is already correct), the entire update term is zero — nothing changes."},
+    {q:"Hidden nodes can be looked upon as:", a:"New features constructed from the given features.", exp:"Hidden nodes compute non-linear combinations of inputs and pass them forward, effectively transforming the original feature space into a new learned representation."},
+    {q:"A three-layer (2 hidden layers + 1 output layer) neural network can theoretically approximate any function to arbitrary accuracy.", a:"True.", exp:"Universal Approximation Theorem. Even a single hidden layer with enough neurons can approximate any continuous function."},
+    {q:"The strength of connections between biological neurons is mathematically modeled by:", a:"Weights.", exp:"Synaptic strengths in biological neurons correspond to connection weights wᵢ. A stronger synapse = a larger weight."},
+    {q:"How are errors determined at hidden nodes during training?", a:"The errors of output nodes are backpropagated.", exp:"Hidden nodes have no direct target values. Output layer errors are propagated backward through the network using the chain rule."},
+    {q:"Neural networks with more hidden nodes and layers can represent more complex models.", a:"True.", exp:"More nodes and layers increase the model's total parameters, giving greater capacity to fit complex, high-dimensional decision boundaries."},
+    {q:"Neural networks introduce non-linearity by:", a:"Using a non-linear activation function.", exp:"Without a non-linear activation, stacking multiple linear layers is still just one linear transformation."},
+    {q:"Which of the following is NOT what makes neural networks different from other ML methods?", a:"It can overfit.", exp:"Overfitting is a general problem shared by many ML methods (decision trees, SVMs, etc.). Not a distinguishing property of neural networks."},
+  ];
+  const container = document.getElementById('nnQuiz');
+  questions.forEach((q,i) => {
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    card.innerHTML = `
+      <div class="quiz-card-inner">
+        <div class="quiz-front">
+          <div><div class="quiz-qnum">Q${i+1} — Neural Networks</div><div class="quiz-q">${q.q}</div></div>
+          <div class="quiz-hint">👆 Click to reveal answer</div>
+        </div>
+        <div class="quiz-back">
+          <div><div class="quiz-answer-label">✓ Answer</div><div class="quiz-answer">${q.a}</div></div>
+          <div class="quiz-explanation">${q.exp}</div>
+        </div>
+      </div>`;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    container.appendChild(card);
+  });
+
+  // Tabs
+  initAllTabs();
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  if(hamburger) hamburger.addEventListener('click', ()=>mobileNav.classList.toggle('open'));
+});
+</script>
+</body>
+</html>

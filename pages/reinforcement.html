@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reinforcement Learning — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+<style>
+.mdp-loop { display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; padding:1.5rem 0; }
+.mdp-box { border-radius:12px; padding:14px 18px; text-align:center; border:2px solid; min-width:100px; }
+.mdp-agent { border-color:var(--primary); background:rgba(0,212,255,0.1); }
+.mdp-env { border-color:var(--green); background:rgba(16,185,129,0.1); }
+.mdp-arrow { display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--text3); font-size:0.8rem; }
+.mdp-arrow-line { font-size:1.4rem; }
+.rl-grid-wrap { display:inline-grid; gap:3px; }
+.rl-cell { width:52px; height:52px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; border:1.5px solid; transition:all 0.3s; }
+.rl-cell.empty { background:rgba(255,255,255,0.03); border-color:var(--border); color:var(--text3); }
+.rl-cell.wall { background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.5); color:var(--red); }
+.rl-cell.goal { background:rgba(16,185,129,0.2); border-color:var(--green); color:var(--green); }
+.rl-cell.agent { background:rgba(0,212,255,0.25); border-color:var(--primary); color:var(--primary); box-shadow:0 0 16px rgba(0,212,255,0.4); }
+.rl-cell.path { background:rgba(245,158,11,0.12); border-color:rgba(245,158,11,0.4); }
+.rl-cell .q-val { font-size:0.55rem; color:var(--text3); margin-top:2px; }
+.rl-controls { display:flex; gap:0.6rem; flex-wrap:wrap; margin:1rem 0; }
+.reward-bar { height:8px; border-radius:4px; transition:width 0.4s ease; }
+.episode-list { max-height:180px; overflow-y:auto; font-family:monospace; font-size:0.78rem; }
+.episode-row { padding:4px 8px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text2); }
+.episode-row:hover { background:rgba(255,255,255,0.03); }
+.episode-row.success { color:var(--green); }
+.episode-row.fail { color:var(--red); }
+.algo-card { border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem; background:var(--card); }
+.bellman-step { background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:8px; padding:0.8rem; margin-bottom:0.6rem; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo"><div class="dot"></div><a href="../index.html" style="color:white;font-weight:800;">ML Visual Guide</a></div>
+  <div class="nav-links">
+    <a href="neural-networks.html">Neural Nets</a><a href="deep-learning.html">Deep Learning</a>
+    <a href="cnn.html">CNNs</a><a href="generative-ai.html">Generative AI</a>
+    <a href="attention.html">Attention</a><a href="reinforcement.html" class="active">RL</a>
+    <a href="unsupervised.html">Unsupervised</a><a href="quiz.html">Quiz</a>
+  </div>
+  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="neural-networks.html">🧠 Neural Nets</a><a href="deep-learning.html">🔥 Deep Learning</a>
+  <a href="cnn.html">🖼️ CNNs</a><a href="generative-ai.html">✨ Generative AI</a>
+  <a href="attention.html">👁️ Attention</a><a href="reinforcement.html">🎮 RL</a>
+  <a href="unsupervised.html">🔍 Unsupervised</a><a href="quiz.html">📝 Quiz</a>
+</div>
+
+<div class="page-header">
+  <canvas id="headerBg" class="hero-canvas" style="opacity:0.4;"></canvas>
+  <div style="position:relative;z-index:1;">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span>/</span>Reinforcement Learning</div>
+    <span class="topic-icon">🎮</span>
+    <h1>Reinforcement Learning</h1>
+    <p>Agents, environments, rewards, policies, Q-learning, and the Bellman equation.</p>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- 1. Core Framework -->
+  <div class="section-header">
+    <h4>Part 1</h4>
+    <h2>The RL Framework</h2>
+    <p class="section-subtitle">An agent learns to make decisions by interacting with an environment and receiving reward signals.</p>
+  </div>
+
+  <div class="demo-container">
+    <div class="demo-title">Agent–Environment Loop</div>
+    <div class="mdp-loop">
+      <div class="mdp-box mdp-agent">
+        <div style="font-size:1.5rem;">🤖</div>
+        <div style="font-weight:800;color:var(--primary);">Agent</div>
+        <div style="font-size:0.72rem;color:var(--text3);margin-top:3px;">Selects action a</div>
+      </div>
+      <div class="mdp-arrow">
+        <div style="font-size:0.72rem;color:var(--primary);">Action aₜ</div>
+        <div class="mdp-arrow-line">→</div>
+      </div>
+      <div class="mdp-box mdp-env">
+        <div style="font-size:1.5rem;">🌍</div>
+        <div style="font-weight:800;color:var(--green);">Environment</div>
+        <div style="font-size:0.72rem;color:var(--text3);margin-top:3px;">Transitions state</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div class="mdp-arrow" style="flex-direction:row-reverse;">
+          <div class="mdp-arrow-line">←</div>
+          <div style="font-size:0.72rem;color:var(--green);">State sₜ₊₁</div>
+        </div>
+        <div class="mdp-arrow" style="flex-direction:row-reverse;">
+          <div class="mdp-arrow-line">←</div>
+          <div style="font-size:0.72rem;color:var(--accent);">Reward rₜ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;margin-top:1.5rem;">
+    <div>
+      <div class="card">
+        <h3>Key Components</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+            <tbody>
+              <tr><td><strong>State s</strong></td><td>Current situation of the agent</td></tr>
+              <tr><td><strong>Action a</strong></td><td>Decision made by the agent</td></tr>
+              <tr><td><strong>Reward r</strong></td><td>Scalar feedback from environment</td></tr>
+              <tr><td><strong>Policy π</strong></td><td>Strategy: maps states → actions</td></tr>
+              <tr><td><strong>Value V(s)</strong></td><td>Expected future reward from state s</td></tr>
+              <tr><td><strong>Q(s,a)</strong></td><td>Expected reward for action a in state s</td></tr>
+              <tr><td><strong>Episode</strong></td><td>One complete run until terminal state</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Markov Decision Process (MDP)</h3>
+        <p>RL problems are modeled as MDPs: the future depends only on the current state (Markov property).</p>
+        <div class="formula" style="margin-top:0.8rem;">
+          <div class="formula-label">MDP Tuple</div>
+          \[\mathcal{M} = (S, A, P, R, \gamma)\]
+        </div>
+        <div style="font-size:0.82rem;color:var(--text2);margin-top:0.5rem;">
+          S = states, A = actions, P = transition probabilities,<br>R = reward function, γ = discount factor
+        </div>
+        <div class="formula purple" style="margin-top:0.8rem;">
+          <div class="formula-label">Discounted Return</div>
+          \[G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots = \sum_{k=0}^{\infty} \gamma^k r_{t+k}\]
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Types of RL Algorithms</h3>
+        <div style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.5rem;">
+          <div class="algo-card">
+            <strong style="color:var(--primary);">Value-Based</strong>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Learn Q(s,a) or V(s). Extract policy by choosing action with highest Q. Examples: Q-learning, DQN.</p>
+          </div>
+          <div class="algo-card">
+            <strong style="color:var(--secondary);">Policy-Based</strong>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Directly learn π(a|s). Optimize policy gradient. Examples: REINFORCE, PPO.</p>
+          </div>
+          <div class="algo-card">
+            <strong style="color:var(--accent);">Model-Based</strong>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Learn model of environment, use it to plan. Examples: Dyna-Q, AlphaZero.</p>
+          </div>
+          <div class="algo-card">
+            <strong style="color:var(--green);">Actor-Critic</strong>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Combine value and policy: Actor selects actions, Critic evaluates them. Examples: A3C, SAC.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 2. Q-Learning -->
+  <div class="section-header">
+    <h4>Part 2</h4>
+    <h2>Q-Learning</h2>
+    <p class="section-subtitle">Learn the optimal action-value function Q*(s,a) using the Bellman equation — without needing a model of the environment.</p>
+  </div>
+
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>Bellman Equation</h3>
+        <div class="formula">
+          <div class="formula-label">Optimal Q-function</div>
+          \[Q^*(s,a) = r + \gamma \max_{a'} Q^*(s', a')\]
+        </div>
+        <p style="margin-top:0.8rem;font-size:0.88rem;">The value of taking action a in state s = immediate reward r + discounted best future value.</p>
+
+        <h3 style="margin-top:1.5rem;">Q-Learning Update Rule</h3>
+        <div class="formula green">
+          <div class="formula-label">TD Update</div>
+          \[Q(s,a) \leftarrow Q(s,a) + \alpha\!\left[r + \gamma\max_{a'}Q(s',a') - Q(s,a)\right]\]
+        </div>
+        <p style="font-size:0.85rem;margin-top:0.5rem;">α = learning rate, γ = discount factor</p>
+        <div class="concept-box" style="margin-top:0.8rem;">
+          <p><strong>TD error</strong> = \(r + \gamma\max_{a'}Q(s',a') - Q(s,a)\) — the difference between target and current Q value. Drive this toward zero.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Exploration vs Exploitation</h3>
+        <div class="formula amber">
+          <div class="formula-label">ε-Greedy Policy</div>
+          \[\pi(s) = \begin{cases} \text{random action} & \text{with prob. } \varepsilon \\ \arg\max_a Q(s,a) & \text{with prob. } 1-\varepsilon \end{cases}\]
+        </div>
+        <div class="concept-box amber" style="margin-top:0.8rem;">
+          <p>Start with high ε (explore), decay over time (exploit more). Balances trying new actions vs. using what you know.</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Q-Learning Grid World</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:0.8rem;">Agent (🤖) learns to reach Goal (⭐) while avoiding Walls (🧱). Watch Q-values update during training.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-start;">
+        <div>
+          <div id="rlGrid" class="rl-grid-wrap" style="grid-template-columns:repeat(5,52px);"></div>
+          <div style="display:flex;gap:4px;margin-top:8px;font-size:0.72rem;color:var(--text3);">
+            <span>🤖 Agent</span><span style="margin-left:8px;">⭐ Goal</span><span style="margin-left:8px;">🧱 Wall</span>
+          </div>
+        </div>
+        <div style="flex:1;min-width:180px;">
+          <div class="output-display" id="rlStats" style="margin-bottom:0.8rem;"></div>
+          <div class="controls" style="margin-bottom:0.8rem;">
+            <div class="control-row"><span class="control-label" style="font-size:0.78rem;">Learning rate α</span><input type="range" id="rlAlpha" min="0.1" max="1" step="0.05" value="0.5"><span class="control-value" id="rlAlphaV">0.5</span></div>
+            <div class="control-row"><span class="control-label" style="font-size:0.78rem;">Discount γ</span><input type="range" id="rlGamma" min="0.5" max="0.99" step="0.01" value="0.9"><span class="control-value" id="rlGammaV">0.90</span></div>
+            <div class="control-row"><span class="control-label" style="font-size:0.78rem;">Exploration ε</span><input type="range" id="rlEps" min="0" max="1" step="0.05" value="0.3"><span class="control-value" id="rlEpsV">0.30</span></div>
+          </div>
+          <div class="rl-controls">
+            <button class="btn btn-sm btn-primary" id="rlStep">Step</button>
+            <button class="btn btn-sm btn-outline" id="rlRun">▶ Run</button>
+            <button class="btn btn-sm btn-outline" id="rlReset">↺ Reset</button>
+          </div>
+          <div class="episode-list" id="episodeList" style="margin-top:0.8rem;border:1px solid var(--border);border-radius:8px;padding:4px;"></div>
+        </div>
+      </div>
+      <canvas id="rewardChart" width="400" height="100" style="width:100%;border-radius:8px;margin-top:1rem;"></canvas>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3. Deep RL -->
+  <div class="section-header">
+    <h4>Part 3</h4>
+    <h2>Deep Reinforcement Learning</h2>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));">
+    <div class="card">
+      <h3 style="color:var(--primary);">Deep Q-Network (DQN)</h3>
+      <p>Use a neural network to approximate Q(s,a). Takes raw pixels as state, outputs Q-value for each action.</p>
+      <div class="concept-box" style="margin-top:0.8rem;"><p><strong>Key tricks:</strong> Experience replay (random sampling from memory), target network (stable learning target), reward clipping.</p></div>
+      <div class="badge badge-blue" style="margin-top:0.8rem;">AlphaGo, Atari games</div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--secondary);">Policy Gradient</h3>
+      <p>Directly optimize the policy π(a|s;θ) using gradient ascent on expected reward.</p>
+      <div class="formula purple" style="margin-top:0.8rem;"><div class="formula-label">REINFORCE</div>\[\nabla_\theta J = \mathbb{E}[G_t \nabla_\theta \log \pi_\theta(a_t|s_t)]\]</div>
+      <div class="badge badge-purple" style="margin-top:0.8rem;">PPO, TRPO</div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--green);">Applications</h3>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.88rem;margin-top:0.5rem;">
+        <div>🎮 Game playing (Go, Chess, StarCraft)</div>
+        <div>🤖 Robot locomotion and manipulation</div>
+        <div>🚗 Autonomous driving</div>
+        <div>💊 Drug discovery</div>
+        <div>📈 Trading and resource allocation</div>
+        <div>💬 RLHF for LLM alignment</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent);">RL Challenges</h3>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.88rem;margin-top:0.5rem;">
+        <div>⏱️ <strong>Credit assignment</strong> — which action caused the reward?</div>
+        <div>🔍 <strong>Exploration</strong> — how to find new rewarding strategies?</div>
+        <div>🌊 <strong>Non-stationarity</strong> — policy changes the data distribution</div>
+        <div>📊 <strong>Sample efficiency</strong> — millions of steps needed</div>
+        <div>🎯 <strong>Reward shaping</strong> — designing good reward functions is hard</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  <p>← <a href="attention.html">Attention & Transformers</a> · <a href="unsupervised.html">Unsupervised Learning →</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/contrib/auto-render.min.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/three-bg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderMathInElement(document.body, { delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}] });
+  initTopicHeaderBg('headerBg', 0xef4444, 0xf59e0b);
+
+  // ── Q-Learning Grid World ──
+  const ROWS=4, COLS=5;
+  const GOAL={r:3,c:4}, WALLS=[{r:1,c:1},{r:1,c:3},{r:2,c:3},{r:3,c:1}];
+  const ACTIONS=['up','down','left','right'];
+  const DR=[-1,1,0,0], DC=[0,0,-1,1];
+  let Q={}, agentPos={r:0,c:0}, episode=0, totalSteps=0, episodeSteps=0, episodeReward=0;
+  let rewardHistory=[], running=false, runTimer=null;
+
+  function isWall(r,c){return WALLS.some(w=>w.r===r&&w.c===c);}
+  function isGoal(r,c){return r===GOAL.r&&c===GOAL.c;}
+  function stateKey(r,c){return `${r},${c}`;}
+  function getQ(r,c,a){return Q[`${stateKey(r,c)}_${a}`]||0;}
+  function setQ(r,c,a,v){Q[`${stateKey(r,c)}_${a}`]=v;}
+  function maxQ(r,c){return Math.max(...ACTIONS.map((_,i)=>getQ(r,c,i)));}
+  function bestAction(r,c){let best=0,bestV=-Infinity;ACTIONS.forEach((_,i)=>{const v=getQ(r,c,i);if(v>bestV){bestV=v;best=i;}});return best;}
+
+  function resetRL(){
+    Q={}; agentPos={r:0,c:0}; episode=0; totalSteps=0; episodeSteps=0; episodeReward=0;
+    rewardHistory=[]; clearInterval(runTimer); running=false;
+    document.getElementById('rlRun').textContent='▶ Run';
+    document.getElementById('episodeList').innerHTML='';
+    renderGrid(); updateStats(); drawRewardChart();
+  }
+
+  function rlStep(){
+    const alpha=+document.getElementById('rlAlpha').value;
+    const gamma=+document.getElementById('rlGamma').value;
+    const eps=+document.getElementById('rlEps').value;
+    const {r,c}=agentPos;
+    // Choose action (ε-greedy)
+    let action;
+    if(Math.random()<eps) action=Math.floor(Math.random()*4);
+    else action=bestAction(r,c);
+    // Take step
+    let nr=r+DR[action], nc=c+DC[action];
+    if(nr<0||nr>=ROWS||nc<0||nc>=COLS||isWall(nr,nc)){nr=r;nc=c;}
+    // Reward
+    let reward=-0.1;
+    if(isGoal(nr,nc)) reward=10;
+    else if(isWall(nr,nc)) reward=-1;
+    // Q update
+    const target=reward+gamma*maxQ(nr,nc);
+    const oldQ=getQ(r,c,action);
+    setQ(r,c,action,oldQ+alpha*(target-oldQ));
+    // Move
+    agentPos={r:nr,c:nc};
+    episodeSteps++; totalSteps++; episodeReward+=reward;
+    // Check terminal
+    if(isGoal(nr,nc)||episodeSteps>50){
+      const success=isGoal(nr,nc);
+      rewardHistory.push(episodeReward);
+      const list=document.getElementById('episodeList');
+      const row=document.createElement('div');
+      row.className=`episode-row ${success?'success':'fail'}`;
+      row.textContent=`Ep${episode+1}: ${success?'✓ Goal':'✗ Timeout'} | Steps: ${episodeSteps} | R: ${episodeReward.toFixed(1)}`;
+      list.insertBefore(row,list.firstChild);
+      episode++; episodeSteps=0; episodeReward=0;
+      agentPos={r:0,c:0};
+      if(rewardHistory.length>50) rewardHistory.shift();
+      drawRewardChart();
+    }
+    renderGrid(); updateStats();
+  }
+
+  function renderGrid(){
+    const grid=document.getElementById('rlGrid'); grid.innerHTML='';
+    for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+      const cell=document.createElement('div');
+      const isA=agentPos.r===r&&agentPos.c===c;
+      const isG=isGoal(r,c), isW=isWall(r,c);
+      cell.className=`rl-cell ${isA?'agent':isG?'goal':isW?'wall':'empty'}`;
+      if(isA) cell.innerHTML='<span style="font-size:1.2rem;">🤖</span>';
+      else if(isG) cell.innerHTML='<span style="font-size:1.2rem;">⭐</span>';
+      else if(isW) cell.innerHTML='<span style="font-size:1rem;">🧱</span>';
+      else {
+        const qv=maxQ(r,c);
+        const dirs=['↑','↓','←','→'];
+        const ba=bestAction(r,c);
+        cell.innerHTML=`<span style="font-size:1rem;">${dirs[ba]}</span><span class="q-val">${qv.toFixed(1)}</span>`;
+        if(qv>0.5) cell.style.background='rgba(16,185,129,0.1)';
+        else if(qv<-0.1) cell.style.background='rgba(239,68,68,0.06)';
+      }
+      grid.appendChild(cell);
+    }
+  }
+
+  function updateStats(){
+    document.getElementById('rlAlphaV').textContent=(+document.getElementById('rlAlpha').value).toFixed(2);
+    document.getElementById('rlGammaV').textContent=(+document.getElementById('rlGamma').value).toFixed(2);
+    document.getElementById('rlEpsV').textContent=(+document.getElementById('rlEps').value).toFixed(2);
+    const recent=rewardHistory.slice(-10);
+    const avgR=recent.length?recent.reduce((a,b)=>a+b,0)/recent.length:0;
+    document.getElementById('rlStats').innerHTML=`
+      <span class="label">Episode: </span><span class="value">${episode}</span>&nbsp;
+      <span class="label">Steps: </span><span class="value">${totalSteps}</span><br>
+      <span class="label">Avg reward (last 10): </span><span class="value ${avgR>0?'green':'red'}">${avgR.toFixed(2)}</span>`;
+  }
+
+  function drawRewardChart(){
+    const canvas=document.getElementById('rewardChart');
+    const ctx=canvas.getContext('2d');
+    const W=canvas.width, H=canvas.height;
+    ctx.fillStyle='#0d1220'; ctx.fillRect(0,0,W,H);
+    if(!rewardHistory.length){ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='11px monospace';ctx.textAlign='center';ctx.fillText('Episode reward history will appear here',W/2,H/2);return;}
+    const min=Math.min(...rewardHistory), max=Math.max(...rewardHistory,1);
+    const px=i=>(i/(Math.max(rewardHistory.length-1,1)))*(W-20)+10;
+    const py=v=>H-10-((v-min)/(max-min||1))*(H-20);
+    // Zero line
+    ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(0,py(0));ctx.lineTo(W,py(0));ctx.stroke();ctx.setLineDash([]);
+    // Reward line
+    ctx.strokeStyle='#10b981';ctx.lineWidth=1.5;ctx.shadowColor='#10b981';ctx.shadowBlur=4;
+    ctx.beginPath();
+    rewardHistory.forEach((v,i)=>i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v)));
+    ctx.stroke();ctx.shadowBlur=0;
+    // Fill under
+    ctx.fillStyle='rgba(16,185,129,0.08)';
+    ctx.lineTo(px(rewardHistory.length-1),H);ctx.lineTo(px(0),H);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='9px monospace';ctx.textAlign='left';ctx.fillText('Episode Rewards',8,12);
+  }
+
+  document.getElementById('rlStep').addEventListener('click',rlStep);
+  document.getElementById('rlRun').addEventListener('click',()=>{
+    if(running){clearInterval(runTimer);running=false;document.getElementById('rlRun').textContent='▶ Run';return;}
+    running=true;document.getElementById('rlRun').textContent='⏹ Stop';
+    runTimer=setInterval(()=>{for(let i=0;i<5;i++)rlStep();},80);
+  });
+  document.getElementById('rlReset').addEventListener('click',resetRL);
+  ['rlAlpha','rlGamma','rlEps'].forEach(id=>document.getElementById(id).addEventListener('input',updateStats));
+  resetRL();
+
+  const h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');
+  if(h)h.addEventListener('click',()=>m.classList.toggle('open'));
+});
+</script>
+</body>
+</html>

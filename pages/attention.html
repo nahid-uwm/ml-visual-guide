@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attention & Transformers — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+<style>
+.transformer-diagram{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:1rem 0;}
+.tf-block{border-radius:10px;padding:10px 14px;text-align:center;font-size:0.78rem;font-weight:700;border:2px solid;min-width:110px;}
+.tf-encoder{border-color:var(--primary);background:rgba(0,212,255,0.08);}
+.tf-decoder{border-color:var(--secondary);background:rgba(168,85,247,0.08);}
+.tf-sublayer{border-radius:6px;padding:5px 8px;font-size:0.7rem;font-weight:600;margin:3px 0;border:1px solid;}
+.tf-self-attn{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.08);color:var(--primary);}
+.tf-cross-attn{border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.08);color:var(--secondary);}
+.tf-ffn{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.08);color:var(--green);}
+.tf-norm{border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:var(--text3);}
+.attn-token{padding:7px 14px;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;border:1.5px solid var(--border);color:var(--text2);transition:all 0.2s;display:inline-block;margin:3px;}
+.attn-token:hover,.attn-token.selected{background:var(--secondary-dim);border-color:var(--secondary);color:var(--secondary);}
+.attn-matrix-wrap{overflow-x:auto;margin-top:1rem;}
+.attn-cell-box{width:36px;height:36px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:700;transition:all 0.3s;}
+.qkv-box{border-radius:10px;padding:1rem;border:1.5px solid;text-align:center;}
+.qkv-q{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.08);}
+.qkv-k{border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.08);}
+.qkv-v{border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.08);}
+.embed-dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+.llm-step{display:flex;gap:0.8rem;align-items:flex-start;padding:0.8rem;border-radius:8px;background:var(--card);border:1px solid var(--border);margin-bottom:0.6rem;}
+.llm-step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0;background:var(--primary-dim);border:1px solid var(--primary);color:var(--primary);}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo"><div class="dot"></div><a href="../index.html" style="color:white;font-weight:800;">ML Visual Guide</a></div>
+  <div class="nav-links">
+    <a href="neural-networks.html">Neural Nets</a><a href="deep-learning.html">Deep Learning</a>
+    <a href="cnn.html">CNNs</a><a href="generative-ai.html">Generative AI</a>
+    <a href="attention.html" class="active">Attention</a><a href="reinforcement.html">RL</a>
+    <a href="unsupervised.html">Unsupervised</a><a href="quiz.html">Quiz</a>
+  </div>
+  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="neural-networks.html">🧠 Neural Nets</a><a href="deep-learning.html">🔥 Deep Learning</a>
+  <a href="cnn.html">🖼️ CNNs</a><a href="generative-ai.html">✨ Generative AI</a>
+  <a href="attention.html">👁️ Attention</a><a href="reinforcement.html">🎮 RL</a>
+  <a href="unsupervised.html">🔍 Unsupervised</a><a href="quiz.html">📝 Quiz</a>
+</div>
+
+<div class="page-header">
+  <canvas id="headerBg" class="hero-canvas" style="opacity:0.4;"></canvas>
+  <div style="position:relative;z-index:1;">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span>/</span>Attention & Transformers</div>
+    <span class="topic-icon">👁️</span>
+    <h1>Attention & Transformers</h1>
+    <p>Self-attention, Query/Key/Value, transformer architecture, and Large Language Models.</p>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- 1. Word Embeddings -->
+  <div class="section-header">
+    <h4>Part 1</h4>
+    <h2>Word Representations</h2>
+    <p class="section-subtitle">How do we represent words as input to a neural network?</p>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>Why Numerical Vectors?</h3>
+        <p>The best way to represent a word for a neural network is using a <strong>numerical vector</strong> (embedding). Why?</p>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;margin-top:0.8rem;">
+          <div class="concept-box red"><p>❌ <strong>One-hot encoding:</strong> Sparse, no semantic meaning, arbitrary ordinal relationships.</p></div>
+          <div class="concept-box red"><p>❌ <strong>Single integer:</strong> Imposes arbitrary ordinal relationships (cat=2, dog=3 doesn't mean dog > cat).</p></div>
+          <div class="concept-box green"><p>✅ <strong>Dense embeddings</strong> (Word2Vec, learned): Capture semantic relationships in continuous vector space. Work well with gradient-based learning.</p></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Semantic Geometry</h3>
+        <p>Embeddings encode meaning in geometry:</p>
+        <div class="formula">
+          <div class="formula-label">Classic example</div>
+          \[\text{king} - \text{man} + \text{woman} \approx \text{queen}\]
+        </div>
+        <p style="font-size:0.85rem;margin-top:0.8rem;">Similar words cluster together in embedding space. Analogical reasoning emerges naturally from the vector arithmetic.</p>
+        <div class="concept-box" style="margin-top:0.8rem;">
+          <p>Transformers learn their own embeddings end-to-end from the data — often better than pre-trained word vectors for the specific task.</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Word Embedding Space (2D Projection)</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:0.8rem;">Hover over words to see their relationships. Similar words cluster together.</p>
+      <canvas id="embedCanvas" width="400" height="260" style="width:100%;border-radius:10px;border:1px solid var(--border);cursor:crosshair;"></canvas>
+      <div id="embedInfo" class="output-display" style="margin-top:0.8rem;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 2. Self-Attention -->
+  <div class="section-header">
+    <h4>Part 2</h4>
+    <h2>Self-Attention</h2>
+    <p class="section-subtitle">Every word attends to every other word simultaneously — unlike RNNs which process sequentially.</p>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>The Core Idea</h3>
+        <p>For each word (Query), compute how much it should "attend to" every other word (Keys), then take a weighted sum of Values.</p>
+        <div class="formula" style="margin:1rem 0;">
+          <div class="formula-label">Attention</div>
+          \[\text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{QK^T}{\sqrt{d_k}}\right)V\]
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin-top:0.8rem;">
+          <div class="qkv-box qkv-q"><div style="font-size:0.72rem;color:var(--text3);">Query</div><div style="color:var(--primary);font-weight:800;font-size:1rem;">Q</div><div style="font-size:0.7rem;color:var(--text2);">What I'm looking for</div></div>
+          <div class="qkv-box qkv-k"><div style="font-size:0.72rem;color:var(--text3);">Key</div><div style="color:var(--secondary);font-weight:800;font-size:1rem;">K</div><div style="font-size:0.7rem;color:var(--text2);">What I can offer</div></div>
+          <div class="qkv-box qkv-v"><div style="font-size:0.72rem;color:var(--text3);">Value</div><div style="color:var(--green);font-weight:800;font-size:1rem;">V</div><div style="font-size:0.7rem;color:var(--text2);">What I actually share</div></div>
+        </div>
+        <div class="concept-box" style="margin-top:1rem;">
+          <p><strong>In self-attention:</strong> Q, K, and V are all computed from the <em>same</em> input sequence (via linear projections W_Q, W_K, W_V). This is what makes it "self"-attention — each position attends to all other positions within the same sequence.</p>
+        </div>
+        <div class="concept-box amber" style="margin-top:0.8rem;">
+          <p><strong>Adaptation:</strong> The Query, Key, and Value projection matrices (W_Q, W_K, W_V) are learnable parameters. During training or fine-tuning, these matrices adapt the attention computation to the specific task.</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Self-Attention Heatmap</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:0.8rem;">Click a word (query) to see which words it attends to most. Brighter = higher attention weight.</p>
+      <div id="tokenRow" style="margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:4px;"></div>
+      <div class="attn-matrix-wrap">
+        <div id="attnMatrix"></div>
+      </div>
+      <div id="attnInfo" class="output-display" style="margin-top:0.8rem;"></div>
+    </div>
+  </div>
+
+  <!-- QKV Computation Example -->
+  <div class="demo-container" style="margin-top:1.5rem;">
+    <div class="demo-title">Attention Score Computation — Worked Example</div>
+    <p style="font-size:0.85rem;color:var(--text3);margin-bottom:1rem;">Sentence: "The sky is blue" — computing attention for query word "is"</p>
+    <div style="display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));">
+      <div class="card" style="background:rgba(0,0,0,0.3);">
+        <h4 style="color:var(--primary);margin-bottom:0.5rem;">Step 1: Dot Products</h4>
+        <div style="font-size:0.82rem;font-family:monospace;display:flex;flex-direction:column;gap:4px;">
+          <div>dp(is, sky) = <span style="color:var(--primary);">0.3</span></div>
+          <div>dp(is, is)  = <span style="color:var(--primary);">0.9</span></div>
+          <div>dp(is, blue)= <span style="color:var(--primary);">0.6</span></div>
+        </div>
+      </div>
+      <div class="card" style="background:rgba(0,0,0,0.3);">
+        <h4 style="color:var(--secondary);margin-bottom:0.5rem;">Step 2: Softmax → Weights</h4>
+        <div style="font-size:0.82rem;font-family:monospace;display:flex;flex-direction:column;gap:4px;">
+          <div>w(sky) = <span style="color:var(--secondary);">0.17</span></div>
+          <div>w(is)  = <span style="color:var(--secondary);">0.51</span></div>
+          <div>w(blue)= <span style="color:var(--secondary);">0.32</span></div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text3);margin-top:4px;">Sum = 1.0 ✓</div>
+      </div>
+      <div class="card" style="background:rgba(0,0,0,0.3);">
+        <h4 style="color:var(--green);margin-bottom:0.5rem;">Step 3: Weighted Sum of Values</h4>
+        <div style="font-size:0.82rem;font-family:monospace;">
+          new_rep("is") =<br>
+          0.17·v(sky)<br>+ 0.51·v(is)<br>+ 0.32·v(blue)
+        </div>
+      </div>
+      <div class="card" style="background:rgba(0,0,0,0.3);">
+        <h4 style="color:var(--accent);margin-bottom:0.5rem;">Quiz: Which is the Query?</h4>
+        <div class="concept-box amber" style="padding:0.6rem;">
+          <p style="font-size:0.85rem;">In "sky·dp(is,sky) + is·dp(is,is) + blue·dp(is,blue)" — the query is <strong>"is"</strong>.</p>
+          <p style="font-size:0.78rem;margin-top:0.3rem;">The query is the word whose new representation is being computed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3. Transformer Architecture -->
+  <div class="section-header">
+    <h4>Part 3</h4>
+    <h2>Transformer Architecture</h2>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>Encoder vs Decoder</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Component</th><th>Attention Type</th><th>Used For</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Encoder</strong></td><td>Self-attention only</td><td>Understanding input</td></tr>
+              <tr><td><strong>Decoder</strong></td><td>Masked self-attn + encoder-decoder attn</td><td>Generating output</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="concept-box" style="margin-top:1rem;">
+          <p><strong>Encoder-decoder attention</strong> (cross-attention): Q comes from the decoder's own sequence, K and V come from the encoder's output. This is what uses "encoder-decoder attention" in the transformer architecture — the <strong>Decoder</strong>.</p>
+        </div>
+        <div class="concept-box purple" style="margin-top:0.8rem;">
+          <p><strong>Masked self-attention:</strong> In the decoder, future tokens are masked — prevents the model from "cheating" by looking at tokens it hasn't generated yet.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Transformer vs RNN</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>RNN</th><th>Transformer</th></tr></thead>
+            <tbody>
+              <tr><td>Processing</td><td>Sequential</td><td><strong>Parallel</strong></td></tr>
+              <tr><td>Long-range deps</td><td>Struggles</td><td><strong>Excellent</strong></td></tr>
+              <tr><td>Training speed</td><td>Slow</td><td><strong>Fast (GPU)</strong></td></tr>
+              <tr><td>Context window</td><td>Limited</td><td>Fixed but large</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="demo-container">
+        <div class="demo-title">Transformer Block Diagram</div>
+        <div class="transformer-diagram">
+          <div>
+            <div style="font-size:0.72rem;color:var(--primary);text-transform:uppercase;text-align:center;margin-bottom:6px;font-weight:700;">Encoder</div>
+            <div class="tf-block tf-encoder">
+              <div class="tf-sublayer tf-self-attn">Multi-Head Self-Attention</div>
+              <div class="tf-sublayer tf-norm">Add & Norm</div>
+              <div class="tf-sublayer tf-ffn">Feed-Forward Network</div>
+              <div class="tf-sublayer tf-norm">Add & Norm</div>
+            </div>
+            <div style="font-size:0.65rem;color:var(--text3);text-align:center;margin-top:4px;">× N layers</div>
+          </div>
+          <div style="color:var(--text3);font-size:1.5rem;display:flex;align-items:center;">→</div>
+          <div>
+            <div style="font-size:0.72rem;color:var(--secondary);text-transform:uppercase;text-align:center;margin-bottom:6px;font-weight:700;">Decoder</div>
+            <div class="tf-block tf-decoder">
+              <div class="tf-sublayer tf-self-attn" style="border-color:rgba(168,85,247,0.4);color:var(--secondary);">Masked Self-Attention</div>
+              <div class="tf-sublayer tf-norm">Add & Norm</div>
+              <div class="tf-sublayer tf-cross-attn">Cross-Attention (Enc→Dec)</div>
+              <div class="tf-sublayer tf-norm">Add & Norm</div>
+              <div class="tf-sublayer tf-ffn">Feed-Forward Network</div>
+              <div class="tf-sublayer tf-norm">Add & Norm</div>
+            </div>
+            <div style="font-size:0.65rem;color:var(--text3);text-align:center;margin-top:4px;">× N layers</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;font-size:0.72rem;margin-top:0.5rem;">
+          <span style="color:var(--primary);">■ Self-Attention</span>
+          <span style="color:var(--secondary);">■ Cross-Attention</span>
+          <span style="color:var(--green);">■ Feed-Forward</span>
+          <span style="color:var(--text3);">■ LayerNorm</span>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Positional Encoding</h3>
+        <p style="font-size:0.88rem;">Self-attention has no inherent notion of word order. Positional encodings add information about each token's position:</p>
+        <div class="formula" style="margin-top:0.8rem;">
+          <div class="formula-label">Sinusoidal PE</div>
+          \[\text{PE}_{(pos,2i)} = \sin\!\left(\frac{pos}{10000^{2i/d}}\right)\]
+        </div>
+        <p style="font-size:0.82rem;margin-top:0.5rem;">Added to token embeddings before the first layer. Modern models use learned positional embeddings.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 4. LLMs -->
+  <div class="section-header">
+    <h4>Part 4</h4>
+    <h2>Large Language Models (LLMs)</h2>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>How LLMs are Trained</h3>
+        <div class="concept-box">
+          <p><strong>Large language models are pre-trained on the next word prediction task.</strong> LLMs like GPT are trained autoregressively: given all previous tokens, predict the next one.</p>
+        </div>
+        <p style="margin-top:0.8rem;font-size:0.88rem;">This self-supervised objective over massive text corpora (trillions of tokens) produces rich, general-purpose language representations.</p>
+        <div class="llm-step" style="margin-top:1rem;">
+          <div class="llm-step-num">1</div>
+          <div><strong>Pre-training</strong><br><span style="font-size:0.83rem;color:var(--text2);">Train on massive text corpus with next-token prediction. Learns language structure, facts, reasoning.</span></div>
+        </div>
+        <div class="llm-step">
+          <div class="llm-step-num" style="background:var(--secondary-dim);border-color:var(--secondary);color:var(--secondary);">2</div>
+          <div><strong>Fine-tuning / RLHF</strong><br><span style="font-size:0.83rem;color:var(--text2);">Adapt to specific tasks or align with human preferences using labeled data or human feedback.</span></div>
+        </div>
+        <div class="llm-step">
+          <div class="llm-step-num" style="background:var(--green-dim);border-color:var(--green);color:var(--green);">3</div>
+          <div><strong>Few-shot / Zero-shot</strong><br><span style="font-size:0.83rem;color:var(--text2);">At inference, provide examples in the prompt (few-shot) or just instructions (zero-shot).</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Self-Supervised Learning</h3>
+        <div class="concept-box green">
+          <p><strong>In self-supervised learning, correct targets are automatically generated</strong> from the data itself — e.g., masking a word and predicting it, or predicting the next word — without requiring manual human annotation.</p>
+        </div>
+        <div class="card" style="margin-top:1rem;background:rgba(0,0,0,0.3);">
+          <h4>BERT vs GPT</h4>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Model</th><th>Architecture</th><th>Task</th></tr></thead>
+              <tbody>
+                <tr><td><strong>BERT</strong></td><td>Encoder only</td><td>Understanding (classification, QA)</td></tr>
+                <tr><td><strong>GPT</strong></td><td>Decoder only</td><td>Generation (text completion)</td></tr>
+                <tr><td><strong>T5/BART</strong></td><td>Encoder-Decoder</td><td>Translation, summarization</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="concept-box amber" style="margin-top:1rem;">
+          <p><strong>Sentiment/emotion classification</strong> (happy, sad, angry, neutral) is a language <em>understanding</em> task — only the <em>encoder</em> (e.g. BERT) is needed. The decoder (used for text generation) is not needed here.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Few-Shot Learning</h3>
+        <div class="concept-box">
+          <p><strong>Giving large language models a few illustrative examples of a task in the prompt</strong> is called <em>few-shot learning</em> (or in-context few-shot learning). No gradient updates to the model — examples just guide it in the prompt.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive LLM Demo -->
+  <div class="demo-container" style="margin-top:1.5rem;">
+    <div class="demo-title">Next-Token Prediction Demo</div>
+    <p style="font-size:0.85rem;color:var(--text3);margin-bottom:1rem;">LLMs predict the next token using probability distributions. See how context shapes predictions.</p>
+    <div style="display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
+      <select id="promptSelect" style="flex:1;min-width:200px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:white;font-size:0.9rem;">
+        <option value="0">The cat sat on the ___</option>
+        <option value="1">Neural networks learn by ___</option>
+        <option value="2">The best activation function is ___</option>
+        <option value="3">Transformers use ___ to attend</option>
+      </select>
+      <button class="btn btn-sm btn-primary" id="predictBtn">Predict →</button>
+    </div>
+    <div id="predictionResult" style="display:none;">
+      <div style="font-size:0.85rem;color:var(--text2);margin-bottom:0.8rem;">Top predictions with probabilities:</div>
+      <div id="predBars"></div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="divider"></div>
+  <div class="section-header"><h4>Quiz 10 — Practice</h4><h2>Attention & Transformers Quiz Questions</h2></div>
+  <div class="quiz-grid" id="attnQuiz"></div>
+
+</div>
+
+<footer class="footer">
+  <p>← <a href="generative-ai.html">Generative AI</a> · <a href="reinforcement.html">Reinforcement Learning →</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/contrib/auto-render.min.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/three-bg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderMathInElement(document.body, { delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}] });
+  initTopicHeaderBg('headerBg', 0xa855f7, 0x00d4ff);
+
+  // ── Word Embedding Visualization ──
+  const words = [
+    {word:'king', x:320, y:60, color:'#00d4ff', group:'royalty'},
+    {word:'queen', x:310, y:100, color:'#00d4ff', group:'royalty'},
+    {word:'man', x:260, y:80, color:'#a855f7', group:'gender'},
+    {word:'woman', x:250, y:120, color:'#a855f7', group:'gender'},
+    {word:'cat', x:80, y:80, color:'#10b981', group:'animals'},
+    {word:'dog', x:100, y:120, color:'#10b981', group:'animals'},
+    {word:'fish', x:60, y:140, color:'#10b981', group:'animals'},
+    {word:'walk', x:180, y:200, color:'#f59e0b', group:'verbs'},
+    {word:'run', x:200, y:180, color:'#f59e0b', group:'verbs'},
+    {word:'jump', x:160, y:220, color:'#f59e0b', group:'verbs'},
+    {word:'Paris', x:340, y:180, color:'#ef4444', group:'cities'},
+    {word:'London', x:360, y:210, color:'#ef4444', group:'cities'},
+    {word:'France', x:310, y:220, color:'#ef4444', group:'cities'},
+  ];
+  const embedCanvas = document.getElementById('embedCanvas');
+  const eCtx = embedCanvas.getContext('2d');
+  const EW = embedCanvas.width, EH = embedCanvas.height;
+  let hoveredWord = null;
+
+  function drawEmbed() {
+    eCtx.fillStyle = '#0d1220'; eCtx.fillRect(0,0,EW,EH);
+    // Grid
+    eCtx.strokeStyle = 'rgba(255,255,255,0.04)'; eCtx.lineWidth=1;
+    for(let x=0;x<EW;x+=40){eCtx.beginPath();eCtx.moveTo(x,0);eCtx.lineTo(x,EH);eCtx.stroke();}
+    for(let y=0;y<EH;y+=40){eCtx.beginPath();eCtx.moveTo(0,y);eCtx.lineTo(EW,y);eCtx.stroke();}
+    // Group connections (faint lines within groups)
+    const groups = {};
+    words.forEach(w=>{if(!groups[w.group])groups[w.group]=[];groups[w.group].push(w);});
+    Object.values(groups).forEach(grp=>{
+      eCtx.strokeStyle = grp[0].color+'33'; eCtx.lineWidth=1;
+      for(let i=0;i<grp.length-1;i++) for(let j=i+1;j<grp.length;j++){
+        eCtx.beginPath(); eCtx.moveTo(grp[i].x,grp[i].y); eCtx.lineTo(grp[j].x,grp[j].y); eCtx.stroke();
+      }
+    });
+    // Hover highlight — connection to similar words
+    if(hoveredWord) {
+      const same = words.filter(w=>w.group===hoveredWord.group&&w!==hoveredWord);
+      same.forEach(w=>{
+        eCtx.strokeStyle = hoveredWord.color+'88'; eCtx.lineWidth=1.5;
+        eCtx.beginPath(); eCtx.moveTo(hoveredWord.x,hoveredWord.y); eCtx.lineTo(w.x,w.y); eCtx.stroke();
+      });
+    }
+    // Words
+    words.forEach(w=>{
+      const isHover = w===hoveredWord;
+      eCtx.beginPath(); eCtx.arc(w.x,w.y,isHover?7:5,0,Math.PI*2);
+      eCtx.fillStyle=w.color; eCtx.fill();
+      if(isHover){eCtx.strokeStyle=w.color;eCtx.lineWidth=2;eCtx.shadowColor=w.color;eCtx.shadowBlur=12;eCtx.stroke();eCtx.shadowBlur=0;}
+      eCtx.fillStyle=isHover?'white':w.color+'cc';
+      eCtx.font=`${isHover?'bold ':''}11px monospace`;
+      eCtx.textAlign='left'; eCtx.fillText(w.word, w.x+9, w.y+4);
+    });
+  }
+  embedCanvas.addEventListener('mousemove', e=>{
+    const r=embedCanvas.getBoundingClientRect();
+    const mx=(e.clientX-r.left)*(EW/r.width), my=(e.clientY-r.top)*(EH/r.height);
+    hoveredWord=words.find(w=>Math.hypot(w.x-mx,w.y-my)<16)||null;
+    drawEmbed();
+    if(hoveredWord){
+      const same=words.filter(w=>w.group===hoveredWord.group&&w!==hoveredWord).map(w=>w.word);
+      document.getElementById('embedInfo').innerHTML=`<span class="label">Word: </span><span class="value" style="color:${hoveredWord.color}">${hoveredWord.word}</span><span class="label"> | Group: ${hoveredWord.group}</span><br><span class="label">Similar (same cluster): </span><span class="value">${same.join(', ')}</span>`;
+    } else document.getElementById('embedInfo').innerHTML='<span class="label">Hover over a word to see its semantic neighbors</span>';
+  });
+  document.getElementById('embedInfo').innerHTML='<span class="label">Hover over a word to see its semantic neighbors</span>';
+  drawEmbed();
+
+  // ── Self-Attention Heatmap ──
+  const sentence = ['The','cat','sat','on','mat'];
+  // Simulated attention weights for each query word
+  const attnWeights = {
+    'The':  [0.4,0.3,0.1,0.1,0.1],
+    'cat':  [0.2,0.5,0.15,0.05,0.1],
+    'sat':  [0.05,0.2,0.5,0.15,0.1],
+    'on':   [0.1,0.05,0.2,0.5,0.15],
+    'mat':  [0.1,0.15,0.05,0.2,0.5],
+  };
+  let selectedToken = null;
+
+  function renderAttnMatrix() {
+    const tokenRow = document.getElementById('tokenRow');
+    tokenRow.innerHTML='';
+    sentence.forEach((tok,i)=>{
+      const btn=document.createElement('span');
+      btn.className='attn-token'+(selectedToken===tok?' selected':'');
+      btn.textContent=tok;
+      btn.addEventListener('click',()=>{selectedToken=selectedToken===tok?null:tok;renderAttnMatrix();});
+      tokenRow.appendChild(btn);
+    });
+    const matrix=document.getElementById('attnMatrix');
+    matrix.innerHTML='';
+    const weights=selectedToken?attnWeights[selectedToken]:null;
+    // Labels row
+    const labelRow=document.createElement('div');
+    labelRow.style.display='flex';labelRow.style.gap='3px';labelRow.style.marginBottom='3px';
+    labelRow.innerHTML='<div style="width:50px;font-size:0.65rem;color:transparent;">Q↓ K→</div>';
+    sentence.forEach(tok=>{
+      const lbl=document.createElement('div');
+      lbl.className='attn-cell-box';lbl.style.color='var(--text3)';lbl.style.fontSize='0.65rem';
+      lbl.textContent=tok;labelRow.appendChild(lbl);
+    });
+    matrix.appendChild(labelRow);
+    sentence.forEach((qTok,qi)=>{
+      const row=document.createElement('div');
+      row.style.display='flex';row.style.gap='3px';row.style.marginBottom='3px';
+      const rowLabel=document.createElement('div');
+      rowLabel.style.width='50px';rowLabel.style.fontSize='0.7rem';rowLabel.style.color='var(--text2)';
+      rowLabel.style.display='flex';rowLabel.style.alignItems='center';rowLabel.style.fontWeight='600';
+      rowLabel.textContent=qTok;row.appendChild(rowLabel);
+      const qWeights=attnWeights[qTok];
+      qWeights.forEach((w,ki)=>{
+        const cell=document.createElement('div');cell.className='attn-cell-box';
+        const highlight=selectedToken===qTok;
+        const alpha=highlight?0.2+w*0.8:0.05+w*0.3;
+        const r=Math.round(highlight?168*w*2:50*w), g=Math.round(highlight?85*w:100*w), b=Math.round(highlight?247*(0.3+w*0.7):200*w);
+        cell.style.background=`rgba(${Math.min(255,r)},${Math.min(255,g)},${Math.min(255,b)},${alpha})`;
+        cell.style.border=`1px solid rgba(168,85,247,${alpha*0.8})`;
+        cell.style.color=highlight?'white':'rgba(255,255,255,0.5)';
+        cell.style.fontWeight=highlight?'700':'400';
+        cell.textContent=w.toFixed(2);
+        row.appendChild(cell);
+      });
+      matrix.appendChild(row);
+    });
+    if(selectedToken){
+      const w=attnWeights[selectedToken];
+      const topIdx=w.indexOf(Math.max(...w));
+      document.getElementById('attnInfo').innerHTML=`<span class="label">Query: </span><span class="value" style="color:var(--secondary)">${selectedToken}</span><span class="label"> attends most to: </span><span class="value" style="color:var(--primary)">${sentence[topIdx]} (${(w[topIdx]*100).toFixed(0)}%)</span>`;
+    } else document.getElementById('attnInfo').innerHTML='<span class="label">Click a word above to see its attention pattern</span>';
+  }
+  renderAttnMatrix();
+
+  // ── LLM Prediction Demo ──
+  const predictions = [
+    [{t:'mat',p:0.42},{t:'floor',p:0.28},{t:'chair',p:0.15},{t:'roof',p:0.08},{t:'table',p:0.07}],
+    [{t:'adjusting',p:0.35},{t:'updating',p:0.30},{t:'backpropagation',p:0.18},{t:'gradient',p:0.10},{t:'training',p:0.07}],
+    [{t:'ReLU',p:0.45},{t:'sigmoid',p:0.25},{t:'tanh',p:0.18},{t:'leaky',p:0.07},{t:'softmax',p:0.05}],
+    [{t:'self-attention',p:0.50},{t:'attention',p:0.28},{t:'Q/K/V',p:0.12},{t:'query',p:0.06},{t:'keys',p:0.04}],
+  ];
+  document.getElementById('predictBtn').addEventListener('click',()=>{
+    const idx=+document.getElementById('promptSelect').value;
+    const preds=predictions[idx];
+    const result=document.getElementById('predictionResult');
+    result.style.display='block';
+    const bars=document.getElementById('predBars');
+    bars.innerHTML='';
+    const colors=['#00d4ff','#a855f7','#10b981','#f59e0b','#ef4444'];
+    preds.forEach((p,i)=>{
+      bars.innerHTML+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="min-width:120px;font-family:monospace;font-size:0.85rem;color:${colors[i]};font-weight:${i===0?'700':'400'}">${p.t}</span>
+        <div style="flex:1;background:var(--bg3);border-radius:3px;height:8px;"><div style="width:${p.p*100}%;height:100%;background:${colors[i]};border-radius:3px;transition:width 0.5s;"></div></div>
+        <span style="min-width:45px;font-family:monospace;font-size:0.82rem;color:${colors[i]};">${(p.p*100).toFixed(0)}%</span>
+      </div>`;
+    });
+  });
+
+  // ── Quiz ──
+  const questions=[
+    {q:"In the new representation for a sentence obtained using self-attention, the new representation of a word is influenced by:", a:"Every word in the sentence.", exp:"Self-attention computes a weighted sum over all positions in the sequence for each query. Every word attends to every other word (and itself) simultaneously, regardless of distance."},
+    {q:"In the transformer architecture, what uses encoder-decoder attention?", a:"Decoder.", exp:"The decoder has two attention sub-layers: (1) masked self-attention over the decoder's own sequence, and (2) encoder-decoder attention, where the decoder attends to the encoder's output."},
+    {q:"The best way to represent a word to give it as input to a neural network is:", a:"Using a numerical vector.", exp:"Dense word embeddings capture semantic relationships in a continuous vector space and work well with gradient-based learning. One-hot encodings are sparse and carry no semantic meaning."},
+    {q:"How are attentions adapted to different tasks?", a:"By introducing learnable weights.", exp:"The Query, Key, and Value projection matrices (W_Q, W_K, W_V) are learnable parameters. During training or fine-tuning, these matrices adapt the attention computation to the specific task."},
+    {q:"To build a model for classifying the emotion of each sentence (happy, sad, angry, neutral):", a:"You need to fine-tune only the pre-trained encoder part of the transformer.", exp:"Sentiment/emotion classification is a language understanding task — only the encoder (e.g. BERT) is needed. You attach a classification head and fine-tune on labeled data."},
+    {q:"Large language models are pre-trained on the next word prediction task.", a:"True.", exp:"LLMs like GPT are trained autoregressively: given all previous tokens, predict the next one. This self-supervised objective over massive text corpora produces rich, general-purpose language representations."},
+    {q:"In self-supervised learning, correct targets are:", a:"Automatically generated.", exp:"Self-supervised learning creates supervision signals from the data itself — e.g., masking a word and predicting it, or predicting the next word — without requiring manual human annotation."},
+    {q:"In the computation: sky·dp(is,sky) + is·dp(is,is) + blue·dp(is,blue) — which word is being the query?", a:"is.", exp:"The query is the word whose new representation is being computed. Here, 'is' is dotted against every word (sky, is, blue) as keys, and the result is a weighted sum of their values."},
+    {q:"Giving large language models a few illustrative examples of a task in the prompt is called:", a:"Few-shot learning.", exp:"Providing k labeled examples directly in the prompt (without any gradient updates to the model) to guide it on a new task is called few-shot prompting or in-context few-shot learning."},
+    {q:"In self-attention, queries, keys and values are all from within the same sequence.", a:"True.", exp:"In self-attention, Q, K, and V are all computed from the same input sequence (via linear projections). This is what makes it 'self'-attention. In cross-attention/encoder-decoder attention, Q comes from one sequence and K, V come from another."},
+  ];
+  const container=document.getElementById('attnQuiz');
+  questions.forEach((q,i)=>{
+    const card=document.createElement('div');card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-card-inner"><div class="quiz-front"><div><div class="quiz-qnum">Q${i+1} — Attention</div><div class="quiz-q">${q.q}</div></div><div class="quiz-hint">👆 Click to reveal</div></div><div class="quiz-back"><div><div class="quiz-answer-label">✓ Answer</div><div class="quiz-answer">${q.a}</div></div><div class="quiz-explanation">${q.exp}</div></div></div>`;
+    card.addEventListener('click',()=>card.classList.toggle('flipped'));
+    container.appendChild(card);
+  });
+
+  const h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');
+  if(h)h.addEventListener('click',()=>m.classList.toggle('open'));
+});
+</script>
+</body>
+</html>

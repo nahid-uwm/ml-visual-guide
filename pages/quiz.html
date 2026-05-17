@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Quiz — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+<style>
+.quiz-header-bg { position:relative; overflow:hidden; }
+.quiz-controls { display:flex; flex-wrap:wrap; gap:1rem; align-items:center; margin-bottom:2rem; }
+.filter-btn { padding:0.5rem 1.2rem; border:2px solid var(--border); background:transparent; color:var(--text-muted); border-radius:2rem; cursor:pointer; font-size:0.85rem; font-weight:600; transition:all 0.2s; }
+.filter-btn:hover { border-color:var(--primary); color:var(--primary); }
+.filter-btn.active { background:var(--primary); border-color:var(--primary); color:#000; }
+.filter-btn.q7.active { background:var(--secondary); border-color:var(--secondary); color:#fff; }
+.filter-btn.q8.active { background:var(--accent); border-color:var(--accent); color:#000; }
+.filter-btn.q9.active { background:var(--green); border-color:var(--green); color:#000; }
+.filter-btn.q10.active { background:#f472b6; border-color:#f472b6; color:#000; }
+
+.score-bar { background:var(--card); border:1px solid var(--border); border-radius:1rem; padding:1rem 1.5rem; display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap; }
+.score-stat { text-align:center; }
+.score-stat .num { font-size:2rem; font-weight:800; color:var(--primary); line-height:1; }
+.score-stat .lbl { font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; }
+.progress-track { flex:1; min-width:120px; }
+.progress-bar-bg { background:var(--border); border-radius:4px; height:8px; overflow:hidden; }
+.progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--secondary)); border-radius:4px; transition:width 0.4s; }
+.progress-text { font-size:0.75rem; color:var(--text-muted); margin-top:0.3rem; }
+
+.quiz-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:1.5rem; }
+.qcard { perspective:1000px; cursor:pointer; height:380px; }
+.qcard-inner { position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform 0.55s cubic-bezier(0.4,0,0.2,1); }
+.qcard.flipped .qcard-inner { transform:rotateY(180deg); }
+.qcard-front, .qcard-back { position:absolute; inset:0; backface-visibility:hidden; border-radius:1rem; padding:1.4rem; display:flex; flex-direction:column; border:1px solid var(--border); overflow:hidden; }
+.qcard-front { background:var(--card); }
+.qcard-back { background:linear-gradient(135deg,rgba(0,212,255,0.07),rgba(168,85,247,0.07)); border-color:var(--primary); transform:rotateY(180deg); }
+.qcard-front:hover { border-color:var(--primary); box-shadow:0 0 20px rgba(0,212,255,0.1); }
+
+.q-badge { display:inline-block; padding:0.2rem 0.65rem; border-radius:2rem; font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.6rem; }
+.badge-q6 { background:rgba(0,212,255,0.15); color:var(--primary); }
+.badge-q7 { background:rgba(168,85,247,0.15); color:var(--secondary); }
+.badge-q8 { background:rgba(245,158,11,0.15); color:var(--accent); }
+.badge-q9 { background:rgba(16,185,129,0.15); color:var(--green); }
+.badge-q10 { background:rgba(244,114,182,0.15); color:#f472b6; }
+
+.q-num { font-size:0.72rem; color:var(--text-muted); }
+.q-text { font-size:0.95rem; line-height:1.55; flex:1; padding:0.5rem 0; }
+.q-hint { font-size:0.73rem; color:var(--text-muted); display:flex; align-items:center; gap:0.3rem; margin-top:auto; padding-top:0.5rem; border-top:1px solid var(--border); }
+
+.back-scroll { flex:1; overflow-y:auto; padding-right:2px; }
+.back-scroll::-webkit-scrollbar { width:3px; }
+.back-scroll::-webkit-scrollbar-thumb { background:var(--primary); border-radius:2px; }
+.a-label { font-size:0.68rem; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.3rem; }
+.a-text { font-size:0.88rem; line-height:1.6; margin-bottom:0.75rem; color:var(--text); }
+.e-label { font-size:0.68rem; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.3rem; }
+.e-text { font-size:0.83rem; line-height:1.6; color:rgba(255,255,255,0.75); font-style:italic; }
+
+.mark-row { display:flex; gap:0.5rem; margin-top:0.6rem; flex-shrink:0; }
+.mark-btn { flex:1; padding:0.35rem; border:none; border-radius:0.5rem; cursor:pointer; font-size:0.78rem; font-weight:700; transition:all 0.2s; }
+.mark-correct { background:rgba(16,185,129,0.2); color:var(--green); }
+.mark-correct:hover { background:var(--green); color:#000; }
+.mark-wrong { background:rgba(239,68,68,0.2); color:var(--red); }
+.mark-wrong:hover { background:var(--red); color:#fff; }
+.qcard.correct .qcard-front { border-color:var(--green); box-shadow:0 0 15px rgba(16,185,129,0.2); }
+.qcard.wrong .qcard-front { border-color:var(--red); box-shadow:0 0 15px rgba(239,68,68,0.2); }
+.qcard.hidden { display:none; }
+
+.result-dot { width:10px; height:10px; border-radius:50%; display:inline-block; flex-shrink:0; }
+.dot-correct { background:var(--green); }
+.dot-wrong { background:var(--red); }
+.dot-none { background:var(--border); }
+.dot-grid { display:flex; flex-wrap:wrap; gap:4px; margin-top:0.5rem; }
+
+.shortcut-row { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; font-size:0.8rem; color:var(--text-muted); }
+.shortcut-row kbd { background:var(--card); border:1px solid var(--border); border-radius:4px; padding:0.1rem 0.4rem; font-family:monospace; font-size:0.75rem; color:var(--text); }
+.reset-btn { padding:0.5rem 1.2rem; border:2px solid var(--red); background:transparent; color:var(--red); border-radius:2rem; cursor:pointer; font-size:0.85rem; font-weight:600; transition:all 0.2s; margin-left:auto; }
+.reset-btn:hover { background:var(--red); color:#fff; }
+.shuffle-btn { padding:0.5rem 1.2rem; border:2px solid var(--secondary); background:transparent; color:var(--secondary); border-radius:2rem; cursor:pointer; font-size:0.85rem; font-weight:600; transition:all 0.2s; }
+.shuffle-btn:hover { background:var(--secondary); color:#fff; }
+
+@media(max-width:600px){
+  .quiz-grid { grid-template-columns:1fr; }
+  .qcard { height:400px; }
+  .score-bar { gap:1rem; }
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">ML Visual Guide</a>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+  <div class="nav-links">
+    <a href="neural-networks.html">Neural Nets</a>
+    <a href="deep-learning.html">Deep Learning</a>
+    <a href="cnn.html">CNNs</a>
+    <a href="generative-ai.html">Generative AI</a>
+    <a href="attention.html">Attention</a>
+    <a href="reinforcement.html">Reinforcement</a>
+    <a href="unsupervised.html">Unsupervised</a>
+    <a href="quiz.html" class="active">Quiz</a>
+  </div>
+</nav>
+
+<header class="topic-header quiz-header-bg" style="background:linear-gradient(135deg,#080b14 0%,#0f1a2e 50%,#1a0a2e 100%);">
+  <div class="topic-header-content">
+    <div class="topic-badge">Practice</div>
+    <h1 class="topic-title">Full Quiz Bank</h1>
+    <p class="topic-subtitle">All questions from Quizzes 6–10 · Flip for answer + plain-English explanation</p>
+  </div>
+</header>
+
+<main class="container" style="padding-top:2rem; padding-bottom:4rem;">
+
+  <div class="score-bar" style="margin-bottom:1.5rem;">
+    <div class="score-stat">
+      <div class="num" id="scoreCorrect">0</div>
+      <div class="lbl">Correct</div>
+    </div>
+    <div class="score-stat">
+      <div class="num" id="scoreWrong" style="color:var(--red);">0</div>
+      <div class="lbl">Wrong</div>
+    </div>
+    <div class="score-stat">
+      <div class="num" id="scoreTotal" style="color:var(--text-muted);">0</div>
+      <div class="lbl">Answered</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-text" id="progressText">0 / 50 answered</div>
+    </div>
+    <div class="dot-grid" id="dotGrid"></div>
+  </div>
+
+  <div class="quiz-controls">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All (50)</button>
+    <button class="filter-btn" data-filter="q6" onclick="setFilter('q6',this)">Quiz 6 — Neural Nets</button>
+    <button class="filter-btn q7" data-filter="q7" onclick="setFilter('q7',this)">Quiz 7 — Deep Learning</button>
+    <button class="filter-btn q8" data-filter="q8" onclick="setFilter('q8',this)">Quiz 8 — CNNs</button>
+    <button class="filter-btn q9" data-filter="q9" onclick="setFilter('q9',this)">Quiz 9 — Generative AI</button>
+    <button class="filter-btn q10" data-filter="q10" onclick="setFilter('q10',this)">Quiz 10 — Attention</button>
+    <button class="shuffle-btn" onclick="shuffleCards()">⇌ Shuffle</button>
+    <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
+  </div>
+
+  <div class="shortcut-row">
+    <span>Click card to flip · Scroll back for full explanation</span>
+    <span><kbd>G</kbd> correct · <kbd>B</kbd> wrong (focused card) · <kbd>Space</kbd> flip</span>
+  </div>
+
+  <div class="quiz-grid" id="quizGrid"></div>
+</main>
+
+<script>
+const QUESTIONS = [
+  // ── Quiz 6 — Neural Networks ──────────────────────────────────────────────
+  { quiz:'q6', n:1, topic:'Neural Networks',
+    q:'What is the purpose of an activation function in a neural network?',
+    a:'Introduces non-linearity so the network can learn complex mappings. Without it, stacked layers collapse to one linear transformation.',
+    e:'Think of stacking layers without activation as stacking transparent glass — no matter how many you add, light still passes straight through. The activation function is like tinted glass: it bends the signal and makes the combination actually different. Without it, 10 layers = 1 layer mathematically.' },
+
+  { quiz:'q6', n:2, topic:'Neural Networks',
+    q:'Write the sigmoid activation function and describe its output range.',
+    a:'σ(x) = 1 / (1 + e⁻ˣ). Output range is (0, 1), squashing any real input to a probability-like value.',
+    e:'Feed it a giant number → output ≈ 1. Feed it a very negative number → output ≈ 0. Feed it 0 → output = 0.5 exactly. It\'s like a volume knob that only goes between 0 and 1, no matter how hard you push it.' },
+
+  { quiz:'q6', n:3, topic:'Neural Networks',
+    q:'What is the delta rule (gradient for output neuron)? Define each term.',
+    a:'δⱼ = oⱼ(1 − oⱼ)(tⱼ − oⱼ). oⱼ = actual output, tⱼ = target. Measures how much output neuron j caused the error.',
+    e:'Break it apart: (tⱼ − oⱼ) is just "how wrong were we — and which direction?" The oⱼ(1−oⱼ) part is the sigmoid\'s slope at that output — it scales the correction by how responsive the neuron was. If the neuron was saturated (output ≈ 0 or ≈ 1), it barely updates.' },
+
+  { quiz:'q6', n:4, topic:'Neural Networks',
+    q:'How are weights updated using backpropagation (gradient descent)?',
+    a:'Δwᵢⱼ = α · δⱼ · oᵢ, so wᵢⱼ ← wᵢⱼ + Δwᵢⱼ. α=learning rate, δⱼ=error signal, oᵢ=input from neuron i.',
+    e:'In plain English: "If neuron i was active (oᵢ large) and we need to push output j up (δⱼ positive), then increase the wire wᵢⱼ connecting them." If either was inactive, the weight barely changes. You only strengthen connections that were both active AND wrong.' },
+
+  { quiz:'q6', n:5, topic:'Neural Networks',
+    q:'What is the difference between a perceptron and a sigmoid neuron?',
+    a:'Perceptron: step function output (0 or 1, not differentiable). Sigmoid: smooth continuous output ∈ (0,1), differentiable — allows gradient-based learning.',
+    e:'Perceptron is a light switch — hard ON or OFF, no in-between, can\'t compute gradient. Sigmoid is a dimmer switch — smooth, gradual change, and you can ask "which way should I turn this to fix the output?" You can\'t do calculus on a light switch.' },
+
+  { quiz:'q6', n:6, topic:'Neural Networks',
+    q:'Describe softmax and when it is used.',
+    a:'softmax(zᵢ) = eᶻⁱ / Σⱼ eᶻʲ. Used in output layer for multi-class classification — converts raw scores to probabilities summing to 1.',
+    e:'Think of it as an election tally. Each class gets votes (the raw scores). Softmax counts votes proportionally and reports each class\'s % share. The biggest score wins the most %, but everyone else still gets some. Total always = 100%. Use it whenever you need "which of N classes is this?"' },
+
+  { quiz:'q6', n:7, topic:'Neural Networks',
+    q:'What is the role of the bias term in a neuron?',
+    a:'Bias shifts the activation threshold, allowing the decision boundary to be offset from the origin. Without it, all boundaries must pass through zero.',
+    e:'Imagine drawing a dividing line between red and blue dots. Without bias, your line must pass through the center of the graph. With bias, you can slide it anywhere. In housing prices, without bias the model assumes "zero bedrooms = zero price" — bias fixes that by allowing a baseline value.' },
+
+  { quiz:'q6', n:8, topic:'Neural Networks',
+    q:'What does "net input" mean for a neuron?',
+    a:'net = Σᵢ wᵢxᵢ + b (weighted sum of inputs plus bias). The pre-activation value fed into the activation function.',
+    e:'The neuron\'s inbox: multiply each incoming signal by how important that wire is (weight), add them all up, then add a baseline (bias). This one number summarizes everything the neuron heard. Then the activation function decides what to do with it.' },
+
+  { quiz:'q6', n:9, topic:'Neural Networks',
+    q:'Why can\'t a single-layer perceptron solve XOR?',
+    a:'XOR is not linearly separable. One layer creates one linear boundary. XOR needs two separate regions, requiring at least one hidden layer.',
+    e:'Draw XOR on paper: (0,0)=0, (1,1)=0, (0,1)=1, (1,0)=1. The two 1s are in opposite corners — no single straight line can separate them from the two 0s. You need at least two lines, which requires two decisions (hidden layer).' },
+
+  { quiz:'q6', n:10, topic:'Neural Networks',
+    q:'What is the hidden layer delta rule for backpropagation?',
+    a:'δⱼ = oⱼ(1 − oⱼ) Σₖ (δₖ wⱼₖ). Error backpropagated from downstream neurons k, weighted by connection strengths.',
+    e:'Hidden neurons don\'t have a target — we never told them what they "should" output. So we borrow blame from the output layer: "how much did each downstream neuron k complain, and how strongly was I connected to it?" That\'s the Σ term. Each hidden neuron gets its fair share of the total error.' },
+
+  // ── Quiz 7 — Deep Learning ────────────────────────────────────────────────
+  { quiz:'q7', n:1, topic:'Deep Learning',
+    q:'What is the vanishing gradient problem and why does it occur?',
+    a:'Gradients shrink exponentially as they backprop through layers. Sigmoid derivative ≤ 0.25, so with L layers the gradient ≈ 0.25ᴸ — essentially zero for deep networks.',
+    e:'Imagine whispering a message down a line of 20 people. Each person hears only 25% of what the previous person said. By person 20 the message is gone (0.25²⁰ ≈ 10⁻¹²). Early layers get no signal and their weights freeze — they never learn. This is why sigmoid-based deep networks seemed impossible before ReLU.' },
+
+  { quiz:'q7', n:2, topic:'Deep Learning',
+    q:'How does ReLU solve the vanishing gradient problem?',
+    a:'ReLU(x) = max(0,x) has derivative 1 for x>0. Gradients pass through unchanged for active neurons — no shrinkage across layers.',
+    e:'ReLU is the messenger who repeats everything at full volume for positive inputs. Gradient of 1 × gradient of 1 × ... = still 1. The signal doesn\'t fade. That\'s why you can train 100+ layer networks with ReLU but not with sigmoid. It\'s also faster to compute — just a max() operation.' },
+
+  { quiz:'q7', n:3, topic:'Deep Learning',
+    q:'What is the dying ReLU problem and how is Leaky ReLU a fix?',
+    a:'If a ReLU neuron always receives negative input it outputs 0 forever — gradient is 0, weights never update (dead neuron). Leaky ReLU: f(x) = max(0.01x, x) — gives small slope for x<0.',
+    e:'Imagine a neuron keeps hearing "you\'re negative, so I output zero." With zero output, the gradient is zero, so the weight update is zero. It\'s trapped forever. Leaky ReLU is like saying "even when negative, I still whisper a little (1% of the signal)" — enough to allow recovery if conditions change.' },
+
+  { quiz:'q7', n:4, topic:'Deep Learning',
+    q:'Explain dropout regularization. What happens at test time?',
+    a:'During training, each neuron is randomly zeroed with probability p. At test time, dropout is off and weights are scaled by (1−p) to compensate.',
+    e:'Think of it as a sports team practicing with random players missing each session. No player can become "too essential" — everyone must be able to contribute independently. Result: a more robust team. At test time, everyone plays, but since weights were trained expecting some to be off, we scale them down proportionally.' },
+
+  { quiz:'q7', n:5, topic:'Deep Learning',
+    q:'What is early stopping and what does "patience" mean?',
+    a:'Stop training when validation loss stops improving. Patience = epochs to wait after last improvement before stopping.',
+    e:'Like a student studying for an exam: after a point, studying more causes them to over-memorize specific practice problems (overfit) and do worse on the real test. Early stopping says "save your best checkpoint and stop when you stop improving on the practice exam." Patience = how many extra study sessions you allow before giving up.' },
+
+  { quiz:'q7', n:6, topic:'Deep Learning',
+    q:'What is batch normalization and what problem does it solve?',
+    a:'Normalizes layer inputs to zero mean and unit variance per mini-batch. Solves internal covariate shift — distribution of layer inputs changing during training.',
+    e:'As training progresses, each layer\'s weights change, which changes what distribution the next layer receives. It\'s like trying to hit a moving target. BatchNorm re-centers and re-scales each layer\'s input each step, keeping the target stable. Allows larger learning rates and dramatically speeds up training.' },
+
+  { quiz:'q7', n:7, topic:'Deep Learning',
+    q:'What is the difference between underfitting and overfitting?',
+    a:'Underfitting: model too simple (high bias), fails on training data. Overfitting: model memorizes training data (high variance), fails to generalize.',
+    e:'Underfitting is like drawing a straight line through a spiral — it misses the shape entirely. Overfitting is like memorizing every practice question word-for-word but failing when any word changes. You want the middle ground: learn the pattern, not the noise.' },
+
+  { quiz:'q7', n:8, topic:'Deep Learning',
+    q:'What is L2 regularization (weight decay) and what does it do?',
+    a:'Adds λ‖w‖² to the loss. Penalizes large weights, encouraging simpler models. Equivalent to multiplying weights by (1−αλ) each step.',
+    e:'Large weights mean the model is making extreme decisions based on specific features. L2 regularization acts like a tax on extreme weights — the model is penalized for being too confident in any one feature, so it spreads attention more evenly. Result: smoother, more generalizable decisions.' },
+
+  { quiz:'q7', n:9, topic:'Deep Learning',
+    q:'Why is tanh often preferred over sigmoid for hidden layers?',
+    a:'tanh output is centered at 0 (range −1 to 1). Zero-centered activations help gradients flow better and avoid the "all positive" gradient issue.',
+    e:'Sigmoid always outputs positive values (0 to 1). When all activations are positive, all gradient updates go the same direction — like a car that can only turn right. You have to zig-zag to go left. tanh centers at 0 so gradients can go both ways — cleaner, faster updates.' },
+
+  { quiz:'q7', n:10, topic:'Deep Learning',
+    q:'What is the difference between stochastic, mini-batch, and batch gradient descent?',
+    a:'SGD: update per single sample (noisy, fast). Mini-batch: update per small batch (balanced). Full batch: update on entire dataset (stable but slow).',
+    e:'Imagine navigating to a destination: SGD = one person giving directions at a time (fast but unreliable, may contradict). Mini-batch = ask a small group of 32 people (averaged, reasonable). Full batch = survey the entire city before each step (accurate but takes forever). Mini-batch is the practical middle ground.' },
+
+  { quiz:'q7', n:11, topic:'Deep Learning',
+    q:'What does it mean for a model to have high bias vs. high variance?',
+    a:'High bias = underfits, strong wrong assumptions. High variance = overfits, too sensitive to training data fluctuations. Want balance.',
+    e:'High bias: "I\'ve already decided the answer before looking at the data." High variance: "I\'ve memorized every quirk of the training data, including typos." The bias-variance tradeoff is about finding a model that\'s flexible enough to learn but stable enough not to memorize noise.' },
+
+  { quiz:'q7', n:12, topic:'Deep Learning',
+    q:'Name three strategies to combat overfitting in deep networks.',
+    a:'1) Dropout (random neuron deactivation). 2) L1/L2 regularization (weight penalty). 3) Early stopping (halt at best val loss). Also: data augmentation, simpler model.',
+    e:'Think of them as three approaches: Dropout forces robustness (no single neuron dependency), regularization forces simplicity (no extreme weights), early stopping forces timely commitment (don\'t over-study). Data augmentation is a bonus: more diverse training data = less memorization.' },
+
+  // ── Quiz 8 — CNNs ─────────────────────────────────────────────────────────
+  { quiz:'q8', n:1, topic:'CNNs',
+    q:'What is convolution in CNNs? How is a feature map computed?',
+    a:'Slide a learnable filter across the input. At each position, compute dot product between filter and input patch → feature map value at that location.',
+    e:'Think of the filter as a stamp. You press it at every position on the image, and the stamp\'s response says "does this pattern exist here?" A horizontal-edge filter lights up wherever there\'s a horizontal edge. Sliding it across the whole image gives you a map of "where did I find this pattern?"' },
+
+  { quiz:'q8', n:2, topic:'CNNs',
+    q:'What is the output size formula after convolution?',
+    a:'Out = ⌊(W − F + 2P) / S⌋ + 1. W=input size, F=filter size, P=padding, S=stride.',
+    e:'Count how many times the filter can land: start at position 1, slide by S each time, stop when the filter would fall off the edge. Example: 6×6 input, 3×3 filter, no padding, stride 1 → (6−3+0)/1+1 = 4. The output is 4×4.' },
+
+  { quiz:'q8', n:3, topic:'CNNs',
+    q:'What is the purpose of padding in CNNs?',
+    a:'"Same" padding (P=(F−1)/2) preserves spatial dimensions. Prevents shrinkage and allows the filter to fully process border pixels.',
+    e:'Without padding, a 3×3 filter can\'t center on the corner pixel — the filter would hang off the edge. Also, the output keeps getting smaller with each layer (6→4→2→0!). Padding adds a border of zeros so the filter can visit every pixel, and "same" padding keeps width/height unchanged through the layer.' },
+
+  { quiz:'q8', n:4, topic:'CNNs',
+    q:'What does max pooling do and why is it used?',
+    a:'Takes maximum value in each pooling window (e.g., 2×2). Reduces spatial size, adds translation invariance, reduces computation.',
+    e:'In a 2×2 region, max pooling asks "was this feature detected anywhere in this zone?" If yes (high value), keep it; if no (all low values), output low. It doesn\'t care exactly where in the zone the feature was — only whether it was there. This makes the network less sensitive to small shifts.' },
+
+  { quiz:'q8', n:5, topic:'CNNs',
+    q:'Why are CNNs better than fully-connected networks for images?',
+    a:'Weight sharing: same filter everywhere → O(F²) not O(W²×output). Local connectivity respects spatial structure. Translation equivariance via convolution.',
+    e:'A dense layer on a 224×224 image connecting to 256 outputs = 224×224×256 ≈ 13 million weights for ONE layer. A 3×3 CNN filter = 9 weights used everywhere. Plus, a dense layer treats pixel (0,0) and pixel (223,223) as completely unrelated — CNNs know they\'re part of the same spatial structure.' },
+
+  { quiz:'q8', n:6, topic:'CNNs',
+    q:'What is a receptive field in a CNN?',
+    a:'The region of the original input that influences a particular neuron. Deeper layers have larger receptive fields.',
+    e:'Layer 1 neuron sees a 3×3 patch. Layer 2 neuron sees a 5×5 patch of the original image (because each of its inputs already saw 3×3 with offsets). By layer 10, a neuron might see the entire image. This is why deep CNNs learn simple local features early (edges) and complex global features later (faces, objects).' },
+
+  { quiz:'q8', n:7, topic:'CNNs',
+    q:'What is stride and how does it affect the output?',
+    a:'Stride S = step size of the filter. Larger stride → smaller output map. Stride 2 roughly halves spatial dimensions.',
+    e:'Stride 1: move the filter one pixel at a time — thorough but slow. Stride 2: jump 2 pixels each step — faster, smaller output. Stride is like skimming a book vs. reading every word. Stride 2 gives natural downsampling without a separate pooling layer.' },
+
+  { quiz:'q8', n:8, topic:'CNNs',
+    q:'What happens in the fully-connected layers at the end of a CNN?',
+    a:'Feature maps are flattened to a 1D vector. Dense layers combine all features globally → map to class scores. Final layer: softmax.',
+    e:'The CNN part is like a feature extractor — it finds "there\'s a whisker here, an eye there, fur texture here." The FC layers are the classifier that says "given all these features combined, this is probably a cat (87%) or a dog (10%)." The CNN extracts; the FC decides.' },
+
+  { quiz:'q8', n:9, topic:'CNNs',
+    q:'What is weight sharing in CNNs?',
+    a:'Same filter weights applied at every spatial position. Reduces parameters from O(W²) to O(F²) and encodes translational equivariance.',
+    e:'The same "vertical edge detector" works whether the edge is on the left or right of the image — you don\'t need a different filter for each location. One filter = one feature detector that works everywhere. This is why a CNN trained on upright cats can still detect a cat even if you shift it slightly.' },
+
+  { quiz:'q8', n:10, topic:'CNNs',
+    q:'What does each channel in a feature map represent?',
+    a:'Each channel = one filter\'s response map — where does this specific feature appear? Multiple channels capture different features at each spatial location.',
+    e:'After 32 filters, you get 32 channels. Channel 1 might be "vertical edges map," Channel 2 "horizontal edges map," Channel 15 "blue blobs map," etc. Each is a full spatial scan for one particular pattern. Deeper layers have channels for more complex patterns (noses, wheels, windows).' },
+
+  // ── Quiz 9 — Generative AI ────────────────────────────────────────────────
+  { quiz:'q9', n:1, topic:'Generative AI',
+    q:'What is an autoencoder and what are its two main components?',
+    a:'Encoder compresses input to a small latent vector z. Decoder reconstructs input from z. Trained to minimize reconstruction error. No labels needed.',
+    e:'It\'s like a very lossy zip file that learns the best compression strategy. Encoder = zipper (compresses). Decoder = unzipper (reconstructs). The trick: the bottleneck forces it to learn what\'s truly important about the data, not just copy it pixel by pixel. Useful for denoising, anomaly detection, feature learning.' },
+
+  { quiz:'q9', n:2, topic:'Generative AI',
+    q:'What is the bottleneck in an autoencoder and why is it important?',
+    a:'The bottleneck is the narrow latent layer (far fewer dimensions than input). Forces the network to find a compressed representation of most important features.',
+    e:'If you try to compress a 28×28 image (784 pixels) into just 32 numbers, you have to throw away most information — and you\'d better keep what matters. Without this constraint, the network just copies the input (identity function). The bottleneck creates the pressure to learn meaningful structure.' },
+
+  { quiz:'q9', n:3, topic:'Generative AI',
+    q:'How does a Variational Autoencoder (VAE) differ from a regular autoencoder?',
+    a:'VAE encodes to a distribution (mean μ and variance σ). Samples z ~ N(μ,σ²) during training. Makes the latent space continuous and structured → can generate new data.',
+    e:'Regular AE: "image X → always maps to point (3.2, −1.7, 5.1)." Fixed point, no randomness, no generation. VAE: "image X → maps to a cloud centered at (3.2, −1.7, 5.1) with a little spread." You can sample from that cloud to get images similar to X but slightly different — actual generation.' },
+
+  { quiz:'q9', n:4, topic:'Generative AI',
+    q:'Describe the GAN framework. What are the generator and discriminator?',
+    a:'Generator G: maps noise z → fake data. Discriminator D: real vs fake classifier. Adversarial training: min_G max_D E[logD(x)] + E[log(1−D(G(z)))].',
+    e:'Classic cat-and-mouse game. The counterfeiter (G) prints fake money trying to fool the detective (D). The detective gets better at spotting fakes, which forces the counterfeiter to get better at faking. After training, the fakes are so good even experts can\'t tell. Neither can win alone — competition drives both to excellence.' },
+
+  { quiz:'q9', n:5, topic:'Generative AI',
+    q:'What is mode collapse in GANs?',
+    a:'Generator produces only a few types of outputs (ignores most of data distribution). Finds a few patterns that fool D and repeats them endlessly.',
+    e:'The counterfeiter figures out one perfect fake $20 bill and just prints the same one over and over. It fools the detective, but only for that one type. In ML: GAN generates only blond women, or only sports cars, even though the training data had thousands of diverse categories. No diversity = mode collapse.' },
+
+  { quiz:'q9', n:6, topic:'Generative AI',
+    q:'What is the forward diffusion process in a diffusion model?',
+    a:'Add Gaussian noise over T timesteps: xₜ = √ᾱₜ x₀ + √(1−ᾱₜ) ε. After T steps, data becomes pure noise. Model learns to reverse each step.',
+    e:'Like slowly erasing a drawing: step 1 adds a tiny smudge, step 2 a little more, ... step 1000 = pure white static. You train a neural network to undo each single smudge step. Generation: start with static, run the undo-er 1000 times. Each step reveals a little more of the image until you have a clean picture.' },
+
+  { quiz:'q9', n:7, topic:'Generative AI',
+    q:'What is a transformer-based language model (LLM) at a high level?',
+    a:'Decoder-only transformer. Takes token sequence, uses masked self-attention to attend to previous tokens, predicts next token via softmax over vocabulary.',
+    e:'Trained on trillions of words with one simple task: "what word comes next?" Do this enough times with a big enough network and something remarkable happens — the model implicitly learns grammar, facts, reasoning, and patterns to predict well. ChatGPT is "just" a very large next-word predictor, run repeatedly.' },
+
+  { quiz:'q9', n:8, topic:'Generative AI',
+    q:'What is the reconstruction loss in an autoencoder?',
+    a:'MSE: L = (1/n) Σ (x̂ᵢ − xᵢ)². VAE adds KL divergence term to regularize the latent distribution toward N(0,1).',
+    e:'Reconstruction loss is literally "how different does the output look from the input?" — pixel by pixel. The VAE\'s extra KL term says "also make sure the latent space blobs don\'t drift too far from a standard bell curve." This keeps the latent space smooth and navigable so you can generate by sampling from it.' },
+
+  { quiz:'q9', n:9, topic:'Generative AI',
+    q:'How does a diffusion model generate new images?',
+    a:'Start from pure Gaussian noise xₜ. Iteratively denoise using learned U-Net (predicts noise at each step). Running T reverse steps yields a clean image.',
+    e:'Think of it as developing a photograph in slow motion. Start with a blank snowy picture. The denoiser says "this probably should have a dog in the corner" and softens the noise there slightly. Repeat 1000 times and a crisp dog emerges. No adversarial game — just supervised regression on noise prediction.' },
+
+  { quiz:'q9', n:10, topic:'Generative AI',
+    q:'What are the main applications of generative AI models?',
+    a:'Image generation (GANs, Diffusion), text generation (LLMs), data augmentation, anomaly detection, drug discovery, style transfer, inpainting.',
+    e:'Autoencoders: find anomalies (reconstruction error is high for weird data). GANs: generate training data, create art. Diffusion: Stable Diffusion, DALL-E, Midjourney. LLMs: chatbots, coding assistants, translation. VAEs: drug molecule design (navigate latent space to find useful molecules).' },
+
+  // ── Quiz 10 — Attention & Transformers ───────────────────────────────────
+  { quiz:'q10', n:1, topic:'Attention',
+    q:'What are Query, Key, and Value in the attention mechanism?',
+    a:'Q = what I am looking for. K = what I have to offer. V = actual content to give. Attention = softmax(QKᵀ/√dₖ)V — weighted sum of values by query-key similarity.',
+    e:'Imagine a library. Q = your search query. K = book titles/tags on the shelf. V = actual book contents. You compare your query to each title (Q·K), the most relevant titles score high, and you get a blended reading of the relevant books (weighted sum of V). Every word does this for every other word simultaneously.' },
+
+  { quiz:'q10', n:2, topic:'Attention',
+    q:'Write the scaled dot-product attention formula and explain the scaling.',
+    a:'Attention(Q,K,V) = softmax(QKᵀ / √dₖ) · V. Dividing by √dₖ prevents dot products from saturating the softmax and causing vanishing gradients.',
+    e:'With high-dimensional vectors (dₖ=512), dot products can grow to 512 or −512 range. Feeding huge numbers into softmax makes it near one-hot (one value near 1, all others near 0). The gradient of softmax then vanishes. Dividing by √dₖ scales them back to a manageable range, keeping gradients healthy.' },
+
+  { quiz:'q10', n:3, topic:'Attention',
+    q:'What is self-attention and how does it differ from cross-attention?',
+    a:'Self-attention: Q,K,V all from the same sequence — each token attends to all others in its own sequence. Cross-attention: Q from decoder, K&V from encoder.',
+    e:'Self-attention: "The word \'it\' in \'The cat fell because it was tired\' — what does \'it\' refer to?" Each word looks at all other words in the SAME sentence. Cross-attention: the decoder (generating translation) looks at the encoder (the source sentence in another language) — bridging two different sequences.' },
+
+  { quiz:'q10', n:4, topic:'Attention',
+    q:'What is multi-head attention? Why use multiple heads?',
+    a:'Run h attention heads in parallel with different learned Q/K/V projections. Concatenate outputs → project. Each head specializes in different relationship types.',
+    e:'One head might track "who is doing what" (subject-verb). Another tracks "what refers to what" (pronoun resolution). Another tracks "what words are close together." With just one head, you can only look for one type of relationship. Multiple heads = multiple perspectives, all combined into a richer understanding.' },
+
+  { quiz:'q10', n:5, topic:'Attention',
+    q:'What is positional encoding and why is it needed?',
+    a:'Added to embeddings to inject sequence position. Attention is permutation-invariant (ignores order). Sinusoidal: PE(pos,2i)=sin(pos/10000^(2i/d)).',
+    e:'"The dog chased the cat" vs "The cat chased the dog" — same words, opposite meaning. Attention alone can\'t tell these apart (it\'s just comparing which words are similar). Positional encoding adds a unique pattern to each position (like numbering seats in a theater) so the model knows word order.' },
+
+  { quiz:'q10', n:6, topic:'Attention',
+    q:'Describe the structure of a Transformer encoder block.',
+    a:'1) Multi-head self-attention. 2) Add & Norm (residual + LayerNorm). 3) Feed-forward network (two linear + ReLU). 4) Add & Norm. Stack N times.',
+    e:'Read all words at once (attention) → combine with original signal so nothing is lost (residual + norm) → think deeply about each position independently (FFN) → combine again (residual + norm). The residual connections are crucial: they give gradients a highway to flow back without vanishing through N stacked blocks.' },
+
+  { quiz:'q10', n:7, topic:'Attention',
+    q:'How does masked self-attention in the transformer decoder work?',
+    a:'Future tokens masked with −∞ before softmax → zero attention weight. Ensures each token only attends to previous tokens (autoregressive).',
+    e:'If you\'re generating word 5, you must not be allowed to peek at words 6, 7, 8 — that\'s cheating. During training, we know all words, so we must artificially hide future ones. Setting attention scores to −∞ → softmax gives them 0% weight → decoder truly can\'t use future context. Enforces left-to-right generation.' },
+
+  { quiz:'q10', n:8, topic:'Attention',
+    q:'What is the difference between BERT and GPT in terms of attention masking?',
+    a:'BERT: bidirectional, no masking — every token attends to all others. For understanding. GPT: causal masking — each token attends only to past. For generation.',
+    e:'BERT reads the whole sentence at once — like a human reading a book with full context. Great for "what is the sentiment of this review?" GPT reads left-to-right, never peeking ahead — like writing a story word by word. Great for "what word comes next?" You can\'t generate text bidirectionally.' },
+
+  { quiz:'q10', n:9, topic:'Attention',
+    q:'What is the computational complexity of self-attention w.r.t. sequence length n?',
+    a:'O(n²·d). The n² comes from computing all pairwise attention scores between n tokens. Makes transformers expensive for very long sequences.',
+    e:'Every token must compare to every other token: "token 1 vs token 2, token 1 vs token 3, ... token n vs token n." That\'s n × n = n² comparisons. Double the sequence length → 4× the computation. That\'s why processing a 10,000-word document is 100× harder than a 1,000-word document.' },
+
+  { quiz:'q10', n:10, topic:'Attention',
+    q:'What is fine-tuning a pre-trained language model?',
+    a:'Take a model pre-trained on large corpus (GPT, BERT). Train on small task-specific dataset with low learning rate. Model adapts pre-learned representations to the new task.',
+    e:'Pre-training teaches the model about language from 1 billion sentences. Fine-tuning says "now specifically learn medical terminology / legal contracts / customer support tone" using just 10,000 examples. Like hiring an expert linguist (pre-trained) and giving them a 2-week specific training course — far better than training someone from zero.' },
+];
+
+// State
+let scores = {};
+let currentFilter = 'all';
+let cardOrder = QUESTIONS.map((_,i)=>i);
+
+function buildGrid() {
+  const grid = document.getElementById('quizGrid');
+  grid.innerHTML = '';
+  cardOrder.forEach(idx => {
+    const q = QUESTIONS[idx];
+    const div = document.createElement('div');
+    div.className = `qcard ${q.quiz}`;
+    div.dataset.idx = idx;
+    div.tabIndex = 0;
+    if (scores[idx] === 'correct') div.classList.add('correct');
+    if (scores[idx] === 'wrong') div.classList.add('wrong');
+    if (currentFilter !== 'all' && q.quiz !== currentFilter) div.classList.add('hidden');
+
+    const statusText = scores[idx]==='correct' ? 'Correct ✓' : scores[idx]==='wrong' ? 'Wrong ✗' : 'Click to flip for answer';
+    const dotClass = scores[idx]==='correct' ? 'dot-correct' : scores[idx]==='wrong' ? 'dot-wrong' : 'dot-none';
+
+    div.innerHTML = `
+      <div class="qcard-inner">
+        <div class="qcard-front">
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+            <span class="q-badge badge-${q.quiz}">Quiz ${q.quiz.slice(1)} · ${q.topic}</span>
+            <span class="q-num">Q${q.n}</span>
+          </div>
+          <div class="q-text">${q.q}</div>
+          <div class="q-hint">
+            <span class="result-dot ${dotClass}"></span>
+            <span>${statusText}</span>
+          </div>
+        </div>
+        <div class="qcard-back">
+          <div class="back-scroll">
+            <div class="a-label">Answer</div>
+            <div class="a-text">${q.a}</div>
+            <div class="e-label">Plain-English Explanation</div>
+            <div class="e-text">${q.e}</div>
+          </div>
+          <div class="mark-row">
+            <button class="mark-btn mark-correct" onclick="markCard(event,${idx},'correct')">✓ Got it</button>
+            <button class="mark-btn mark-wrong" onclick="markCard(event,${idx},'wrong')">✗ Missed</button>
+          </div>
+        </div>
+      </div>`;
+    div.addEventListener('click', function(e) {
+      if (e.target.classList.contains('mark-btn')) return;
+      this.classList.toggle('flipped');
+    });
+    div.addEventListener('keydown', function(e) {
+      if (e.code === 'Space') { e.preventDefault(); this.classList.toggle('flipped'); }
+      if (e.code === 'KeyG') markCard(e, idx, 'correct');
+      if (e.code === 'KeyB') markCard(e, idx, 'wrong');
+    });
+    grid.appendChild(div);
+  });
+  updateScore();
+}
+
+function markCard(e, idx, result) {
+  e.stopPropagation();
+  scores[idx] = result;
+  const card = document.querySelector(`.qcard[data-idx="${idx}"]`);
+  if (card) {
+    card.classList.remove('correct','wrong');
+    card.classList.add(result);
+    const dot = card.querySelector('.result-dot');
+    const hint = card.querySelector('.q-hint span:last-child');
+    if (dot) dot.className = `result-dot dot-${result}`;
+    if (hint) hint.textContent = result==='correct' ? 'Correct ✓' : 'Wrong ✗';
+  }
+  updateScore();
+}
+
+function updateScore() {
+  const visible = cardOrder.filter(i => currentFilter==='all' || QUESTIONS[i].quiz===currentFilter);
+  const correct = visible.filter(i => scores[i]==='correct').length;
+  const wrong = visible.filter(i => scores[i]==='wrong').length;
+  const answered = correct + wrong;
+
+  document.getElementById('scoreCorrect').textContent = correct;
+  document.getElementById('scoreWrong').textContent = wrong;
+  document.getElementById('scoreTotal').textContent = answered;
+  document.getElementById('progressFill').style.width = visible.length ? (answered/visible.length*100)+'%' : '0%';
+  document.getElementById('progressText').textContent = `${answered} / ${visible.length} answered`;
+
+  const dg = document.getElementById('dotGrid');
+  dg.innerHTML = '';
+  visible.forEach(i => {
+    const d = document.createElement('span');
+    d.className = `result-dot ${scores[i]==='correct'?'dot-correct':scores[i]==='wrong'?'dot-wrong':'dot-none'}`;
+    d.title = `${QUESTIONS[i].topic} Q${QUESTIONS[i].n}`;
+    dg.appendChild(d);
+  });
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.qcard').forEach(card => {
+    const q = QUESTIONS[+card.dataset.idx];
+    if (f==='all' || q.quiz===f) card.classList.remove('hidden');
+    else card.classList.add('hidden');
+  });
+  updateScore();
+}
+
+function shuffleCards() {
+  for (let i = cardOrder.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [cardOrder[i], cardOrder[j]] = [cardOrder[j], cardOrder[i]];
+  }
+  buildGrid();
+}
+
+function resetAll() {
+  if (!confirm('Reset all scores?')) return;
+  scores = {};
+  buildGrid();
+}
+
+buildGrid();
+</script>
+</body>
+</html>

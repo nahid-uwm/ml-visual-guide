@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generative AI — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+<style>
+.ae-diagram{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;padding:1.5rem 0;}
+.ae-block{border-radius:10px;padding:12px 16px;text-align:center;min-width:90px;font-size:0.82rem;font-weight:700;border:2px solid;}
+.ae-block.input{border-color:var(--primary);background:rgba(0,212,255,0.1);color:var(--primary);}
+.ae-block.encoder{border-color:var(--secondary);background:rgba(168,85,247,0.1);color:var(--secondary);}
+.ae-block.bottleneck{border-color:var(--accent);background:rgba(245,158,11,0.15);color:var(--accent);border-style:dashed;}
+.ae-block.decoder{border-color:var(--secondary);background:rgba(168,85,247,0.1);color:var(--secondary);}
+.ae-block.output{border-color:var(--green);background:rgba(16,185,129,0.1);color:var(--green);}
+.ae-arrow{color:var(--text3);font-size:1.4rem;}
+.gan-anim-wrap{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;}
+.gan-anim-box{border-radius:12px;padding:14px;text-align:center;border:2px solid;min-width:120px;}
+.gan-anim-box.noise{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.03);}
+.gan-anim-box.gen{border-color:var(--secondary);background:rgba(168,85,247,0.1);}
+.gan-anim-box.disc{border-color:var(--primary);background:rgba(0,212,255,0.1);}
+.gan-anim-box.real{border-color:var(--green);background:rgba(16,185,129,0.1);}
+.gan-label-top{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);margin-bottom:6px;}
+.gan-main-label{font-size:0.9rem;font-weight:800;}
+.gan-score-disp{font-size:1.6rem;font-weight:900;margin-top:6px;}
+.diffusion-step{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.diffusion-canvas{width:64px;height:64px;border-radius:8px;border:1px solid var(--border);}
+.diffusion-label{font-size:0.68rem;color:var(--text3);text-align:center;}
+.diffusion-row{display:flex;align-items:center;gap:8px;overflow-x:auto;padding:1rem 0;}
+.diff-arrow{color:var(--text3);font-size:1rem;flex-shrink:0;}
+.latent-demo{position:relative;width:100%;height:200px;border-radius:12px;border:1px solid var(--border);overflow:hidden;cursor:crosshair;}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo"><div class="dot"></div><a href="../index.html" style="color:white;font-weight:800;">ML Visual Guide</a></div>
+  <div class="nav-links">
+    <a href="neural-networks.html">Neural Nets</a><a href="deep-learning.html">Deep Learning</a>
+    <a href="cnn.html">CNNs</a><a href="generative-ai.html" class="active">Generative AI</a>
+    <a href="attention.html">Attention</a><a href="reinforcement.html">RL</a>
+    <a href="unsupervised.html">Unsupervised</a><a href="quiz.html">Quiz</a>
+  </div>
+  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="neural-networks.html">🧠 Neural Nets</a><a href="deep-learning.html">🔥 Deep Learning</a>
+  <a href="cnn.html">🖼️ CNNs</a><a href="generative-ai.html">✨ Generative AI</a>
+  <a href="attention.html">👁️ Attention</a><a href="reinforcement.html">🎮 RL</a>
+  <a href="unsupervised.html">🔍 Unsupervised</a><a href="quiz.html">📝 Quiz</a>
+</div>
+
+<div class="page-header">
+  <canvas id="headerBg" class="hero-canvas" style="opacity:0.4;"></canvas>
+  <div style="position:relative;z-index:1;">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span>/</span>Generative AI</div>
+    <span class="topic-icon">✨</span>
+    <h1>Generative AI</h1>
+    <p>Autoencoders, GANs, diffusion models — how machines learn to create.</p>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- 1. Autoencoders -->
+  <div class="section-header">
+    <h4>Part 1</h4>
+    <h2>Autoencoders</h2>
+    <p class="section-subtitle">Learn a compressed representation of the input by training a network to reconstruct its own input.</p>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>Architecture</h3>
+        <div class="ae-diagram">
+          <div class="ae-block input">Input<br><span style="font-size:0.7rem;font-weight:400;color:var(--text2);">e.g. 784 dims</span></div>
+          <div class="ae-arrow">→</div>
+          <div class="ae-block encoder">Encoder<br><span style="font-size:0.7rem;font-weight:400;color:var(--text2);">Compress</span></div>
+          <div class="ae-arrow">→</div>
+          <div class="ae-block bottleneck">Latent z<br><span style="font-size:0.7rem;font-weight:400;color:var(--text2);">e.g. 32 dims</span></div>
+          <div class="ae-arrow">→</div>
+          <div class="ae-block decoder">Decoder<br><span style="font-size:0.7rem;font-weight:400;color:var(--text2);">Reconstruct</span></div>
+          <div class="ae-arrow">→</div>
+          <div class="ae-block output">Output<br><span style="font-size:0.7rem;font-weight:400;color:var(--text2);">≈ Input</span></div>
+        </div>
+        <div class="concept-box amber" style="margin-top:0.5rem;">
+          <p><strong>Key:</strong> The new (compressed) representation is learned in the <em>bottleneck</em> — the middle hidden/latent layer. The output layer reconstructs the original input — it does NOT produce the new representation.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Training Objective</h3>
+        <div class="formula">
+          <div class="formula-label">Reconstruction Loss</div>
+          \[\mathcal{L} = \|x - \hat{x}\|^2 = \sum_i (x_i - \hat{x}_i)^2\]
+        </div>
+        <p style="margin-top:0.8rem;font-size:0.88rem;">Minimize the difference between input x and reconstructed output x̂. Forces the bottleneck to learn the most important features.</p>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Applications</h3>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.88rem;">
+          <div>🗜️ <strong>Compression</strong> — reduce data dimensionality</div>
+          <div>🔍 <strong>Anomaly detection</strong> — high reconstruction error = anomaly</div>
+          <div>✨ <strong>Denoising</strong> — train with noisy input, clean target</div>
+          <div>🎨 <strong>Generation</strong> — sample from latent space (VAE)</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Latent Space Explorer</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:1rem;">An autoencoder maps high-dimensional data to a low-dimensional latent space z. Nearby points in latent space → similar outputs. Click to explore.</p>
+      <canvas id="latentCanvas" width="400" height="200" style="width:100%;border-radius:10px;cursor:crosshair;border:1px solid var(--border);"></canvas>
+      <div id="latentInfo" class="output-display" style="margin-top:0.8rem;"></div>
+      <div class="concept-box" style="margin-top:1rem;">
+        <p><strong>Latent space interpolation:</strong> GANs map a continuous latent space to images. If you have 5 latent vectors corresponding to 5 images, you can average them and decode the average vector to produce a "blended" image.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 2. GANs -->
+  <div class="section-header">
+    <h4>Part 2</h4>
+    <h2>Generative Adversarial Networks (GANs)</h2>
+    <p class="section-subtitle">Two networks compete — a Generator trying to fool the Discriminator, a Discriminator trying to catch fakes.</p>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>The Adversarial Game</h3>
+        <div style="margin:1rem 0;">
+          <div style="display:flex;flex-direction:column;gap:0.8rem;">
+            <div style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3);border-radius:10px;padding:1rem;">
+              <strong style="color:var(--secondary);">🎨 Generator (G)</strong>
+              <p style="font-size:0.88rem;margin-top:0.4rem;">Takes random noise z → generates fake data (e.g. fake images). Goal: fool the discriminator into thinking its output is real.</p>
+            </div>
+            <div style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);border-radius:10px;padding:1rem;">
+              <strong style="color:var(--primary);">🔍 Discriminator (D)</strong>
+              <p style="font-size:0.88rem;margin-top:0.4rem;">Takes real or fake data → outputs probability of being real. Goal: correctly classify real vs. fake.</p>
+            </div>
+          </div>
+        </div>
+        <div class="concept-box">
+          <p><strong>Minimax game:</strong> Generator improves to fool Discriminator; Discriminator improves to detect fakes. Competition drives both to improve simultaneously.</p>
+        </div>
+        <div class="formula" style="margin-top:1rem;">
+          <div class="formula-label">GAN Objective (minimax)</div>
+          \[\min_G \max_D\; \mathbb{E}[\log D(x)] + \mathbb{E}[\log(1-D(G(z)))]\]
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Training the Generator</h3>
+        <div class="concept-box green">
+          <p>The generator's goal: fool the discriminator into thinking its fake images are real. So when training the generator, the target label used is <strong>"Real"</strong>.</p>
+        </div>
+        <div class="concept-box red" style="margin-top:0.8rem;">
+          <p><strong>Mode collapse:</strong> Generator produces limited variety, ignoring parts of the data distribution. A well-known challenge in GAN training (NOT diffusion models).</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">GAN Training Simulator</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:1rem;">Watch generator and discriminator improve over training steps. Scores should converge toward 0.5 (discriminator can't tell real from fake).</p>
+      <div class="gan-anim-wrap">
+        <div class="gan-anim-box noise">
+          <div class="gan-label-top">Input</div>
+          <div class="gan-main-label">🎲 Noise z</div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-top:4px;">Random vector</div>
+        </div>
+        <div style="color:var(--text3);font-size:1.2rem;">→</div>
+        <div class="gan-anim-box gen">
+          <div class="gan-label-top">Generator</div>
+          <div class="gan-main-label" style="color:var(--secondary);">G(z)</div>
+          <div class="gan-score-disp" id="genQuality" style="color:var(--secondary);">0%</div>
+          <div style="font-size:0.65rem;color:var(--text3);">quality</div>
+        </div>
+        <div style="color:var(--text3);font-size:1.2rem;">→</div>
+        <div class="gan-anim-box disc">
+          <div class="gan-label-top">Discriminator</div>
+          <div class="gan-main-label" style="color:var(--primary);">D(x)</div>
+          <div class="gan-score-disp" id="discAccuracy" style="color:var(--primary);">100%</div>
+          <div style="font-size:0.65rem;color:var(--text3);">accuracy</div>
+        </div>
+        <div style="color:var(--text3);font-size:1.2rem;">vs</div>
+        <div class="gan-anim-box real">
+          <div class="gan-label-top">Real Data</div>
+          <div class="gan-main-label" style="color:var(--green);">x ~ p(data)</div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-top:4px;">Ground truth</div>
+        </div>
+      </div>
+      <canvas id="ganCanvas" width="500" height="160" style="width:100%;border-radius:8px;margin-top:1rem;"></canvas>
+      <div style="display:flex;gap:0.8rem;margin-top:0.8rem;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-primary" id="ganStartBtn">▶ Start Training</button>
+        <button class="btn btn-sm btn-outline" id="ganResetBtn">↺ Reset</button>
+      </div>
+      <div id="ganInfo" class="output-display" style="margin-top:0.8rem;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3. Diffusion Models -->
+  <div class="section-header">
+    <h4>Part 3</h4>
+    <h2>Diffusion Models</h2>
+    <p class="section-subtitle">Add noise gradually (forward process), then learn to reverse it (denoising). More stable than GANs, but slower to generate.</p>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:1fr 1fr;">
+    <div>
+      <div class="card">
+        <h3>How Diffusion Works</h3>
+        <div style="display:flex;flex-direction:column;gap:0.8rem;margin-top:0.5rem;">
+          <div style="background:rgba(0,212,255,0.1);border-radius:8px;padding:0.8rem;">
+            <strong style="color:var(--primary);">Forward Process (q)</strong>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Gradually add Gaussian noise to data over T steps. By step T, data is pure noise.</p>
+          </div>
+          <div style="background:rgba(168,85,247,0.1);border-radius:8px;padding:0.8rem;">
+            <strong style="color:var(--secondary);">Reverse Process (p)</strong>
+            <p style="font-size:0.85rem;margin-top:0.3rem;">Train a neural network to denoise — predict and remove the noise added at each step. Start from noise → iteratively denoise → get clean image.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Diffusion vs. GAN</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Property</th><th>GAN</th><th>Diffusion</th></tr></thead>
+            <tbody>
+              <tr><td>Generation speed</td><td><strong style="color:var(--green);">Fast</strong> (single forward pass)</td><td><strong style="color:var(--red);">Slow</strong> (many denoising steps)</td></tr>
+              <tr><td>Training stability</td><td>Unstable (mode collapse risk)</td><td><strong style="color:var(--green);">More stable</strong></td></tr>
+              <tr><td>Mode collapse</td><td>Common problem</td><td><strong style="color:var(--green);">Less susceptible</strong></td></tr>
+              <tr><td>Image quality</td><td>High</td><td>Very high (SOTA)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="concept-box red" style="margin-top:1rem;">
+          <p><strong>Quiz answer:</strong> Diffusion models are <em>slower</em> at generating images than GANs — they require many iterative denoising steps. GANs generate in a single forward pass.</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Diffusion Forward Process (Noise Addition)</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:0.8rem;">Visualizing how a clean image becomes pure noise across T timesteps.</p>
+      <div class="diffusion-row" id="diffusionRow"></div>
+      <div style="margin-top:0.8rem;">
+        <div class="control-row">
+          <span class="control-label" style="font-size:0.78rem;">Steps T</span>
+          <input type="range" id="diffSteps" min="3" max="8" step="1" value="6">
+          <span class="control-value" id="diffStepsV">6</span>
+        </div>
+      </div>
+      <div class="concept-box" style="margin-top:1rem;">
+        <p><strong>Reverse:</strong> A trained neural network learns to undo each step — predict what was added and subtract it. Starting from pure noise (step T), it iteratively denoises to produce a clean sample.</p>
+      </div>
+      <div class="card" style="margin-top:1rem;background:rgba(0,0,0,0.3);">
+        <h4 style="margin-bottom:0.5rem;">Self-Supervised Training for Colorization</h4>
+        <p style="font-size:0.85rem;">No manual labeling required. Existing color photos are trivially converted to grayscale; the original color image serves as the ground truth target. This is a form of self-supervised learning.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 4. Other CNN Tasks -->
+  <div class="section-header">
+    <h4>Part 4</h4>
+    <h2>Advanced CNN Applications</h2>
+  </div>
+  <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));">
+    <div class="card">
+      <h3 style="color:var(--primary);">Image Segmentation</h3>
+      <p>Output is an image of the <em>same shape</em> as the input, where each pixel is labeled (foreground/background or class).</p>
+      <div class="concept-box" style="margin-top:0.8rem;"><p><strong>Architecture:</strong> Encoder (compress) → Decoder (upsample). Skip connections preserve spatial detail (U-Net).</p></div>
+      <div class="badge badge-blue" style="margin-top:0.8rem;">Used in autonomous driving</div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--secondary);">Adversarial Images</h3>
+      <p>Tiny, often imperceptible pixel perturbations crafted to make a CNN misclassify with high confidence.</p>
+      <div class="concept-box red" style="margin-top:0.8rem;"><p>Demonstrates that CNNs <em>do not closely model</em> the human visual system — they rely on patterns humans don't notice.</p></div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--green);">Transpose Convolution</h3>
+      <p>The up-sampling counterpart of convolution. Used in decoders to grow feature maps back to full image size.</p>
+      <div class="concept-box green" style="margin-top:0.8rem;"><p>Also called "deconvolution." Used in encoder-decoder architectures like U-Net and image generation models.</p></div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--accent);">Object Detection</h3>
+      <p>Locate and classify multiple objects in an image with bounding boxes (rectangles, not exact contours).</p>
+      <div class="concept-box amber" style="margin-top:0.8rem;"><p><strong>YOLO</strong> (You Only Look Once): single-pass object detection. Fast, open-source, state-of-the-art.</p></div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="divider"></div>
+  <div class="section-header"><h4>Quiz 9 — Practice</h4><h2>Generative AI Quiz Questions</h2></div>
+  <div class="quiz-grid" id="genQuiz"></div>
+
+</div>
+
+<footer class="footer">
+  <p>← <a href="cnn.html">CNNs</a> · <a href="attention.html">Attention & Transformers →</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/contrib/auto-render.min.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/three-bg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderMathInElement(document.body, { delimiters: [{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}] });
+  initTopicHeaderBg('headerBg', 0xa855f7, 0xf59e0b);
+
+  // ── Latent Space Canvas ──
+  const latCanvas = document.getElementById('latentCanvas');
+  const latCtx = latCanvas.getContext('2d');
+  const LW = latCanvas.width, LH = latCanvas.height;
+
+  // Generate random "latent points" (clusters)
+  const clusters = [
+    {cx:80, cy:60, r:35, color:'#00d4ff', label:'Cats'},
+    {cx:200, cy:120, r:40, color:'#a855f7', label:'Dogs'},
+    {cx:320, cy:70, r:30, color:'#10b981', label:'Cars'},
+    {cx:140, cy:160, r:28, color:'#f59e0b', label:'Faces'},
+    {cx:280, cy:160, r:32, color:'#ef4444', label:'Buildings'},
+  ];
+  const points = [];
+  clusters.forEach(cl => {
+    for (let i=0; i<20; i++) {
+      const angle = Math.random()*Math.PI*2, dist = Math.random()*cl.r;
+      points.push({ x: cl.cx+Math.cos(angle)*dist, y: cl.cy+Math.sin(angle)*dist, color: cl.color+'aa' });
+    }
+  });
+
+  let mousePos = null;
+  function drawLatent() {
+    latCtx.fillStyle = '#0d1220'; latCtx.fillRect(0,0,LW,LH);
+    // Grid
+    latCtx.strokeStyle = 'rgba(255,255,255,0.04)'; latCtx.lineWidth = 1;
+    for(let x=0;x<LW;x+=40){latCtx.beginPath();latCtx.moveTo(x,0);latCtx.lineTo(x,LH);latCtx.stroke();}
+    for(let y=0;y<LH;y+=40){latCtx.beginPath();latCtx.moveTo(0,y);latCtx.lineTo(LW,y);latCtx.stroke();}
+    // Cluster regions
+    clusters.forEach(cl => {
+      const grad = latCtx.createRadialGradient(cl.cx,cl.cy,0,cl.cx,cl.cy,cl.r*1.5);
+      grad.addColorStop(0, cl.color+'22'); grad.addColorStop(1, 'transparent');
+      latCtx.fillStyle = grad; latCtx.beginPath(); latCtx.arc(cl.cx,cl.cy,cl.r*1.5,0,Math.PI*2); latCtx.fill();
+    });
+    // Points
+    points.forEach(p => {
+      latCtx.beginPath(); latCtx.arc(p.x,p.y,3,0,Math.PI*2);
+      latCtx.fillStyle = p.color; latCtx.fill();
+    });
+    // Labels
+    clusters.forEach(cl => {
+      latCtx.fillStyle = cl.color; latCtx.font = 'bold 10px monospace'; latCtx.textAlign = 'center';
+      latCtx.fillText(cl.label, cl.cx, cl.cy-cl.r-6);
+    });
+    // Mouse crosshair & nearest cluster
+    if (mousePos) {
+      latCtx.strokeStyle = 'rgba(255,255,255,0.4)'; latCtx.lineWidth = 1; latCtx.setLineDash([4,4]);
+      latCtx.beginPath(); latCtx.moveTo(mousePos.x,0); latCtx.lineTo(mousePos.x,LH); latCtx.stroke();
+      latCtx.beginPath(); latCtx.moveTo(0,mousePos.y); latCtx.lineTo(LW,mousePos.y); latCtx.stroke();
+      latCtx.setLineDash([]);
+      const nearest = clusters.reduce((best,cl) => {
+        const d = Math.hypot(cl.cx-mousePos.x, cl.cy-mousePos.y);
+        return d < best.d ? {cl, d} : best;
+      }, {d:Infinity});
+      latCtx.strokeStyle = nearest.cl.color; latCtx.lineWidth = 1.5;
+      latCtx.beginPath(); latCtx.moveTo(mousePos.x,mousePos.y); latCtx.lineTo(nearest.cl.cx,nearest.cl.cy); latCtx.stroke();
+      document.getElementById('latentInfo').innerHTML = `<span class="label">z = (${mousePos.x.toFixed(0)}, ${mousePos.y.toFixed(0)}) in latent space</span><br><span class="value" style="color:${nearest.cl.color}">Nearest cluster: ${nearest.cl.label}</span><br><span class="label">Distance: ${nearest.d.toFixed(1)} units</span>`;
+    }
+  }
+  latCanvas.addEventListener('mousemove', e => { const r=latCanvas.getBoundingClientRect(); mousePos={x:(e.clientX-r.left)*(LW/r.width),y:(e.clientY-r.top)*(LH/r.height)}; drawLatent(); });
+  latCanvas.addEventListener('mouseleave', () => { mousePos=null; drawLatent(); document.getElementById('latentInfo').innerHTML='<span class="label">Hover over the latent space to explore</span>'; });
+  document.getElementById('latentInfo').innerHTML = '<span class="label">Hover over the latent space to explore</span>';
+  drawLatent();
+
+  // ── GAN Simulator ──
+  let ganStep = 0, ganRunning = false, ganTimer = null;
+  const ganHistory = { gen:[], disc:[] };
+  function ganReset() {
+    ganStep=0; ganRunning=false; ganHistory.gen=[]; ganHistory.disc=[];
+    clearInterval(ganTimer);
+    document.getElementById('genQuality').textContent = '0%';
+    document.getElementById('discAccuracy').textContent = '100%';
+    document.getElementById('ganStartBtn').textContent = '▶ Start Training';
+    drawGanChart();
+  }
+  function ganTick() {
+    ganStep++;
+    const maxSteps = 50;
+    // Generator quality improves (logistic curve)
+    const t = ganStep/maxSteps;
+    const gq = 1/(1+Math.exp(-10*(t-0.5)));
+    // Discriminator accuracy starts high, drops toward 0.5 as generator improves
+    const da = 1 - 0.5*gq;
+    ganHistory.gen.push(gq); ganHistory.disc.push(da);
+    document.getElementById('genQuality').textContent = (gq*100).toFixed(0)+'%';
+    document.getElementById('discAccuracy').textContent = (da*100).toFixed(0)+'%';
+    document.getElementById('ganInfo').innerHTML = `<span class="label">Step ${ganStep}/${maxSteps} | </span><span class="value" style="color:var(--secondary)">Gen quality: ${(gq*100).toFixed(1)}%</span><span class="label"> | </span><span class="value" style="color:var(--primary)">Disc accuracy: ${(da*100).toFixed(1)}%</span>`;
+    drawGanChart();
+    if (ganStep >= maxSteps) { clearInterval(ganTimer); ganRunning=false; document.getElementById('ganStartBtn').textContent='▶ Start Training'; document.getElementById('ganInfo').innerHTML += '<br><span class="label">Training complete! Discriminator converged to ~50% (cannot distinguish real from fake).</span>'; }
+  }
+  function drawGanChart() {
+    const canvas = document.getElementById('ganCanvas');
+    const ctx = canvas.getContext('2d');
+    const W=canvas.width, H=canvas.height;
+    ctx.fillStyle='#0d1220'; ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=1;
+    for(let i=1;i<5;i++){ctx.beginPath();ctx.moveTo(0,H*i/5);ctx.lineTo(W,H*i/5);ctx.stroke();}
+    // 50% line
+    ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(0,H*0.5); ctx.lineTo(W,H*0.5); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font='9px monospace'; ctx.textAlign='right';
+    ctx.fillText('50%',W-4,H*0.5-4);
+    if (!ganHistory.gen.length) {
+      ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font='12px monospace'; ctx.textAlign='center';
+      ctx.fillText('Press Start Training to begin',W/2,H/2); return;
+    }
+    const n=ganHistory.gen.length;
+    const px=i=>(i/(49))*W;
+    const py=v=>H-(v*H*0.9+H*0.05);
+    // Gen quality
+    ctx.strokeStyle='#a855f7'; ctx.lineWidth=2; ctx.shadowColor='#a855f7'; ctx.shadowBlur=6;
+    ctx.beginPath();
+    ganHistory.gen.forEach((v,i)=>i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v)));
+    ctx.stroke();
+    // Disc accuracy
+    ctx.strokeStyle='#00d4ff'; ctx.lineWidth=2; ctx.shadowColor='#00d4ff';
+    ctx.beginPath();
+    ganHistory.disc.forEach((v,i)=>i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v)));
+    ctx.stroke();
+    ctx.shadowBlur=0;
+    // Legend
+    ctx.font='9px monospace'; ctx.fillStyle='#a855f7'; ctx.textAlign='left'; ctx.fillText('— Generator quality',8,H-4);
+    ctx.fillStyle='#00d4ff'; ctx.fillText('— Discriminator accuracy',160,H-4);
+  }
+  document.getElementById('ganStartBtn').addEventListener('click',()=>{
+    if(ganRunning){clearInterval(ganTimer);ganRunning=false;document.getElementById('ganStartBtn').textContent='▶ Start Training';return;}
+    ganRunning=true; document.getElementById('ganStartBtn').textContent='⏹ Stop';
+    ganTimer=setInterval(ganTick,120);
+  });
+  document.getElementById('ganResetBtn').addEventListener('click',ganReset);
+  drawGanChart();
+
+  // ── Diffusion Steps ──
+  function drawDiffusion() {
+    const steps = +document.getElementById('diffSteps').value;
+    document.getElementById('diffStepsV').textContent = steps;
+    const row = document.getElementById('diffusionRow'); row.innerHTML='';
+    for(let t=0; t<=steps; t++) {
+      const noiseLevel = t/steps;
+      const wrap = document.createElement('div'); wrap.className='diffusion-step';
+      const canvas = document.createElement('canvas'); canvas.width=64; canvas.height=64; canvas.className='diffusion-canvas';
+      const ctx = canvas.getContext('2d');
+      // Draw "image" with increasing noise
+      ctx.fillStyle='#0d1220'; ctx.fillRect(0,0,64,64);
+      // Base pattern (simple gradient square)
+      if(noiseLevel < 0.99) {
+        const alpha = 1-noiseLevel;
+        ctx.globalAlpha=alpha;
+        // Draw a simple face-like pattern
+        ctx.fillStyle='#a855f7'; ctx.beginPath(); ctx.arc(32,32,20,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#00d4ff'; ctx.beginPath(); ctx.arc(25,28,4,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(39,28,4,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#10b981'; ctx.beginPath(); ctx.arc(32,38,6,0,Math.PI); ctx.fill();
+        ctx.globalAlpha=1;
+      }
+      // Add noise overlay
+      if(noiseLevel > 0) {
+        const imgData = ctx.getImageData(0,0,64,64);
+        for(let i=0;i<imgData.data.length;i+=4){
+          const n=(Math.random()-0.5)*255*noiseLevel*2;
+          imgData.data[i]=Math.max(0,Math.min(255,imgData.data[i]+n));
+          imgData.data[i+1]=Math.max(0,Math.min(255,imgData.data[i+1]+n));
+          imgData.data[i+2]=Math.max(0,Math.min(255,imgData.data[i+2]+n));
+        }
+        ctx.putImageData(imgData,0,0);
+      }
+      const label = document.createElement('div'); label.className='diffusion-label';
+      label.textContent = t===0?'Clean x₀':t===steps?'Noise xT':`t=${t}`;
+      wrap.appendChild(canvas); wrap.appendChild(label);
+      row.appendChild(wrap);
+      if(t<steps){const arr=document.createElement('div');arr.className='diff-arrow';arr.textContent='→';row.appendChild(arr);}
+    }
+  }
+  document.getElementById('diffSteps').addEventListener('input',drawDiffusion);
+  drawDiffusion();
+
+  // ── Quiz ──
+  const questions=[
+    {q:"An auto-encoder learns a new representation of the input in its output layer.", a:"False.", exp:"The new (compressed) representation is learned in the bottleneck — the middle hidden/latent layer. The output layer simply tries to reconstruct the original input, not produce a new representation."},
+    {q:"What is NOT true about diffusion models?", a:"They are faster at generating images than GANs.", exp:"Diffusion models are actually slower at inference than GANs. They require many iterative denoising steps, whereas GANs generate in a single forward pass. However, diffusion models are easier to train and less prone to mode collapse."},
+    {q:"What is used as the target while training the generator of a GAN?", a:"\"Real.\"", exp:"The generator's goal is to fool the discriminator into thinking its fake images are real. So when training the generator, the target label used is 'real'."},
+    {q:"Transfer learning is useful when you have:", a:"A lot of data available for a general task and very little data available for a specific task.", exp:"You pre-train a model on a large general dataset (e.g. ImageNet), which learns rich general features. You then fine-tune on your small specific dataset."},
+    {q:"Output of image segmentation is:", a:"An image.", exp:"Segmentation outputs a full image where each pixel is assigned a class label (shown as a color-coded mask). Different from classification (single label) or detection (bounding boxes)."},
+    {q:"One can automatically create training data for colorization by:", a:"Converting colored images into grayscale and giving grayscale as input and colored images as targets.", exp:"No manual labeling required. Existing color photos are trivially converted to grayscale; the original color image serves as the ground truth target. This is self-supervised learning."},
+    {q:"Mode collapse is a challenge in training diffusion models.", a:"False.", exp:"Mode collapse — where a generator produces limited variety, ignoring parts of the data distribution — is a well-known challenge in GAN training, not diffusion models."},
+    {q:"During GAN training:", a:"The generator and the discriminator improve each other by competing against each other.", exp:"The adversarial (minimax) game: the generator tries to produce more convincing fakes, and the discriminator tries to detect them. This competition drives both to improve simultaneously."},
+    {q:"Given 5 images of dogs generated using a GAN, it is possible to generate an image of a dog which is the average of those 5 images.", a:"True.", exp:"GANs map a continuous latent space to images. If you have the 5 latent vectors corresponding to those images, you can average them and decode the average vector to produce a 'blended' dog image."},
+    {q:"Data augmentation leads to:", a:"More robust learning.", exp:"Training on augmented data (rotations, flips, crops, color jitter) exposes the model to more variation, making it less sensitive to those transformations and improving generalization to unseen data."},
+  ];
+  const container=document.getElementById('genQuiz');
+  questions.forEach((q,i)=>{
+    const card=document.createElement('div');card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-card-inner"><div class="quiz-front"><div><div class="quiz-qnum">Q${i+1} — Generative AI</div><div class="quiz-q">${q.q}</div></div><div class="quiz-hint">👆 Click to reveal</div></div><div class="quiz-back"><div><div class="quiz-answer-label">✓ Answer</div><div class="quiz-answer">${q.a}</div></div><div class="quiz-explanation">${q.exp}</div></div></div>`;
+    card.addEventListener('click',()=>card.classList.toggle('flipped'));
+    container.appendChild(card);
+  });
+
+  const h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');
+  if(h)h.addEventListener('click',()=>m.classList.toggle('open'));
+});
+</script>
+</body>
+</html>

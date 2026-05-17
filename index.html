@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML Visual Guide — Interactive Machine Learning</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+<style>
+.hero { min-height: 100vh; background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,212,255,0.06), transparent); }
+.topics-section { padding: 4rem 1.5rem; max-width: 1200px; margin: 0 auto; }
+.topic-card[data-c="blue"] { --c1: rgba(0,212,255,0.1); }
+.topic-card[data-c="purple"] { --c1: rgba(168,85,247,0.1); }
+.topic-card[data-c="green"] { --c1: rgba(16,185,129,0.1); }
+.topic-card[data-c="amber"] { --c1: rgba(245,158,11,0.1); }
+.topic-card[data-c="red"] { --c1: rgba(239,68,68,0.1); }
+.topic-card[data-c="cyan"] { --c1: rgba(6,182,212,0.1); }
+.features { background: rgba(0,0,0,0.3); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.feature-item { text-align: center; padding: 2rem 1rem; }
+.feature-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.timeline { position: relative; padding: 1rem 0; }
+.timeline::before { content:''; position:absolute; left:50%; top:0; bottom:0; width:2px; background: linear-gradient(to bottom, var(--primary), var(--secondary)); transform: translateX(-50%); }
+.t-item { display:flex; gap:2rem; align-items:center; margin-bottom:2rem; }
+.t-item:nth-child(even) { flex-direction:row-reverse; }
+.t-dot { width:14px; height:14px; border-radius:50%; background: var(--primary); box-shadow: 0 0 15px var(--primary); flex-shrink:0; }
+.t-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:1rem 1.2rem; flex:1; max-width:45%; }
+.t-era { font-size:0.72rem; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:0.1em; }
+.scroll-indicator { position:absolute; bottom:2rem; left:50%; transform:translateX(-50%); animation: float 2s ease-in-out infinite; color: var(--text3); font-size:0.8rem; text-align:center; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="dot"></div>
+    ML Visual Guide
+  </div>
+  <div class="nav-links">
+    <a href="pages/neural-networks.html">Neural Nets</a>
+    <a href="pages/deep-learning.html">Deep Learning</a>
+    <a href="pages/cnn.html">CNNs</a>
+    <a href="pages/generative-ai.html">Generative AI</a>
+    <a href="pages/attention.html">Attention</a>
+    <a href="pages/reinforcement.html">RL</a>
+    <a href="pages/unsupervised.html">Unsupervised</a>
+    <a href="pages/quiz.html">Quiz</a>
+  </div>
+  <div class="nav-hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="pages/neural-networks.html">🧠 Neural Networks</a>
+  <a href="pages/deep-learning.html">🔥 Deep Learning</a>
+  <a href="pages/cnn.html">🖼️ CNNs</a>
+  <a href="pages/generative-ai.html">✨ Generative AI</a>
+  <a href="pages/attention.html">👁️ Attention & Transformers</a>
+  <a href="pages/reinforcement.html">🎮 Reinforcement Learning</a>
+  <a href="pages/unsupervised.html">🔍 Unsupervised Learning</a>
+  <a href="pages/quiz.html">📝 Quiz</a>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <canvas id="heroBg" class="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">🎓 Interactive ML Study Guide</div>
+    <h1>Machine Learning<br><span class="gradient">Visually Explained</span></h1>
+    <p class="subtitle">Interactive visualizations, animated equations, and practice quizzes covering Neural Networks, Deep Learning, CNNs, Transformers, and more.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">8</div><div class="lbl">Topics</div></div>
+      <div class="hero-stat"><div class="num">50+</div><div class="lbl">Visualizations</div></div>
+      <div class="hero-stat"><div class="num">50</div><div class="lbl">Quiz Questions</div></div>
+      <div class="hero-stat"><div class="num">100%</div><div class="lbl">Interactive</div></div>
+    </div>
+    <div class="hero-cta">
+      <a href="pages/neural-networks.html" class="btn btn-primary">Start Learning →</a>
+      <a href="pages/quiz.html" class="btn btn-outline">Take the Quiz</a>
+    </div>
+  </div>
+  <div class="scroll-indicator">↓ Scroll to explore</div>
+</section>
+
+<!-- Feature Highlights -->
+<div class="features">
+  <div class="section" style="padding: 3rem 1.5rem;">
+    <div class="grid grid-4">
+      <div class="feature-item">
+        <div class="feature-icon">🧮</div>
+        <h3>Live Math</h3>
+        <p>Every formula is rendered with KaTeX and interactive — change inputs and see results.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🎨</div>
+        <h3>3D Visualization</h3>
+        <p>Three.js neural networks you can rotate, explore signal flow in real time.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🎮</div>
+        <h3>Interactive Demos</h3>
+        <p>Convolution sliders, K-means animation, GAN training loop — all interactive.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📝</div>
+        <h3>Quiz Mode</h3>
+        <p>50 Q&A flashcards from Quizzes 6–10 with flip-card reveal and progress tracking.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Topic Cards -->
+<div class="topics-section">
+  <div class="section-header">
+    <h4>Topics</h4>
+    <h2 class="section-title">Everything You Need to Know</h2>
+    <p class="section-subtitle">Complete coverage of all exam topics with visual explanations and practice questions.</p>
+  </div>
+  <div class="grid grid-4">
+    <a href="pages/neural-networks.html" class="topic-card card-glow" data-c="blue">
+      <span class="icon">🧠</span>
+      <h3>Neural Networks</h3>
+      <p>Perceptron, multi-layer networks, backpropagation, activation functions, weight update rules.</p>
+      <div class="tag badge badge-blue">Parts 1–3 · Quiz 6</div>
+    </a>
+    <a href="pages/deep-learning.html" class="topic-card card-glow" data-c="purple">
+      <span class="icon">🔥</span>
+      <h3>Deep Learning</h3>
+      <p>Vanishing gradients, ReLU variants, dropout, early stopping, batch normalization.</p>
+      <div class="tag badge badge-purple">Parts 1–3 · Quiz 7–8</div>
+    </a>
+    <a href="pages/cnn.html" class="topic-card card-glow" data-c="green">
+      <span class="icon">🖼️</span>
+      <h3>CNNs</h3>
+      <p>Convolution, pooling, stride, padding, feature maps, weight sharing, transfer learning.</p>
+      <div class="tag badge badge-green">Parts 1–3 · Quiz 8–9</div>
+    </a>
+    <a href="pages/generative-ai.html" class="topic-card card-glow" data-c="amber">
+      <span class="icon">✨</span>
+      <h3>Generative AI</h3>
+      <p>Autoencoders, GANs, diffusion models, mode collapse, latent space interpolation.</p>
+      <div class="tag badge badge-amber">Quiz 9</div>
+    </a>
+    <a href="pages/attention.html" class="topic-card card-glow" data-c="blue">
+      <span class="icon">👁️</span>
+      <h3>Attention & Transformers</h3>
+      <p>Self-attention, Q/K/V matrices, transformer architecture, LLMs, embeddings.</p>
+      <div class="tag badge badge-blue">Parts 1–2 · Quiz 10</div>
+    </a>
+    <a href="pages/reinforcement.html" class="topic-card card-glow" data-c="red">
+      <span class="icon">🎮</span>
+      <h3>Reinforcement Learning</h3>
+      <p>Agents, environments, rewards, Q-learning, policy gradients, Markov decision processes.</p>
+      <div class="tag badge badge-red">Full Module</div>
+    </a>
+    <a href="pages/unsupervised.html" class="topic-card card-glow" data-c="cyan">
+      <span class="icon">🔍</span>
+      <h3>Unsupervised Learning</h3>
+      <p>K-means clustering, PCA, autoencoders, dimensionality reduction, anomaly detection.</p>
+      <div class="tag" style="background:rgba(6,182,212,0.15);color:#06b6d4;">Full Module</div>
+    </a>
+    <a href="pages/quiz.html" class="topic-card card-glow" data-c="purple">
+      <span class="icon">📝</span>
+      <h3>Quiz — All 50 Questions</h3>
+      <p>Full Q&A from Quizzes 6–10 with explanations. Flashcard format with answer reveal.</p>
+      <div class="tag badge badge-purple">Quizzes 6–10</div>
+    </a>
+  </div>
+</div>
+
+<!-- History Timeline -->
+<div class="section">
+  <div class="section-header">
+    <h4>History</h4>
+    <h2>The Rise of Deep Learning</h2>
+    <p class="section-subtitle">From biological inspiration to modern AI dominance.</p>
+  </div>
+  <div class="timeline">
+    <div class="t-item">
+      <div class="t-card card">
+        <div class="t-era">1950s</div>
+        <strong>Perceptrons</strong>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Rosenblatt's perceptron sparked excitement for AI — a machine that could learn!</p>
+      </div>
+      <div class="t-dot" style="background: var(--primary);"></div>
+      <div style="flex:1;max-width:45%;"></div>
+    </div>
+    <div class="t-item">
+      <div style="flex:1;max-width:45%;"></div>
+      <div class="t-dot" style="background: var(--secondary);"></div>
+      <div class="t-card card">
+        <div class="t-era" style="color:var(--secondary);">1960s</div>
+        <strong>Perceptron Limits</strong>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Minsky & Papert proved perceptrons can only learn linear functions. Research stalled for decades.</p>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-card card">
+        <div class="t-era">1980s</div>
+        <strong>Backpropagation Revival</strong>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Multi-layer NNs + non-linear activation + backprop revived interest. Neural nets could learn complex functions!</p>
+      </div>
+      <div class="t-dot" style="background: var(--green);"></div>
+      <div style="flex:1;max-width:45%;"></div>
+    </div>
+    <div class="t-item">
+      <div style="flex:1;max-width:45%;"></div>
+      <div class="t-dot" style="background: var(--accent);"></div>
+      <div class="t-card card">
+        <div class="t-era" style="color:var(--accent);">1990s–2000s</div>
+        <strong>SVMs Dominate</strong>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">Support Vector Machines with theoretical guarantees dominated. NNs faded — too hard to train at scale.</p>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-card card">
+        <div class="t-era" style="color:var(--primary);">2012 — AlexNet</div>
+        <strong>Deep Learning Explosion</strong>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">CNNs dominated ImageNet. ReLU + GPUs + big data solved vanishing gradients. Deep learning era began.</p>
+      </div>
+      <div class="t-dot" style="background: var(--primary); width:18px; height:18px; box-shadow: 0 0 20px var(--primary);"></div>
+      <div style="flex:1;max-width:45%;"></div>
+    </div>
+    <div class="t-item">
+      <div style="flex:1;max-width:45%;"></div>
+      <div class="t-dot" style="background: var(--secondary); width:18px; height:18px; box-shadow: 0 0 20px var(--secondary);"></div>
+      <div class="t-card card">
+        <div class="t-era" style="color:var(--secondary);">2017–Now</div>
+        <strong>Transformers & LLMs</strong>
+        <p style="font-size:0.85rem;margin-top:0.3rem;">"Attention Is All You Need" — Transformers reshape NLP, vision, audio. GPT, BERT, ChatGPT emerge. Hinton wins Nobel Prize 2024.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Formulas Preview -->
+<div style="background: rgba(0,0,0,0.3); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 3rem 1.5rem;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="section-header text-center">
+      <h4>Key Equations</h4>
+      <h2>Essential Formulas at a Glance</h2>
+    </div>
+    <div class="grid grid-3">
+      <div class="card">
+        <h4 style="color:var(--primary);margin-bottom:0.8rem;">Perceptron Update</h4>
+        <div class="formula">\(w_i \leftarrow w_i + \eta(y - \hat{y})x_i\)</div>
+        <p style="font-size:0.85rem;">η = learning rate, y = true, ŷ = predicted</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--secondary);margin-bottom:0.8rem;">Sigmoid Activation</h4>
+        <div class="formula purple">\(\sigma(x) = \frac{1}{1+e^{-x}}\)</div>
+        <p style="font-size:0.85rem;">Derivative: σ(x)·(1 − σ(x)), max = 0.25</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--green);margin-bottom:0.8rem;">Backprop Weight Update</h4>
+        <div class="formula green">\(\Delta w_{ji} = \eta \delta_j o_i\)</div>
+        <p style="font-size:0.85rem;">δ = error signal, o = output of sending node</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--accent);margin-bottom:0.8rem;">Cross-Entropy Loss</h4>
+        <div class="formula amber">\(E = -\sum_k t_k \log(o_k)\)</div>
+        <p style="font-size:0.85rem;">Used with softmax output for multi-class</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--primary);margin-bottom:0.8rem;">Softmax</h4>
+        <div class="formula">\(P(\text{class}_k) = \frac{e^{z_k}}{\sum_j e^{z_j}}\)</div>
+        <p style="font-size:0.85rem;">Converts raw scores to probabilities summing to 1</p>
+      </div>
+      <div class="card">
+        <h4 style="color:var(--secondary);margin-bottom:0.8rem;">CNN Output Size</h4>
+        <div class="formula purple">\(\text{Out} = \left\lfloor\frac{W - F + 2P}{S}\right\rfloor + 1\)</div>
+        <p style="font-size:0.85rem;">W=input, F=filter, P=padding, S=stride</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="section text-center">
+  <h2>Ready to Master ML?</h2>
+  <p>All topics covered from perceptrons to transformers, with interactive demos for every concept.</p>
+  <div class="flex justify-center gap-2" style="margin-top:1.5rem;flex-wrap:wrap;">
+    <a href="pages/neural-networks.html" class="btn btn-primary">Start with Neural Nets →</a>
+    <a href="pages/quiz.html" class="btn btn-outline">Test Your Knowledge</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>ML Visual Guide · Built with Three.js, KaTeX, Chart.js · All content from course notes and study guides</p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/contrib/auto-render.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/three-bg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // KaTeX render
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left:'\\(', right:'\\)', display: false},
+      {left:'\\[', right:'\\]', display: true},
+      {left:'$$', right:'$$', display: true},
+      {left:'$', right:'$', display: false}
+    ]
+  });
+
+  // Three.js hero background
+  const heroCanvas = document.getElementById('heroBg');
+  if (heroCanvas) {
+    heroCanvas.width = window.innerWidth;
+    heroCanvas.height = window.innerHeight;
+    initNeuralNetBg('heroBg', { layers: [3,6,6,6,3], xSpread: 5.5, ySpread: 1.8, camZ: 22 });
+  }
+
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  if (hamburger && mobileNav) {
+    hamburger.addEventListener('click', () => mobileNav.classList.toggle('open'));
+    document.addEventListener('click', e => {
+      if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) mobileNav.classList.remove('open');
+    });
+  }
+
+  // Scroll animations
+  const cards = document.querySelectorAll('.card, .topic-card, .t-card');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }, i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  cards.forEach(c => {
+    c.style.opacity = '0';
+    c.style.transform = 'translateY(24px)';
+    c.style.transition = 'all 0.5s ease';
+    observer.observe(c);
+  });
+});
+</script>
+</body>
+</html>

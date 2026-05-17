@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNNs — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+<style>
+.cnn-arch { display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:center; padding:1.5rem 0; overflow-x:auto; }
+.cnn-block { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.cnn-layer-box { border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; writing-mode:vertical-rl; text-orientation:mixed; padding:8px 6px; min-height:80px; border:1.5px solid; }
+.cnn-layer-box.conv { background:rgba(0,212,255,0.12); border-color:var(--primary); color:var(--primary); }
+.cnn-layer-box.pool { background:rgba(168,85,247,0.12); border-color:var(--secondary); color:var(--secondary); }
+.cnn-layer-box.dense { background:rgba(16,185,129,0.12); border-color:var(--green); color:var(--green); }
+.cnn-layer-box.softmax { background:rgba(245,158,11,0.12); border-color:var(--accent); color:var(--accent); }
+.cnn-arrow { color:var(--text3); font-size:1.2rem; }
+.cnn-dim { font-size:0.62rem; color:var(--text3); text-align:center; }
+.conv-grid { display:inline-grid; gap:3px; }
+.conv-cell { width:38px; height:38px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:700; border:1.5px solid; cursor:pointer; transition:all 0.2s; user-select:none; }
+.conv-cell.normal { background:rgba(255,255,255,0.04); border-color:var(--border); color:var(--text2); }
+.conv-cell.active { background:rgba(245,158,11,0.2); border-color:var(--accent); color:var(--accent); box-shadow:0 0 10px rgba(245,158,11,0.3); }
+.conv-cell.on { background:rgba(0,212,255,0.15); border-color:var(--primary); color:var(--primary); }
+.fmap-cell { width:38px; height:38px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.78rem; font-weight:700; border:1.5px solid; transition:all 0.3s; }
+.kernel-cell { width:38px; height:38px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; background:rgba(168,85,247,0.15); border:1.5px solid var(--secondary); color:var(--secondary); }
+.pool-cell { width:42px; height:42px; border-radius:5px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700; border:1.5px solid; transition:all 0.3s; cursor:pointer; }
+.pool-region-0 { background:rgba(0,212,255,0.1); border-color:rgba(0,212,255,0.4); }
+.pool-region-1 { background:rgba(168,85,247,0.1); border-color:rgba(168,85,247,0.4); }
+.pool-region-2 { background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.4); }
+.pool-region-3 { background:rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.4); }
+.pool-max { font-size:0.6rem; color:var(--text3); }
+.section-grid { display:grid; gap:1.5rem; }
+@media(min-width:768px){ .section-grid { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-logo"><div class="dot"></div><a href="../index.html" style="color:white;font-weight:800;">ML Visual Guide</a></div>
+  <div class="nav-links">
+    <a href="neural-networks.html">Neural Nets</a>
+    <a href="deep-learning.html">Deep Learning</a>
+    <a href="cnn.html" class="active">CNNs</a>
+    <a href="generative-ai.html">Generative AI</a>
+    <a href="attention.html">Attention</a>
+    <a href="reinforcement.html">RL</a>
+    <a href="unsupervised.html">Unsupervised</a>
+    <a href="quiz.html">Quiz</a>
+  </div>
+  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+<div class="nav-mobile" id="mobileNav">
+  <a href="neural-networks.html">🧠 Neural Nets</a><a href="deep-learning.html">🔥 Deep Learning</a>
+  <a href="cnn.html">🖼️ CNNs</a><a href="generative-ai.html">✨ Generative AI</a>
+  <a href="attention.html">👁️ Attention</a><a href="reinforcement.html">🎮 RL</a>
+  <a href="unsupervised.html">🔍 Unsupervised</a><a href="quiz.html">📝 Quiz</a>
+</div>
+
+<div class="page-header">
+  <canvas id="headerBg" class="hero-canvas" style="opacity:0.4;"></canvas>
+  <div style="position:relative;z-index:1;">
+    <div class="breadcrumb"><a href="../index.html">Home</a><span>/</span>CNNs</div>
+    <span class="topic-icon">🖼️</span>
+    <h1>Convolutional Neural Networks</h1>
+    <p>Convolution, pooling, weight sharing, stride, padding — and why CNNs dominate image tasks.</p>
+  </div>
+</div>
+
+<div class="section">
+
+  <!-- 1. Why CNNs -->
+  <div class="section-header">
+    <h4>Part 1</h4>
+    <h2>Why Not Dense Layers on Images?</h2>
+  </div>
+  <div class="section-grid">
+    <div class="card">
+      <h3 style="color:var(--red);">Problems with Dense Layers</h3>
+      <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.9rem;margin-top:0.5rem;">
+        <div>❌ <strong>Too many weights</strong> — a 1000×1000 image × 1000 hidden nodes = <strong>10⁹ weights!</strong></div>
+        <div>❌ <strong>No translation equivariance</strong> — dog detector in top-left won't find a dog at bottom-right</div>
+        <div>❌ <strong>No spatial structure</strong> — pixels treated as independent features; neighbors ignored</div>
+        <div>❌ <strong>Overfitting risk</strong> — billions of parameters for even modest images</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--green);">CNN Solutions</h3>
+      <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.9rem;margin-top:0.5rem;">
+        <div>✅ <strong>Local receptive fields</strong> — each neuron connects only to a small patch</div>
+        <div>✅ <strong>Weight sharing</strong> — the same filter applied everywhere → far fewer parameters</div>
+        <div>✅ <strong>Translation equivariance</strong> — pattern detected anywhere in the input</div>
+        <div>✅ <strong>Pooling</strong> — spatial invariance + dimensionality reduction</div>
+      </div>
+      <div class="concept-box green" style="margin-top:1rem;">
+        <p><strong>CNN</strong> = deep learning architecture designed for <em>grid-like input</em> (images, time series, video).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CNN Architecture Diagram -->
+  <div class="demo-container" style="margin-top:1.5rem;">
+    <div class="demo-title">Complete CNN Architecture</div>
+    <div class="cnn-arch">
+      <div class="cnn-block">
+        <div class="cnn-layer-box conv" style="min-height:100px;width:28px;">Conv+ReLU</div>
+        <div class="cnn-dim">32×32×3<br>→32×32×32</div>
+      </div>
+      <div class="cnn-arrow">▶</div>
+      <div class="cnn-block">
+        <div class="cnn-layer-box pool" style="min-height:80px;width:22px;">MaxPool</div>
+        <div class="cnn-dim">32×32×32<br>→16×16×32</div>
+      </div>
+      <div class="cnn-arrow">▶</div>
+      <div class="cnn-block">
+        <div class="cnn-layer-box conv" style="min-height:80px;width:28px;">Conv+ReLU</div>
+        <div class="cnn-dim">16×16×32<br>→16×16×64</div>
+      </div>
+      <div class="cnn-arrow">▶</div>
+      <div class="cnn-block">
+        <div class="cnn-layer-box pool" style="min-height:60px;width:22px;">MaxPool</div>
+        <div class="cnn-dim">16×16×64<br>→8×8×64</div>
+      </div>
+      <div class="cnn-arrow">▶</div>
+      <div class="cnn-block">
+        <div style="font-size:0.7rem;color:var(--text3);margin-bottom:4px;">Flatten</div>
+        <div class="cnn-layer-box dense" style="min-height:60px;width:28px;">Dense</div>
+        <div class="cnn-dim">4096→128</div>
+      </div>
+      <div class="cnn-arrow">▶</div>
+      <div class="cnn-block">
+        <div class="cnn-layer-box softmax" style="min-height:50px;width:28px;">Softmax</div>
+        <div class="cnn-dim">10 classes</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;font-size:0.78rem;color:var(--text3);">
+      <span style="color:var(--primary);">■ Conv+ReLU</span>
+      <span style="color:var(--secondary);">■ MaxPooling</span>
+      <span style="color:var(--green);">■ Dense (FC)</span>
+      <span style="color:var(--accent);">■ Softmax</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 2. Convolution -->
+  <div class="section-header">
+    <h4>Part 2</h4>
+    <h2>Convolution Layer</h2>
+    <p class="section-subtitle">A small filter (kernel) slides over the input, computing a dot product at each position to produce a feature map.</p>
+  </div>
+
+  <div class="section-grid">
+    <div>
+      <div class="card">
+        <h3>Key Terms</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Filter / Kernel</strong></td><td>Small weight window slid across input</td></tr>
+              <tr><td><strong>Receptive Field</strong></td><td>Region of the input one neuron "sees"</td></tr>
+              <tr><td><strong>Feature Map</strong></td><td>Layer of activations from applying one filter</td></tr>
+              <tr><td><strong>Convolve</strong></td><td>Sliding the same function (filter) across the input</td></tr>
+              <tr><td><strong>Stride</strong></td><td>How far the filter window moves between applications</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Weight Sharing — Two Big Wins</h3>
+        <div class="concept-box" style="margin-bottom:0.8rem;">
+          <p><strong>Fewer parameters:</strong> A 6×6 input fully connected to 4×4 hidden = 36×16 = 576 weights. With a 3×3 shared filter: only <strong>9 weights</strong>.</p>
+        </div>
+        <div class="concept-box green">
+          <p><strong>Translation equivariance:</strong> Whatever pattern the filter learns to detect, it detects it <em>anywhere</em> in the input.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Multiple Filters</h3>
+        <p>One filter detects one pattern. Real tasks need many patterns → use several filters in parallel (e.g. 32, 64, 128). Each filter produces its own feature map.</p>
+        <div class="concept-box amber" style="margin-top:0.8rem;">
+          <p><strong>Feature map depth</strong> = number of filters. Connecting multiple feature maps: treat each map as a channel (like RGB).</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Interactive Convolution Demo</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:1rem;">Click grid cells to toggle values. Watch the convolution compute in real time.</p>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start;">
+        <div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">6×6 Input</div>
+          <div id="inputGrid" class="conv-grid" style="grid-template-columns:repeat(6,38px);"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);font-size:1.5rem;padding-top:2rem;">✱</div>
+        <div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">3×3 Kernel</div>
+          <div id="kernelGrid" class="conv-grid" style="grid-template-columns:repeat(3,38px);"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text3);font-size:1.5rem;padding-top:2rem;">=</div>
+        <div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">4×4 Feature Map (valid)</div>
+          <div id="featureMapGrid" class="conv-grid" style="grid-template-columns:repeat(4,38px);"></div>
+        </div>
+      </div>
+      <div style="margin-top:1rem;" class="output-display" id="convInfo"></div>
+      <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="btn btn-sm btn-outline" id="animateConv">▶ Animate Sliding</button>
+        <button class="btn btn-sm btn-outline" id="clearConv">Clear</button>
+        <button class="btn btn-sm btn-outline" id="patternConv">Load Pattern</button>
+      </div>
+      <div style="margin-top:0.8rem;">
+        <div class="control-row">
+          <span class="control-label" style="font-size:0.78rem;">Kernel preset</span>
+          <select id="kernelPreset" style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px;color:white;font-size:0.82rem;">
+            <option value="edge-h">Edge (Horizontal)</option>
+            <option value="edge-v">Edge (Vertical)</option>
+            <option value="blur">Blur/Average</option>
+            <option value="sharpen">Sharpen</option>
+            <option value="identity">Identity</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3. Stride & Padding -->
+  <div class="section-header">
+    <h4>Part 3</h4>
+    <h2>Stride & Padding</h2>
+  </div>
+
+  <div class="section-grid">
+    <div>
+      <div class="card">
+        <h3>Output Size Formula</h3>
+        <div class="formula">
+          <div class="formula-label">Conv Output Size</div>
+          \[\text{Out} = \left\lfloor\frac{W - F + 2P}{S}\right\rfloor + 1\]
+        </div>
+        <p style="margin-top:0.8rem;">W = input width, F = filter size, P = padding, S = stride</p>
+        <div class="table-wrap" style="margin-top:1rem;">
+          <table>
+            <thead><tr><th>Padding</th><th>Behavior</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Valid</strong></td><td>No padding. Skip edge positions. Output <em>shrinks</em>.</td></tr>
+              <tr><td><strong>Same</strong></td><td>Pad edges with zeros. Output <strong>same size</strong> as input (stride=1).</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="concept-box" style="margin-top:1rem;">
+          <p><strong>Quick example:</strong> 6×6 input, 3×3 filter, valid padding, stride 1:<br>
+          (6−3)/1 + 1 = <strong>4×4 output</strong></p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">Output Size Calculator</div>
+      <div class="controls">
+        <div class="control-row"><span class="control-label">Input W</span><input type="range" id="inputW" min="4" max="32" step="1" value="6"><span class="control-value" id="inputWv">6</span></div>
+        <div class="control-row"><span class="control-label">Filter F</span><input type="range" id="filterF" min="2" max="7" step="1" value="3"><span class="control-value" id="filterFv">3</span></div>
+        <div class="control-row"><span class="control-label">Stride S</span><input type="range" id="strideS" min="1" max="4" step="1" value="1"><span class="control-value" id="strideSv">1</span></div>
+        <div class="control-row"><span class="control-label">Padding P</span><input type="range" id="paddingP" min="0" max="4" step="1" value="0"><span class="control-value" id="paddingPv">0</span></div>
+      </div>
+      <div id="sizeCalcResult" class="output-display" style="margin-top:1rem;"></div>
+      <canvas id="paddingViz" width="400" height="180" style="margin-top:1rem;border-radius:8px;width:100%;"></canvas>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 4. Pooling -->
+  <div class="section-header">
+    <h4>Part 4</h4>
+    <h2>Pooling Layer</h2>
+    <p class="section-subtitle">Downsamples feature maps — passes only a summary of each local region. Adds translation invariance.</p>
+  </div>
+
+  <div class="section-grid">
+    <div>
+      <div class="card">
+        <h3>Why Pool?</h3>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.9rem;margin-top:0.5rem;">
+          <div>📉 <strong>Reduces computation</strong> in later layers</div>
+          <div>🎯 <strong>Translation invariance</strong> — abstracts away exact locations</div>
+          <div>⚡ <strong>No learnable weights</strong> — just aggregation</div>
+        </div>
+        <div class="table-wrap" style="margin-top:1rem;">
+          <table>
+            <thead><tr><th>Type</th><th>Operation</th></tr></thead>
+            <tbody>
+              <tr><td><strong>MaxPooling</strong></td><td>Output = max of values in window (most common)</td></tr>
+              <tr><td><strong>AvgPooling</strong></td><td>Output = average of values in window</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="concept-box" style="margin-top:1rem;">
+          <p><strong>Standard practice:</strong> 2×2 window with non-overlapping stride (= 2), valid padding.</p>
+        </div>
+        <div class="concept-box amber" style="margin-top:0.8rem;">
+          <p><strong>Key distinction:</strong> Equivariance (convolution): pattern at new location → feature map shifts. <em>Invariance</em> (pooling): pattern at new location → pooled output similar.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>2×2 MaxPool Quiz Answer</h3>
+        <div class="concept-box green">
+          <p>After applying 2×2 MaxPooling, there are 10 resulting nodes. How many nodes were in the original? A 2×2 pool reduces spatial area by factor 4 (2×2=4 pixels→1 output). So original had 10×4 = <strong>40 nodes</strong>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="demo-container">
+      <div class="demo-title">MaxPooling 2×2 Demo</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:1rem;">Click cells to change values. See max pooling applied to each 2×2 region.</p>
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;align-items:flex-start;">
+        <div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px;">4×4 Input</div>
+          <div id="poolInputGrid" class="conv-grid" style="grid-template-columns:repeat(4,42px);"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:2.5rem;color:var(--text3);">
+          <div style="font-size:1.2rem;">→</div>
+          <div style="font-size:0.7rem;margin-top:4px;">2×2 MaxPool</div>
+        </div>
+        <div>
+          <div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px;">2×2 Output</div>
+          <div id="poolOutputGrid" class="conv-grid" style="grid-template-columns:repeat(2,52px);"></div>
+        </div>
+      </div>
+      <div id="poolInfo" class="output-display" style="margin-top:1rem;"></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 5. Transfer Learning -->
+  <div class="section-header">
+    <h4>Part 5</h4>
+    <h2>Transfer Learning & Advanced Topics</h2>
+  </div>
+
+  <div class="section-grid">
+    <div class="card">
+      <h3>Transfer Learning</h3>
+      <p>Training a CNN from scratch needs 10,000s of labeled images for each new task. Most of that effort is spent re-learning generic features (edges, shapes, textures).</p>
+      <div class="concept-box" style="margin:1rem 0;">
+        <p><strong>Transfer Learning</strong> = reuse knowledge learned on one task for another.</p>
+      </div>
+      <h4 style="margin-bottom:0.8rem;">Workflow</h4>
+      <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.88rem;">
+        <div style="display:flex;gap:0.5rem;"><span class="badge badge-blue">1</span><span>Take CNN pretrained on huge dataset (e.g. ImageNet)</span></div>
+        <div style="display:flex;gap:0.5rem;"><span class="badge badge-purple">2</span><span><strong>Freeze</strong> the early conv layers (generic features already useful)</span></div>
+        <div style="display:flex;gap:0.5rem;"><span class="badge badge-amber">3</span><span>Replace final dense+softmax layers with new ones for your task</span></div>
+        <div style="display:flex;gap:0.5rem;"><span class="badge badge-green">4</span><span><strong>Fine-tune</strong> the new layers on your small task-specific dataset</span></div>
+      </div>
+      <div class="concept-box green" style="margin-top:1rem;">
+        <p><strong>Popular pretrained CNNs:</strong> VGG-16, ResNet-50, AlexNet — available via <code>keras.applications</code>.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>Data Augmentation</h3>
+        <p>Artificially expand the training set with realistic transformed copies:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.8rem;">
+          <div class="concept-box" style="padding:0.8rem;"><p style="font-size:0.85rem;">🔄 Flip, rotate, crop, translate, zoom</p></div>
+          <div class="concept-box purple" style="padding:0.8rem;"><p style="font-size:0.85rem;">🌈 Change contrast / brightness</p></div>
+          <div class="concept-box green" style="padding:0.8rem;"><p style="font-size:0.85rem;">📐 Any combination of the above</p></div>
+          <div class="concept-box amber" style="padding:0.8rem;"><p style="font-size:0.85rem;">🎯 More robust learning</p></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Image Tasks Beyond Classification</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Task</th><th>Output</th><th>Key Change</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Classification</strong></td><td>Class label</td><td>Softmax output</td></tr>
+              <tr><td><strong>Detection</strong></td><td>Bounding boxes</td><td>YOLO, grid-based</td></tr>
+              <tr><td><strong>Segmentation</strong></td><td>Pixel-wise mask</td><td>Encoder-decoder (U-Net)</td></tr>
+              <tr><td><strong>Regression</strong></td><td>Continuous value</td><td>Linear output, MSE loss</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h3>Famous CNN Landmarks</h3>
+        <div style="font-size:0.88rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <div><span class="badge badge-blue">2012</span> <strong>AlexNet</strong> — dropped ImageNet error dramatically, started CNN era</div>
+          <div><span class="badge badge-purple">2015</span> <strong>VGG-16</strong> — 16 layers, designed for color image classification</div>
+          <div><span class="badge badge-green">2015</span> <strong>ResNet-50</strong> — residual connections, enabled 100+ layer networks</div>
+          <div><span class="badge badge-amber">2015</span> <strong>YOLO</strong> — single-pass object detection, fast and open-source</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="divider"></div>
+  <div class="section-header"><h4>Quiz 8 & 9 — Practice</h4><h2>CNN Quiz Questions</h2></div>
+  <div class="quiz-grid" id="cnnQuiz"></div>
+
+</div>
+
+<footer class="footer">
+  <p>← <a href="deep-learning.html">Deep Learning</a> · <a href="generative-ai.html">Generative AI →</a></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/contrib/auto-render.min.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/three-bg.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  renderMathInElement(document.body, { delimiters: [{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}] });
+  initTopicHeaderBg('headerBg', 0x00d4ff, 0x10b981);
+
+  // ── Convolution Demo ──
+  const INPUT_SIZE = 6, KERNEL_SIZE = 3, FMAP_SIZE = 4;
+  const kernels = {
+    'edge-h':  [[-1,-1,-1],[0,0,0],[1,1,1]],
+    'edge-v':  [[-1,0,1],[-1,0,1],[-1,0,1]],
+    'blur':    [[1/9,1/9,1/9],[1/9,1/9,1/9],[1/9,1/9,1/9]],
+    'sharpen': [[0,-1,0],[-1,5,-1],[0,-1,0]],
+    'identity':[[0,0,0],[0,1,0],[0,0,0]],
+  };
+  let inputVals = Array.from({length:INPUT_SIZE}, ()=>Array(INPUT_SIZE).fill(0));
+  let kernelVals = kernels['edge-h'];
+  let highlighted = null;
+  let animating = false;
+
+  // init input grid with random pattern
+  function initInput() {
+    const patterns = [
+      ()=>Array.from({length:INPUT_SIZE},()=>Array.from({length:INPUT_SIZE},()=>Math.random()>0.5?1:0)),
+      ()=>{const a=Array.from({length:INPUT_SIZE},()=>Array(INPUT_SIZE).fill(0));for(let i=0;i<INPUT_SIZE;i++){a[i][2]=1;a[i][3]=1;}return a;},
+      ()=>{const a=Array.from({length:INPUT_SIZE},()=>Array(INPUT_SIZE).fill(0));for(let j=0;j<INPUT_SIZE;j++){a[2][j]=1;a[3][j]=1;}return a;},
+    ];
+    inputVals = patterns[Math.floor(Math.random()*patterns.length)]();
+    renderConvDemo();
+  }
+
+  function computeFeatureMap() {
+    const fm = Array.from({length:FMAP_SIZE},()=>Array(FMAP_SIZE).fill(0));
+    for(let r=0;r<FMAP_SIZE;r++) for(let c=0;c<FMAP_SIZE;c++) {
+      let sum=0;
+      for(let kr=0;kr<KERNEL_SIZE;kr++) for(let kc=0;kc<KERNEL_SIZE;kc++) sum+=inputVals[r+kr][c+kc]*kernelVals[kr][kc];
+      fm[r][c]=sum;
+    }
+    return fm;
+  }
+
+  function renderConvDemo() {
+    const fm=computeFeatureMap();
+    const maxV=Math.max(...fm.flat().map(Math.abs),1);
+
+    // Input grid
+    const ig=document.getElementById('inputGrid'); ig.innerHTML='';
+    for(let r=0;r<INPUT_SIZE;r++) for(let c=0;c<INPUT_SIZE;c++) {
+      const cell=document.createElement('div');
+      cell.className='conv-cell '+(inputVals[r][c]?'on':'normal');
+      const isActive=highlighted&&r>=highlighted.r&&r<highlighted.r+KERNEL_SIZE&&c>=highlighted.c&&c<highlighted.c+KERNEL_SIZE;
+      if(isActive) cell.className='conv-cell active';
+      cell.textContent=inputVals[r][c];
+      cell.addEventListener('click',()=>{inputVals[r][c]=inputVals[r][c]?0:1;renderConvDemo();});
+      ig.appendChild(cell);
+    }
+
+    // Kernel grid
+    const kg=document.getElementById('kernelGrid'); kg.innerHTML='';
+    for(let r=0;r<KERNEL_SIZE;r++) for(let c=0;c<KERNEL_SIZE;c++) {
+      const cell=document.createElement('div'); cell.className='kernel-cell';
+      cell.textContent=Number(kernelVals[r][c].toFixed(2)); kg.appendChild(cell);
+    }
+
+    // Feature map grid
+    const fg=document.getElementById('featureMapGrid'); fg.innerHTML='';
+    for(let r=0;r<FMAP_SIZE;r++) for(let c=0;c<FMAP_SIZE;c++) {
+      const v=fm[r][c], norm=v/maxV;
+      const cell=document.createElement('div'); cell.className='fmap-cell';
+      const h=norm>0?140:0, s=70, l=20+Math.abs(norm)*40;
+      const isHL=highlighted&&r===highlighted.r&&c===highlighted.c;
+      cell.style.background=isHL?'rgba(245,158,11,0.3)':`hsl(${h},${s}%,${l}%)`;
+      cell.style.borderColor=isHL?'var(--accent)':norm>0?'rgba(16,185,129,0.4)':'rgba(239,68,68,0.3)';
+      cell.style.color=isHL?'var(--accent)':'rgba(255,255,255,0.8)';
+      cell.textContent=v.toFixed(1);
+      fg.appendChild(cell);
+    }
+    document.getElementById('convInfo').innerHTML=`<span class="label">Kernel: ${document.getElementById('kernelPreset').options[document.getElementById('kernelPreset').selectedIndex].text}</span>&nbsp;|&nbsp;<span class="label">Output range: [${Math.min(...fm.flat()).toFixed(1)}, ${Math.max(...fm.flat()).toFixed(1)}]</span>`;
+  }
+
+  document.getElementById('kernelPreset').addEventListener('change', e=>{kernelVals=kernels[e.target.value];renderConvDemo();});
+  document.getElementById('clearConv').addEventListener('click',()=>{inputVals=Array.from({length:INPUT_SIZE},()=>Array(INPUT_SIZE).fill(0));renderConvDemo();});
+  document.getElementById('patternConv').addEventListener('click',()=>initInput());
+
+  let animFrame;
+  document.getElementById('animateConv').addEventListener('click',()=>{
+    if(animating){animating=false;highlighted=null;renderConvDemo();document.getElementById('animateConv').textContent='▶ Animate Sliding';return;}
+    animating=true; document.getElementById('animateConv').textContent='⏹ Stop';
+    let r=0,c=0;
+    function step(){if(!animating)return;highlighted={r,c};renderConvDemo();c++;if(c>=FMAP_SIZE){c=0;r++;}if(r>=FMAP_SIZE){r=0;}animFrame=setTimeout(step,300);}
+    step();
+  });
+  initInput();
+
+  // ── Size Calculator ──
+  function updateSize(){
+    const W=+document.getElementById('inputW').value,F=+document.getElementById('filterF').value,
+          S=+document.getElementById('strideS').value,P=+document.getElementById('paddingP').value;
+    ['inputW','filterF','strideS','paddingP'].forEach(id=>{document.getElementById(id+'v').textContent=document.getElementById(id).value;});
+    const out=Math.floor((W-F+2*P)/S)+1;
+    const valid=out>0;
+    document.getElementById('sizeCalcResult').innerHTML=`
+      <span class="label">Formula: ⌊(W − F + 2P) / S⌋ + 1</span><br>
+      <span class="label">= ⌊(${W} − ${F} + 2×${P}) / ${S}⌋ + 1 = ⌊${(W-F+2*P).toFixed(0)} / ${S}⌋ + 1</span><br>
+      <span class="value ${valid?'green':'red'}">${valid?out+' × '+out+' output':'Invalid (output ≤ 0)'}</span>
+      ${P===0?'<br><span class="label">Padding: VALID</span>':P===Math.floor((F-1)/2)&&S===1?'<br><span class="label">Padding: SAME (output = input size)</span>':''}
+    `;
+    drawPaddingViz(W,F,S,P,out);
+  }
+
+  function drawPaddingViz(W,F,S,P,out){
+    const canvas=document.getElementById('paddingViz'),ctx=canvas.getContext('2d');
+    const cW=canvas.width,cH=canvas.height;
+    ctx.fillStyle='#0d1220';ctx.fillRect(0,0,cW,cH);
+    const cellSize=Math.min(28,(cW-40)/(W+2*P));
+    const totalW=W+2*P,startX=(cW-totalW*cellSize)/2,startY=30;
+    // Draw padded input
+    for(let r=0;r<Math.min(totalW,6);r++) for(let c=0;c<Math.min(totalW,6);c++){
+      const isPad=r<P||r>=W+P||c<P||c>=W+P;
+      ctx.fillStyle=isPad?'rgba(239,68,68,0.15)':'rgba(0,212,255,0.1)';
+      ctx.fillRect(startX+c*cellSize,startY+r*cellSize,cellSize-1,cellSize-1);
+      ctx.strokeStyle=isPad?'rgba(239,68,68,0.3)':'rgba(0,212,255,0.2)';
+      ctx.strokeRect(startX+c*cellSize,startY+r*cellSize,cellSize-1,cellSize-1);
+    }
+    // Highlight filter position
+    if(out>0){
+      ctx.strokeStyle='rgba(245,158,11,0.8)';ctx.lineWidth=2;
+      ctx.strokeRect(startX+P*cellSize,startY+P*cellSize,F*cellSize,F*cellSize);
+    }
+    ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='10px monospace';ctx.textAlign='center';
+    if(P>0){ctx.fillStyle='rgba(239,68,68,0.7)';ctx.fillText(`Padding (${P}px zeros each side)`,cW/2,cH-8);}
+    else{ctx.fillStyle='rgba(255,255,255,0.3)';ctx.fillText('No padding (valid)',cW/2,cH-8);}
+  }
+
+  ['inputW','filterF','strideS','paddingP'].forEach(id=>document.getElementById(id).addEventListener('input',updateSize));
+  updateSize();
+
+  // ── MaxPool Demo ──
+  let poolVals=[[3,1,2,4],[5,6,1,2],[8,3,7,5],[2,4,6,1]];
+  const poolColors=['rgba(0,212,255,0.2)','rgba(168,85,247,0.2)','rgba(16,185,129,0.2)','rgba(245,158,11,0.2)'];
+  const poolBorderColors=['rgba(0,212,255,0.6)','rgba(168,85,247,0.6)','rgba(16,185,129,0.6)','rgba(245,158,11,0.6)'];
+
+  function renderPool(){
+    const ig=document.getElementById('poolInputGrid');ig.innerHTML='';
+    const og=document.getElementById('poolOutputGrid');og.innerHTML='';
+    const regions=[[0,0],[0,2],[2,0],[2,2]];
+    const pooled=regions.map(([r,c])=>Math.max(poolVals[r][c],poolVals[r][c+1],poolVals[r+1][c],poolVals[r+1][c+1]));
+
+    for(let r=0;r<4;r++) for(let c=0;c<4;c++){
+      const rIdx=Math.floor(r/2)*2+Math.floor(c/2);
+      const cell=document.createElement('div');cell.className='pool-cell';
+      cell.style.background=poolColors[rIdx];cell.style.borderColor=poolBorderColors[rIdx].replace('0.6','0.4');
+      cell.style.color='white';cell.style.fontSize='0.9rem';
+      const isMax=poolVals[r][c]===pooled[rIdx];
+      if(isMax){cell.style.fontWeight='900';cell.style.boxShadow=`0 0 8px ${poolBorderColors[rIdx]}`;}
+      cell.textContent=poolVals[r][c];
+      cell.addEventListener('click',()=>{poolVals[r][c]=(poolVals[r][c]%9)+1;renderPool();});
+      ig.appendChild(cell);
+    }
+    pooled.forEach((v,i)=>{
+      const cell=document.createElement('div');cell.className='pool-cell';
+      cell.style.width='52px';cell.style.height='52px';cell.style.background=poolColors[i];
+      cell.style.borderColor=poolBorderColors[i];cell.style.color=poolBorderColors[i].replace('rgba(','rgb(').replace(',0.6)',')');;
+      cell.style.fontSize='1.1rem';cell.style.fontWeight='800';
+      cell.innerHTML=`<span>${v}</span><span class="pool-max">max</span>`;
+      og.appendChild(cell);
+    });
+    document.getElementById('poolInfo').innerHTML=`<span class="label">2×2 MaxPool reduces spatial area 4× (2×2→1). </span><span class="value green">Click cells to change values.</span>`;
+  }
+  renderPool();
+
+  // ── Quiz ──
+  const questions=[
+    {q:"To connect multiple feature maps to the next layer, they are treated just like channels.", a:"True.", exp:"Multiple feature maps from different filters stack depth-wise, exactly like how RGB images have 3 channels. The next layer processes all of them together using filters that span the full depth."},
+    {q:"The distance by which a filter slides over the input is called:", a:"Stride.", exp:"Stride controls how many positions the filter shifts at each step. Stride = 1 moves one pixel at a time; stride = 2 skips every other pixel, reducing output size."},
+    {q:"Which layer downsamples information from the previous layer?", a:"Pooling.", exp:"Pooling (max or average) summarizes regions of the feature map into single values, reducing spatial dimensions."},
+    {q:"Same padding and valid padding differ in:", a:"How they handle boundaries.", exp:"'Valid' padding applies no padding — the filter only slides over valid positions, so output size shrinks. 'Same' padding adds zeros around the edges so the output size matches the input size."},
+    {q:"A 3×3 filter is used to generate 4 nodes in the feature map. How many weights will be learned (ignoring bias)?", a:"3×3 = 9.", exp:"Weight sharing — all 4 nodes in the feature map are produced by sliding the same 3×3 filter. Only 9 unique weights are learned, not 9×4 = 36."},
+    {q:"Leaky ReLU is designed to remedy:", a:"Dying ReLU problem.", exp:"Standard ReLU outputs 0 for any negative input. If a neuron's input is always negative, it permanently outputs 0 and stops learning. Leaky ReLU allows a small gradient (αx) for negatives."},
+    {q:"When used with images, what does a convolution layer achieve compared to a dense layer?", a:"Preserve spatial information; Reduce computational load; Achieve translation equivariance.", exp:"Dense layers flatten the image and lose spatial structure. Conv layers use local receptive fields, share weights, and detect features regardless of location."},
+    {q:"After applying 2×2 MaxPooling, there are 10 resulting nodes. How many nodes were in the original layer?", a:"40.", exp:"A 2×2 pool reduces spatial area by a factor of 4 (2×2 = 4 pixels → 1 output). So the original layer had 10 × 4 = 40 nodes."},
+    {q:"What helps in reducing the number of weights to be learned for a convolution layer?", a:"Weight sharing.", exp:"The same filter weights are applied at every position across the input. Instead of unique weights per location, one shared set of weights covers the entire input."},
+    {q:"Transfer learning is useful when you have:", a:"A lot of data available for a general task and very little data available for a specific task.", exp:"You pre-train a model on a large general dataset (e.g. ImageNet), which learns rich general features. You then fine-tune on your small specific dataset."},
+  ];
+  const container=document.getElementById('cnnQuiz');
+  questions.forEach((q,i)=>{
+    const card=document.createElement('div');card.className='quiz-card';
+    card.innerHTML=`<div class="quiz-card-inner"><div class="quiz-front"><div><div class="quiz-qnum">Q${i+1} — CNN</div><div class="quiz-q">${q.q}</div></div><div class="quiz-hint">👆 Click to reveal</div></div><div class="quiz-back"><div><div class="quiz-answer-label">✓ Answer</div><div class="quiz-answer">${q.a}</div></div><div class="quiz-explanation">${q.exp}</div></div></div>`;
+    card.addEventListener('click',()=>card.classList.toggle('flipped'));
+    container.appendChild(card);
+  });
+
+  const h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');
+  if(h)h.addEventListener('click',()=>m.classList.toggle('open'));
+});
+</script>
+</body>
+</html>
