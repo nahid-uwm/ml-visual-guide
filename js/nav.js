@@ -12,6 +12,7 @@
     { href: 'reinforcement.html',   label: 'RL' },
     { href: 'unsupervised.html',    label: 'Unsupervised' },
     { href: 'quiz.html',            label: 'Quiz' },
+    { href: 'midterm-quiz.html',    label: 'Midterm Quiz' },
     { href: 'evolution.html',       label: 'Evolution' },
     { href: 'final-exam.html',      label: 'Final Exam' },
     { href: 'cheatsheet.html',      label: 'Cheat Sheet' }

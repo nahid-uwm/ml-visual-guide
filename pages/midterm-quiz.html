@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Midterm Quiz — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+.mq-hero { padding: 6rem 0 2rem; text-align: center; }
+.mq-hero h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 900; margin-bottom: 0.5rem; }
+.mq-hero p { color: var(--text-muted); max-width: 600px; margin: 0 auto 1.5rem; font-size: 0.92rem; line-height: 1.55; }
+
+.mq-tabs { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-bottom: 2rem; }
+.mq-tab { padding: 0.4rem 1rem; border: 2px solid var(--border); background: transparent;
+  color: var(--text-muted); border-radius: 2rem; cursor: pointer; font-size: 0.78rem; font-weight: 600; transition: all 0.2s; }
+.mq-tab:hover { border-color: var(--primary); color: var(--primary); }
+.mq-tab.active { background: var(--primary); border-color: var(--primary); color: #000; }
+
+.mq-section { margin-bottom: 2.5rem; }
+.mq-section-head { display: flex; align-items: center; gap: 0.75rem; padding: 0.9rem 1.2rem;
+  border-radius: 0.6rem; margin-bottom: 1rem; }
+.mq-section-head h2 { font-size: 1.05rem; font-weight: 800; }
+.mq-section-head span { font-size: 0.72rem; color: var(--text-muted); }
+
+.mq-card { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem;
+  margin-bottom: 0.85rem; overflow: hidden; transition: border-color 0.2s; }
+.mq-card.revealed { border-color: var(--green); }
+.mq-q { padding: 0.95rem 1.2rem; }
+.mq-q-head { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem; }
+.mq-num { min-width: 2.1rem; height: 1.6rem; padding: 0 0.5rem; border-radius: 4px;
+  background: rgba(0,212,255,0.15); color: var(--primary);
+  font-size: 0.74rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mq-type { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 0.2rem 0.5rem; border-radius: 3px; background: rgba(255,255,255,0.04); flex-shrink: 0; }
+.mq-stem { flex: 1; font-size: 0.92rem; line-height: 1.55; }
+.mq-stem pre, .mq-stem code { font-family: monospace; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 0.4rem; font-size: 0.82rem; display: block; margin: 0.4rem 0; white-space: pre-wrap; }
+
+.mq-options { list-style: none; padding: 0; margin: 0; }
+.mq-options li { padding: 0.55rem 0.8rem; margin: 0.3rem 0; border-radius: 0.4rem;
+  background: rgba(255,255,255,0.025); border: 1px solid transparent;
+  font-size: 0.87rem; line-height: 1.5; transition: all 0.2s; cursor: default; }
+.mq-card.revealed .mq-options li.correct {
+  background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.5); color: #6ee7b7;
+}
+.mq-card.revealed .mq-options li.correct::before { content: '✅  '; font-weight: 800; }
+.mq-card.revealed .mq-options li.wrong {
+  background: rgba(239,68,68,0.04); border-color: rgba(239,68,68,0.18); color: rgba(255,255,255,0.55);
+}
+.mq-card.revealed .mq-options li.wrong::before { content: '❌  '; }
+
+.mq-reveal-btn { margin-top: 0.6rem; padding: 0.5rem 1.1rem; background: var(--primary);
+  color: #000; border: none; border-radius: 0.4rem; cursor: pointer; font-weight: 700; font-size: 0.82rem; transition: opacity 0.2s; }
+.mq-reveal-btn:hover { opacity: 0.9; }
+.mq-card.revealed .mq-reveal-btn { display: none; }
+
+.mq-explain { display: none; margin-top: 0.85rem; padding: 0.85rem 1rem;
+  background: rgba(0,212,255,0.05); border-left: 3px solid var(--primary);
+  border-radius: 0.4rem; font-size: 0.84rem; line-height: 1.6; }
+.mq-card.revealed .mq-explain { display: block; }
+.mq-explain .why-right { color: #6ee7b7; }
+.mq-explain .why-right strong { color: var(--green); }
+.mq-explain .why-wrong { margin-top: 0.5rem; color: rgba(255,255,255,0.72); }
+.mq-explain .why-wrong strong { color: #fca5a5; }
+.mq-explain code { background: rgba(0,0,0,0.4); padding: 1px 5px; border-radius: 3px; font-size: 0.78rem; }
+
+.mq-toolbar { display:flex; gap:0.5rem; justify-content:center; margin: 0 0 1.5rem; flex-wrap:wrap; }
+.mq-tool-btn { padding: 0.4rem 1rem; border: 1px solid var(--border); background: transparent;
+  color: var(--text-muted); border-radius: 2rem; cursor: pointer; font-size: 0.78rem; font-weight: 600; transition: all 0.2s; }
+.mq-tool-btn:hover { border-color: var(--secondary); color: var(--secondary); }
+
+.mq-progress { display: flex; justify-content: center; align-items: center; gap: 0.75rem;
+  margin-bottom: 1.5rem; font-size: 0.82rem; color: var(--text-muted); }
+.mq-progress strong { color: var(--primary); }
+</style>
+</head>
+<body>
+
+<div id="site-nav"></div>
+<script src="../js/nav.js"></script>
+
+<main class="container">
+
+  <section class="mq-hero">
+    <h1>Midterm <span class="gradient-text">Quiz Review</span></h1>
+    <p>All 50 midterm questions across five topic groups. Click "Reveal Answer" on any question to see the correct option, why it's correct, and why each other option is wrong.</p>
+  </section>
+
+  <div class="mq-progress">
+    <span><strong id="seenCount">0</strong> of 50 questions reviewed</span>
+  </div>
+
+  <div class="mq-toolbar">
+    <button class="mq-tool-btn" onclick="mqRevealAll()">Reveal All</button>
+    <button class="mq-tool-btn" onclick="mqResetAll()">Reset All</button>
+  </div>
+
+  <div class="mq-tabs" id="mqTabs">
+    <button class="mq-tab active" data-filter="all">All 50</button>
+    <button class="mq-tab" data-filter="nb">Naive Bayes &amp; Probability</button>
+    <button class="mq-tab" data-filter="knn">kNN &amp; Features</button>
+    <button class="mq-tab" data-filter="eval">Evaluation</button>
+    <button class="mq-tab" data-filter="dt">Decision Trees</button>
+    <button class="mq-tab" data-filter="found">ML Foundations</button>
+  </div>
+
+  <!-- ═══════════════════════ GROUP 1: NAIVE BAYES ═══════════════════════ -->
+  <section class="mq-section" data-topic="nb">
+    <div class="mq-section-head" style="background:rgba(168,85,247,0.08);border-left:4px solid #a855f7;">
+      <h2 style="color:#a855f7;">🎲 Naive Bayes &amp; Probability</h2>
+      <span>Questions 1–10</span>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">1</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Given that using a joint probability distribution one can compute any probability over the random variables, then why not always obtain the joint probability distribution for any task?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Conditional probabilities cannot be estimated from joint probability distributions.</li>
+          <li class="wrong">Most probabilities are zeros in joint probability distributions.</li>
+          <li class="wrong">For most tasks no joint probability distribution can be defined.</li>
+          <li class="correct">Often an exponential number of parameters need to be estimated to obtain a joint probability distribution.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> A joint distribution over n binary features needs 2ⁿ−1 parameters — exponential. Infeasible to estimate from finite data.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Conditionals CAN be computed from joints (just sum and divide). Joints aren't zero-heavy by default. A joint can always be defined for any set of random variables — just impractical.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">2</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">If A and B are features and C is the target, with P(A|C) = 0.2 and P(B|C) = 0.3, what is P(A|B,C) under the naïve Bayes assumption?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">0.5</li>
+          <li class="wrong">0.3</li>
+          <li class="correct">0.2</li>
+          <li class="wrong">0.06</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Naïve Bayes assumes features are conditionally independent given the target. So P(A|B,C) = P(A|C) = 0.2 — knowing B adds no info once C is fixed.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> 0.06 is P(A|C)·P(B|C) = the joint, not the conditional. 0.3 is P(B|C). 0.5 is just a random average.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">3</div><span class="mq-type">True / False</span><div class="mq-stem">Naïve Bayes model computes the joint probability distribution of the features and the target.</div></div>
+        <ul class="mq-options">
+          <li class="wrong">True</li>
+          <li class="correct">False</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> NB models P(Y) and P(Xᵢ|Y) only — never the full joint. Whole point is to AVOID estimating the joint, which would need exponential parameters.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">4</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Naïve Bayes requires estimating a number of probabilities that is:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Quadratic in terms of the number of features</li>
+          <li class="wrong">Independent of the number of features</li>
+          <li class="wrong">Exponential in terms of the number of features</li>
+          <li class="correct">Linear in terms of the number of features</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> One P(Xᵢ|Y) per feature × per class value, plus P(Y). For n features and k classes: roughly n·k probabilities → linear in n.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Exponential is the joint distribution we're trying to avoid. Quadratic would need feature-pair probabilities. Probability count clearly grows with n, so not independent.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">5</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">From the training data — 5 examples with label positive/negative, colors red/red/red/green/blue, labels positive/positive/negative/negative/positive — what is the estimated P(red | positive)?
+          <pre>Ex 1: small  red    circle    positive
+Ex 2: large  red    circle    positive
+Ex 3: small  red    triangle  negative
+Ex 4: medium green  square    negative
+Ex 5: large  blue   circle    positive</pre></div></div>
+        <ul class="mq-options">
+          <li class="wrong">1</li>
+          <li class="wrong">3/5</li>
+          <li class="wrong">2/5</li>
+          <li class="correct">2/3</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Out of 3 positive examples (Ex 1, 2, 5), 2 of them are red (Ex 1 and 2). So P(red | positive) = 2/3.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> 3/5 is overall fraction of red examples — that's P(red), not conditional. 2/5 is positive-AND-red over total — that's joint P(red, positive). 1 would mean every positive is red — Ex 5 is blue, so no.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">6</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">What is the naïve Bayes assumption?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Features are independent.</li>
+          <li class="wrong">Target is conditionally independent of each feature given the other features.</li>
+          <li class="wrong">Features are independent of the target.</li>
+          <li class="correct">Features are conditionally independent of each other given the target.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> The "naïve" part is exactly this — once you know the target Y, features become independent of each other. That lets P(X₁..Xₙ|Y) factor into the product Π P(Xᵢ|Y).</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Plain independence (no conditioning) is too strong and usually false. The opposite (target independent of features) destroys the model. NB doesn't claim features are independent of the target — that would make the target useless.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">7</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Given features X₁, X₂, …, Xₙ and target Y, a machine learning task can be formulated as the probabilistic task of estimating:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">P(X₁)·P(X₂)·…·P(Xₙ)·P(Y)</li>
+          <li class="wrong">P(X₁, X₂, …, Xₙ | Y)</li>
+          <li class="wrong">P(X₁, X₂, …, Xₙ, Y)</li>
+          <li class="correct">P(Y | X₁, X₂, …, Xₙ)</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> At inference you SEE the features and want to predict Y. That's the posterior P(Y|features).</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> P(X|Y) is the likelihood (used inside NB but not the goal). The joint P(X,Y) is what NB avoids. The product form assumes total independence — that's not the predictive question.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">8</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">What probabilities are needed to compute P(Y|X₁,…,Xₙ) using the naïve Bayes method?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">P(Xᵢ|Y) for all i.</li>
+          <li class="correct">P(Y) and P(Xᵢ|Y) for all i.</li>
+          <li class="wrong">P(Y|X₁,…,Xₙ) and P(Y)</li>
+          <li class="wrong">P(Y) and P(Xᵢ) for all i.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Bayes: P(Y|X) ∝ P(Y)·Π P(Xᵢ|Y). Need both the prior P(Y) AND each class-conditional P(Xᵢ|Y).</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> P(Xᵢ|Y) alone misses the prior. P(Y|X..) is the answer we're trying to compute — circular. P(Xᵢ) doesn't capture how features depend on the class.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">9</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">By Bayes' theorem, P(disease | symptom) =</div></div>
+        <ul class="mq-options">
+          <li class="wrong">P(symptom) · P(disease)</li>
+          <li class="correct">P(symptom | disease) · P(disease) / P(symptom)</li>
+          <li class="wrong">P(symptom | disease) · P(symptom) / P(disease)</li>
+          <li class="wrong">P(symptom | disease)</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Bayes' theorem: P(A|B) = P(B|A)·P(A) / P(B). Plug in A=disease, B=symptom.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> P(symptom)·P(disease) assumes independence and ignores the conditional. Swapping numerator and denominator gives the wrong direction. P(symptom|disease) alone is just the likelihood — missing prior and normalizer.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="nb">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">10</div><span class="mq-type">Multiple Answer (select all true)</span><div class="mq-stem">Which statements about Bayes' theorem are true?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">It is an approximation.</li>
+          <li class="wrong">It is based on the naïve Bayes assumption.</li>
+          <li class="correct">It lets us compute P(X|Y) in terms of P(Y|X).</li>
+          <li class="correct">It can be derived from the definition of conditional probability.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Bayes' theorem is an exact identity derived from P(A,B) = P(A|B)·P(B) = P(B|A)·P(A). It's not an approximation. It flips conditional direction — that IS its purpose. The naïve Bayes assumption is a SEPARATE simplification ON TOP of Bayes' theorem.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Bayes' theorem is exact, not approximate. It exists independently of NB — Bayesian statistics uses it everywhere without the NB assumption.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ GROUP 2: kNN & FEATURES ═══════════════════════ -->
+  <section class="mq-section" data-topic="knn">
+    <div class="mq-section-head" style="background:rgba(245,158,11,0.08);border-left:4px solid #f59e0b;">
+      <h2 style="color:#f59e0b;">📍 kNN, Distances &amp; Feature Selection</h2>
+      <span>Questions 11–20</span>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">11</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">k-Nearest Neighbors can be extended for regression by:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Predicting the majority class</li>
+          <li class="wrong">Using cosine similarity</li>
+          <li class="correct">Predicting the average target values of the k nearest neighbors</li>
+          <li class="wrong">Normalizing the features</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Regression needs a numeric output. Average (or weighted average) of neighbors' targets is the natural extension.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Majority class is for classification. Cosine similarity changes the distance metric, not the prediction type. Normalization is a preprocessing trick, not what makes kNN do regression.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">12</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">As the number of dimensions increases (curse of dimensionality):</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Sampling density increases.</li>
+          <li class="wrong">k-nearest neighbor method becomes more accurate</li>
+          <li class="correct">An example is less likely to be near another example.</li>
+          <li class="wrong">Fewer examples are needed to maintain the same sampling density.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> In high dimensions, volume grows exponentially → points become roughly equidistant → the concept of "near" weakens. kNN's nearest neighbor stops being meaningfully closer than far ones.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Sampling density DECREASES (volume grows). kNN gets WORSE in high dim. You need MORE examples (exponentially more) for the same density.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">13</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">How does Dynamic Time Warping (DTW) overcome the disadvantages of Euclidean distance for time series?</div></div>
+        <ul class="mq-options">
+          <li class="correct">By first best aligning the two time series.</li>
+          <li class="wrong">By first mapping the two time series to high dimensional features.</li>
+          <li class="wrong">By first scaling the two time series to be of the same length.</li>
+          <li class="wrong">By first normalizing the two time series.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Euclidean compares point-by-point at the same index, which fails when one series is shifted or stretched. DTW finds the best non-linear alignment (warping) between the two before computing distance.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> DTW doesn't lift to higher dim or normalize — its trick is purely the warped alignment. It handles series of DIFFERENT lengths, so it doesn't force them equal.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">14</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Data normalization is needed to:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Find the best value of parameters.</li>
+          <li class="correct">Prevent some features from numerically dominating other features.</li>
+          <li class="wrong">Prevent overfitting.</li>
+          <li class="wrong">Remove outliers.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> If one feature is in thousands and another in 0–1 range, distance/gradient calculations get dominated by the large one. Normalization (scale to similar range or zero-mean unit-variance) prevents this.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Normalization doesn't directly find parameters (training does). It doesn't prevent overfitting (regularization does). It doesn't remove outliers — outliers are still outliers, just on a smaller scale.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">15</div><span class="mq-type">Multiple Answer (select all true)</span><div class="mq-stem">Which types of features should be retained after feature selection?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Redundant</li>
+          <li class="correct">Predictive</li>
+          <li class="correct">Interacting</li>
+          <li class="wrong">Irrelevant</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Predictive features carry signal about the target — obviously keep. Interacting features may look weak alone but combine to predict well (XOR pattern) — keep them too.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Redundant features duplicate information already in others — wasted dimensions, drop them. Irrelevant features add noise to distance/likelihood — drop.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">16</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Which of the following measures is based on the ratio between feature values?</div></div>
+        <ul class="mq-options">
+          <li class="correct">Cosine similarity</li>
+          <li class="wrong">Edit distance</li>
+          <li class="wrong">Dynamic time warping distance</li>
+          <li class="wrong">Euclidean distance</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Cosine similarity = (a·b)/(‖a‖·‖b‖) — depends on the angle, not magnitudes. Scale a vector by 2 and cosine stays the same → it's about the RATIO of feature values, not their absolute size.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Edit distance counts string-edit operations. DTW is alignment-based. Euclidean is √Σ(aᵢ−bᵢ)² — absolute difference, not ratio.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">17</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Forward sequential feature selection could:</div></div>
+        <ul class="mq-options">
+          <li class="correct">Miss including interacting features.</li>
+          <li class="wrong">Include redundant features.</li>
+          <li class="wrong">Include irrelevant features.</li>
+          <li class="wrong">Miss including predictive features.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Forward selection adds features one at a time based on individual performance. Two features that are weak alone but powerful together (XOR-like) never get picked, because adding either one alone doesn't help.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Redundant and irrelevant features won't improve performance alone, so forward selection won't pick them. It WILL pick predictive features (that's what it's designed for).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">18</div><span class="mq-type">Multiple Answer (select all true)</span><div class="mq-stem">If there are 100 training examples, which are true among kNN models with different k?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">100-nearest neighbor will be most prone for overfitting.</li>
+          <li class="correct">100-nearest neighbor will be most prone for underfitting.</li>
+          <li class="correct">1-nearest neighbor will be most prone to overfitting.</li>
+          <li class="wrong">1-nearest neighbor will be most prone to underfitting.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> k=1 means decision boundary fits noise exactly — overfitting. k=n=100 means EVERY query averages all training data → predicts majority class always → severe underfitting.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> The roles are reversed: large k smooths and underfits; small k is jittery and overfits.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">19</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Two examples (binary features):
+          <pre>Example 1 — F1: True,  F2: True,  F3: False
+Example 2 — F1: True,  F2: False, F3: False</pre>
+What is the Jaccard similarity?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">2/3</li>
+          <li class="wrong">0</li>
+          <li class="wrong">1/3</li>
+          <li class="correct">1/2</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Jaccard = (number of features True in BOTH) / (number of features True in AT LEAST ONE). True-True features: just F1 → 1. True-in-at-least-one: F1, F2 → 2. So 1/2. (F3 is False-False, ignored.)</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> 2/3 would treat False-False as a match (it isn't, in Jaccard). 1/3 would count F3 in the union. 0 would require zero overlap, but F1 matches.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="knn">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">20</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">What computation is done during training in k-nearest neighbor method?</div></div>
+        <ul class="mq-options">
+          <li class="correct">Nothing</li>
+          <li class="wrong">Computing distances between every pair of training examples</li>
+          <li class="wrong">Finding the nearest training example to each training example</li>
+          <li class="wrong">Computing the Voronoi diagram</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> kNN is a "lazy learner". Training = just store the data. All distance computation happens at test time when a query arrives.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Pairwise distances and Voronoi diagrams are sometimes precomputed as optimizations, but they're not REQUIRED by the algorithm. The standard definition does no training work.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ GROUP 3: EVALUATION ═══════════════════════ -->
+  <section class="mq-section" data-topic="eval">
+    <div class="mq-section-head" style="background:rgba(244,114,182,0.08);border-left:4px solid #f472b6;">
+      <h2 style="color:#f472b6;">📊 Evaluation Metrics</h2>
+      <span>Questions 21–30</span>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">21</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">If a dataset has 1000 examples, which has the largest number of training examples per fold?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">2-fold cross-validation</li>
+          <li class="correct">1000-fold cross-validation</li>
+          <li class="wrong">100-fold cross-validation</li>
+          <li class="wrong">10-fold cross-validation</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> In k-fold CV, training set per fold = n − n/k. With k=1000 (leave-one-out): train on 999, test on 1. With k=2: train on 500. Bigger k → bigger training set per fold.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Smaller k means a larger test slice and a smaller training set per fold. So 2-fold and 10-fold both train on fewer examples than 1000-fold.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">22</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">A model predicted 90 test examples to be positive and was correct for 80 of them. What is 80/90?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Recall</li>
+          <li class="wrong">Specificity</li>
+          <li class="wrong">Sensitivity</li>
+          <li class="correct">Precision</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Precision = TP / (TP + FP) = "of those predicted positive, how many are actually positive". 80/90 fits this exactly.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Recall/Sensitivity = TP/(TP+FN) — over all REAL positives, not predicted. Specificity = TN/(TN+FP) — about negatives.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">23</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Which evaluation measure depends on the class distribution?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Recall</li>
+          <li class="wrong">Sensitivity</li>
+          <li class="wrong">Specificity</li>
+          <li class="correct">Precision</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Precision's denominator (TP+FP) depends on how many negatives get misclassified — i.e., depends on how many negatives there are. Change the negative-to-positive ratio and precision shifts even if the classifier is unchanged.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Sensitivity (TP/(TP+FN)) depends only on positives. Specificity (TN/(TN+FP)) depends only on negatives. Recall = sensitivity. None care about the OVERALL distribution between classes.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">24</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Different points on an ROC curve are obtained using:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Different random baselines.</li>
+          <li class="correct">Different thresholds on the classification confidence.</li>
+          <li class="wrong">Different sizes of the test data.</li>
+          <li class="wrong">Different folds of cross-validation.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> An ROC curve sweeps the classification threshold. Each threshold gives one (FPR, TPR) point. Lower threshold → predict more positives → higher TPR and FPR.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> ROC is computed on a fixed test set. Baselines and CV folds don't change shape — they evaluate different runs but each gives ONE point per threshold.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">25</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Out of all positives in the data, how many were correctly predicted as positive — this is:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Specificity</li>
+          <li class="correct">Sensitivity or Recall</li>
+          <li class="wrong">Accuracy</li>
+          <li class="wrong">Precision</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> By definition, Sensitivity = Recall = TP / (TP + FN) = "of real positives, fraction caught".</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Specificity is the analog for negatives. Accuracy mixes both. Precision flips the question — "of predicted positives, how many real".
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">26</div><span class="mq-type">True / False</span><div class="mq-stem">Accuracy cannot be 100% when some non-zero numbers in a confusion matrix are not on the diagonal.</div></div>
+        <ul class="mq-options">
+          <li class="correct">True</li>
+          <li class="wrong">False</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Off-diagonal cells are misclassifications. If ANY of them is non-zero, you have at least one mistake → accuracy &lt; 100%.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">27</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Parameters of a machine learning method are tuned on which dataset?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Test set</li>
+          <li class="wrong">Entire data</li>
+          <li class="correct">Validation set</li>
+          <li class="wrong">Training set</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Hyperparameters and model selection use the validation set. The training set fits the model; the test set is touched only once at the end.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Tuning on test data leaks information — your reported test accuracy becomes overestimated. Tuning on the training set is what training does (for parameters, not hyperparameters). The entire dataset is what you split FROM.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">28</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Location on an ROC curve of a model whose predictions are all correct?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Bottom-left corner</li>
+          <li class="correct">Top-left corner</li>
+          <li class="wrong">Bottom-right corner</li>
+          <li class="wrong">Top-right corner</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> ROC x-axis is FPR (False Positive Rate, lower = better), y-axis is TPR (True Positive Rate, higher = better). Perfect prediction → FPR=0, TPR=1 → top-LEFT.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Bottom-left = no positives predicted at all (TPR=0). Top-right = predict everything positive (TPR=1 but FPR=1). Bottom-right = worst possible (all flipped).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">29</div><span class="mq-type">True / False</span><div class="mq-stem">In machine learning evaluation there should always be some overlap between training and test data.</div></div>
+        <ul class="mq-options">
+          <li class="wrong">True</li>
+          <li class="correct">False</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Overlap = data leakage. Test set must be UNSEEN by the model during training so the reported performance reflects generalization to new data.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="eval">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">30</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">AUC of a model is 0.7. What can be concluded?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Its specificity is 0.3</li>
+          <li class="correct">It is predicting better than a random prediction model.</li>
+          <li class="wrong">Its sensitivity is 0.7.</li>
+          <li class="wrong">It cannot achieve sensitivity higher than 0.7.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Random guessing gives AUC = 0.5. Anything above that beats random. 0.7 is moderate but better than chance.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> AUC is a single summary number — it doesn't fix sensitivity or specificity. You can pick a threshold to get sensitivity=0.9 even if AUC=0.7 (at the cost of higher FPR).
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ GROUP 4: DECISION TREES ═══════════════════════ -->
+  <section class="mq-section" data-topic="dt">
+    <div class="mq-section-head" style="background:rgba(16,185,129,0.08);border-left:4px solid #10b981;">
+      <h2 style="color:#10b981;">🌳 Decision Trees</h2>
+      <span>Questions 31–40</span>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">31</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Which is TRUE about decision trees?</div></div>
+        <ul class="mq-options">
+          <li class="correct">They are human-interpretable</li>
+          <li class="wrong">They have no inductive bias</li>
+          <li class="wrong">They do not overfit</li>
+          <li class="wrong">They cannot be rewritten as rules</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> A trained tree is a chain of if-then rules a human can read top-to-bottom. That's exactly why they're popular in medicine, law, etc.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Every ML method has inductive bias (DT's is "prefer smaller trees"). DTs overfit very easily (deep trees memorize). DTs literally ARE rewritable as rules — each root-to-leaf path is one rule.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">32</div><span class="mq-type">True / False</span><div class="mq-stem">Decision trees are prone to overfitting because their representation language is very expressive.</div></div>
+        <ul class="mq-options">
+          <li class="correct">True</li>
+          <li class="wrong">False</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> A deep enough tree can carve out a leaf for every training example, fitting noise perfectly. Solution: prune, or limit max_depth.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">33</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Decision trees can be extended to do regression by:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Binning the numeric target into categories</li>
+          <li class="wrong">Decision trees cannot be extended for regression</li>
+          <li class="wrong">Reduced error pruning</li>
+          <li class="correct">Using variance instead of entropy for choosing the best feature to split with</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> For continuous targets, replace entropy/Gini (categorical) with variance reduction (numeric). At each leaf, predict the mean target value of training examples in that leaf.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Binning loses information and isn't true regression. DT clearly CAN do regression. Reduced error pruning is a separate technique (anti-overfitting), not what enables regression.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">34</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Three non-leaf nodes A, B, C in a tree being pruned by Reduced Error Pruning. Validation accuracy on full tree: 90%. After pruning A: 80%. After pruning B: 95%. After pruning C: 92%. What does the method do next?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Stop pruning</li>
+          <li class="correct">Prune B</li>
+          <li class="wrong">Prune A</li>
+          <li class="wrong">Prune C</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> REP prunes the node whose removal IMPROVES validation accuracy the most. Pruning B gives 95% (best gain). Then continue with the new tree.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Pruning A drops accuracy (don't do it). Pruning C improves by less than B. REP doesn't stop unless NO pruning helps — and pruning B does help.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">35</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Decision trees handle numeric features by:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Using variance instead of entropy for choosing the best feature to split with</li>
+          <li class="wrong">Decision trees cannot be extended to work with numeric features.</li>
+          <li class="correct">Using numeric threshold to split.</li>
+          <li class="wrong">Reduced error pruning</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> For a numeric feature x, find best threshold t (often midpoint between sorted values) and split into x ≤ t vs x &gt; t. Information gain is computed for each candidate threshold.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Variance vs entropy is for regression TARGETS, not numeric FEATURES. DTs CAN handle numeric features (this is the whole answer). REP is unrelated.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">36</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Which of these has the highest entropy?</div></div>
+        <ul class="mq-options">
+          <li class="correct">{A, A, A, B, B, B}</li>
+          <li class="wrong">{A, A, A, A, A, A}</li>
+          <li class="wrong">{A, A, B, B, B, B}</li>
+          <li class="wrong">{A, B, B, B, B, B}</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Entropy is maximized at 50/50. {3A, 3B} is exactly 50/50 → entropy = 1 bit. Any imbalance reduces entropy.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> {6A, 0B} → entropy = 0 (perfectly pure). {2A, 4B} → entropy ≈ 0.92. {1A, 5B} → entropy ≈ 0.65. None beat 1.0.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">37</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">ID3 has preference bias toward:</div></div>
+        <ul class="mq-options">
+          <li class="correct">Smaller trees</li>
+          <li class="wrong">Broader trees</li>
+          <li class="wrong">Balanced trees</li>
+          <li class="wrong">Larger trees</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> ID3's greedy information-gain selection favors features that split data into purer subsets quickly → shorter paths from root to leaf → smaller trees. This is the "Occam's razor" inductive bias built into the algorithm.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> ID3 doesn't deliberately balance the tree or make it broad. Larger trees would only emerge if pruning is disabled and noise is fitted — that's a side effect, not a bias.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">38</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">A regression tree can be distinguished from a classification tree by looking at its:</div></div>
+        <ul class="mq-options">
+          <li class="correct">Leaves</li>
+          <li class="wrong">Branches</li>
+          <li class="wrong">Internal nodes</li>
+          <li class="wrong">Root</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Classification leaves contain class labels. Regression leaves contain numeric values (typically the mean of training targets falling there).</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Internal nodes test features (same in both types). Branches are just feature-value transitions. The root is also a feature test.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">39</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Four decision trees with (train, test) accuracies:
+          <pre>A: 99% / 80%
+B: 95% / 94%
+C: 70% / 60%
+D: 80% / 85%</pre>
+Which is overfitting?</div></div>
+        <ul class="mq-options">
+          <li class="correct">A</li>
+          <li class="wrong">C</li>
+          <li class="wrong">B</li>
+          <li class="wrong">D</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Overfitting = high train, low test (big gap). Tree A: 99 vs 80 → 19-point gap. Memorized training data, failed to generalize.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> B: tiny gap, well-fit. C: both low → underfitting. D: test &gt; train means it's not even fitting training well — neither overfit nor underfit in the classic sense.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="dt">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">40</div><span class="mq-type">True / False</span><div class="mq-stem">Decision tree induction algorithm is recursive.</div></div>
+        <ul class="mq-options">
+          <li class="correct">True</li>
+          <li class="wrong">False</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> The algorithm: pick best split, partition data into subsets, then recursively build a tree on each subset. Each recursive call returns a subtree.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ GROUP 5: ML FOUNDATIONS ═══════════════════════ -->
+  <section class="mq-section" data-topic="found">
+    <div class="mq-section-head" style="background:rgba(0,212,255,0.08);border-left:4px solid #00d4ff;">
+      <h2 style="color:#00d4ff;">🎓 ML Foundations</h2>
+      <span>Questions 41–50</span>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">41</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">What manual work is needed to apply machine learning?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Change targets to suit the features.</li>
+          <li class="correct">Create training examples.</li>
+          <li class="wrong">Create rules relating features to targets.</li>
+          <li class="wrong">Mathematically derive targets from features.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> You must provide labelled training examples. That's the supervisory signal — the rest (rules, parameter values) is learned automatically.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> If you could derive targets mathematically or write rules, you wouldn't need ML. Changing targets to fit features is backwards.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">42</div><span class="mq-type">True / False</span><div class="mq-stem">Unbiased learning leads to the best prediction performance.</div></div>
+        <ul class="mq-options">
+          <li class="wrong">True</li>
+          <li class="correct">False</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> An unbiased learner has no preference among hypotheses consistent with the training data — it cannot generalize beyond the training set. Inductive bias (a preference) is REQUIRED to generalize.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">43</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Which is NOT a suitable task for machine learning?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Recognize fingerprints.</li>
+          <li class="correct">Predict when Jupiter and Saturn will be nearest to each other.</li>
+          <li class="wrong">Predict tomorrow's stock market index.</li>
+          <li class="wrong">Diagnose a patient's disease.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Planetary positions are governed by exact physics (Kepler's laws, Newtonian gravity). Use math/simulation, not ML. ML is for problems where the underlying function is unknown or too complex to express analytically.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Fingerprints, diseases, and stock markets have noisy, complex, hard-to-formalize patterns → exactly where ML shines.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">44</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">How many possible models are there for a task with 6 binary features and 5 possible target values?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">2⁶ × 5</li>
+          <li class="wrong">5 × 6</li>
+          <li class="wrong">2⁶ + 5</li>
+          <li class="correct">5^(2⁶) = 5^64</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> A "model" is a function from feature combinations to a target. There are 2⁶ = 64 possible feature combinations. Each can independently map to any of 5 targets. So 5 choices per combination, raised to 64 combinations → 5^64. Astronomically large — proves you need inductive bias to navigate this hypothesis space.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Multiplying or adding feature count to target count misses that you're counting FUNCTIONS, not points. The right operation is exponentiation.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">45</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Overfitting will take place:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Independent of the representation function (language bias).</li>
+          <li class="correct">If the representation function (language bias) is more expressive than needed.</li>
+          <li class="wrong">If there is no underfitting.</li>
+          <li class="wrong">If the representation function (language bias) is not expressive enough.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Overfitting happens when the model can express patterns too fine-grained for the true signal → it ends up fitting noise. Excess capacity vs the task is the cause.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Insufficient expressiveness causes UNDERFITTING, the opposite. The presence/absence of overfitting depends very much on the representation, not independent of it. "No underfitting" doesn't imply overfitting — could be just right.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">46</div><span class="mq-type">True / False</span><div class="mq-stem">Training data provides sufficient rationale to make predictions on unseen data.</div></div>
+        <ul class="mq-options">
+          <li class="wrong">True</li>
+          <li class="correct">False</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Training data alone is consistent with many hypotheses (infinitely many functions can fit a finite dataset). Without inductive bias (Occam's razor, smoothness assumptions, etc.), we cannot prefer one extrapolation over another.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">47</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">What makes two machine learning methods different from each other?</div></div>
+        <ul class="mq-options">
+          <li class="wrong">They use different features.</li>
+          <li class="correct">They have different inductive biases.</li>
+          <li class="wrong">They are applied on different tasks.</li>
+          <li class="wrong">They are trained on different training datasets.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Two algorithms can use the same features and data but produce different models because they prefer different hypothesis classes (linear vs tree vs neural). The inductive bias IS what makes each algorithm distinct.</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Features, datasets, and tasks are inputs to a method — they're not what makes the method itself different.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">48</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">Machine learning is an ill-posed problem because:</div></div>
+        <ul class="mq-options">
+          <li class="correct">Often multiple models are consistent with the training data.</li>
+          <li class="wrong">The goal of machine learning is often not clear.</li>
+          <li class="wrong">Often no model is consistent with the training data.</li>
+          <li class="wrong">Machine learning task is often not well-defined.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> "Ill-posed" means the solution isn't unique. Many hypotheses fit any finite training set equally well — choosing among them requires assumptions (inductive bias).</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> ML goals (predict target Y) ARE clear. Failing to find ANY consistent model is a separate (different) problem. Task definition isn't the issue here.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">49</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">What is predicted in a machine learning task is called:</div></div>
+        <ul class="mq-options">
+          <li class="wrong">Feature value</li>
+          <li class="correct">Target</li>
+          <li class="wrong">Feature</li>
+          <li class="wrong">Training data</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> Target (also "label", "response variable", "output Y") is what the model predicts. Features are the inputs.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mq-card" data-topic="found">
+      <div class="mq-q">
+        <div class="mq-q-head"><div class="mq-num">50</div><span class="mq-type">Multiple Choice</span><div class="mq-stem">For machine learning to work:</div></div>
+        <ul class="mq-options">
+          <li class="correct">Training and test data should come from the same distribution.</li>
+          <li class="wrong">Training and test data should be the same.</li>
+          <li class="wrong">Training data should be larger than test data.</li>
+          <li class="wrong">Training and test data should come from different distributions.</li>
+        </ul>
+        <button class="mq-reveal-btn" onclick="mqReveal(this)">Reveal Answer</button>
+        <div class="mq-explain">
+          <div class="why-right"><strong>Why correct:</strong> The i.i.d. assumption — train and test draw from the same distribution. Otherwise patterns learned won't apply (distribution shift → bad generalization).</div>
+          <div class="why-wrong">
+            <strong>Others wrong:</strong> Same data = no evaluation. Larger train is a practical heuristic, not a strict requirement. Different distributions break the foundation of supervised learning.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// Counter
+const seenCountEl = document.getElementById('seenCount');
+function updateCount() {
+  const n = document.querySelectorAll('.mq-card.revealed').length;
+  seenCountEl.textContent = n;
+}
+
+function mqReveal(btn) {
+  btn.closest('.mq-card').classList.add('revealed');
+  updateCount();
+}
+function mqRevealAll() {
+  document.querySelectorAll('.mq-card').forEach(c => c.classList.add('revealed'));
+  updateCount();
+}
+function mqResetAll() {
+  document.querySelectorAll('.mq-card').forEach(c => c.classList.remove('revealed'));
+  updateCount();
+}
+
+// Topic filter
+document.getElementById('mqTabs').addEventListener('click', e => {
+  if (!e.target.matches('.mq-tab')) return;
+  document.querySelectorAll('.mq-tab').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  const f = e.target.dataset.filter;
+  document.querySelectorAll('.mq-card').forEach(c => {
+    c.style.display = (f === 'all' || c.dataset.topic === f) ? '' : 'none';
+  });
+  document.querySelectorAll('.mq-section').forEach(s => {
+    s.style.display = (f === 'all' || s.dataset.topic === f) ? '' : 'none';
+  });
+});
+</script>
+</body>
+</html>
