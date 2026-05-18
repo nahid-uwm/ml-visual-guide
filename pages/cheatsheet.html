@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cheat Sheet — Last-Minute Study — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+<style>
+.cs-hero { padding: 5.5rem 0 2rem; text-align: center; }
+.cs-hero h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 900; margin-bottom: 0.6rem; }
+.cs-hero p { color: var(--text-muted); max-width: 600px; margin: 0 auto 1.5rem; font-size: 0.95rem; line-height: 1.6; }
+
+.cs-toc { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+  padding: 1rem; background: var(--card); border: 1px solid var(--border);
+  border-radius: 1rem; margin-bottom: 2rem; position: sticky; top: 70px; z-index: 50;
+  backdrop-filter: blur(10px); background: rgba(15,18,28,0.92); }
+.cs-toc a { padding: 0.35rem 0.85rem; font-size: 0.78rem; font-weight: 700;
+  border-radius: 2rem; text-decoration: none; transition: all 0.2s; }
+.cs-toc a:hover { transform: translateY(-1px); }
+
+/* ── Topic block ── */
+.cs-topic { margin-bottom: 3.5rem; scroll-margin-top: 140px; }
+.cs-topic-header { display: flex; align-items: center; gap: 1rem; padding: 1.25rem 1.5rem;
+  border-radius: 1rem; margin-bottom: 1.25rem; border: 1px solid; }
+.cs-topic-emoji { font-size: 2rem; flex-shrink: 0; }
+.cs-topic-title { font-size: 1.4rem; font-weight: 800; }
+.cs-topic-tldr { font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem; line-height: 1.4; }
+
+/* TL;DR strip — instantly scannable */
+.cs-tldr-strip { background: rgba(0,212,255,0.05); border-left: 4px solid var(--primary);
+  padding: 0.85rem 1.1rem; border-radius: 0.5rem; margin-bottom: 1.25rem;
+  font-size: 0.92rem; line-height: 1.6; }
+.cs-tldr-strip strong { color: var(--primary); }
+
+/* The big idea (plain English) */
+.cs-section { margin-bottom: 1.2rem; }
+.cs-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.12em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.cs-label.idea { color: var(--primary); }
+.cs-label.terms { color: var(--secondary); }
+.cs-label.formulas { color: var(--green); }
+.cs-label.compare { color: #f472b6; }
+.cs-label.mistake { color: #ef4444; }
+
+.cs-text { font-size: 0.92rem; line-height: 1.7; color: rgba(255,255,255,0.85); }
+
+/* Key terms — visual chips */
+.cs-terms-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 0.6rem; }
+.cs-term { padding: 0.6rem 0.85rem; background: rgba(168,85,247,0.07);
+  border: 1px solid rgba(168,85,247,0.25); border-radius: 0.5rem; }
+.cs-term-name { font-size: 0.82rem; font-weight: 700; color: var(--secondary); margin-bottom: 0.15rem; }
+.cs-term-def { font-size: 0.78rem; color: rgba(255,255,255,0.7); line-height: 1.45; }
+
+/* Formula row */
+.cs-formula { background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 0.6rem; padding: 0.75rem 1rem; margin-bottom: 0.6rem; }
+.cs-formula-label { font-size: 0.7rem; color: var(--green); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+
+/* Quick compare table */
+.cs-compare { font-size: 0.85rem; width: 100%; border-collapse: collapse; }
+.cs-compare th { text-align: left; padding: 0.5rem; color: #f472b6;
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+  border-bottom: 2px solid rgba(244,114,182,0.3); }
+.cs-compare td { padding: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+.cs-compare td:first-child { font-weight: 700; color: var(--text); }
+
+/* ⚠️ MISTAKE BOX — visually striking, must stand out */
+.cs-mistake-box {
+  background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(245,158,11,0.06));
+  border: 2px solid rgba(239,68,68,0.35);
+  border-left: 6px solid #ef4444;
+  border-radius: 0.75rem;
+  padding: 1.1rem 1.3rem;
+  margin-top: 1.25rem;
+  position: relative;
+}
+.cs-mistake-box::before {
+  content: '⚠️ COMMON MISTAKES';
+  position: absolute; top: -0.7rem; left: 1rem;
+  background: var(--bg);
+  color: #ef4444;
+  font-size: 0.7rem; font-weight: 900; letter-spacing: 0.12em;
+  padding: 0.15rem 0.6rem;
+  border-radius: 0.3rem;
+  border: 1px solid #ef4444;
+}
+.cs-mistake-list { list-style: none; padding: 0; margin: 0.5rem 0 0; }
+.cs-mistake-list li { padding: 0.55rem 0; border-bottom: 1px dashed rgba(239,68,68,0.15);
+  font-size: 0.88rem; line-height: 1.55; }
+.cs-mistake-list li:last-child { border-bottom: none; }
+.cs-mistake-list li::before { content: '❌ '; color: #ef4444; font-weight: 900; }
+.cs-mistake-list li strong { color: #fbbf24; }
+.cs-mistake-list .fix { display: block; color: var(--green); font-size: 0.82rem;
+  margin-top: 0.2rem; padding-left: 1.5rem; }
+.cs-mistake-list .fix::before { content: '✅ Fix: '; font-weight: 800; }
+
+/* Edge case sub-box */
+.cs-edge {
+  background: rgba(245,158,11,0.05);
+  border: 1px dashed rgba(245,158,11,0.4);
+  border-radius: 0.5rem;
+  padding: 0.7rem 0.95rem;
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+.cs-edge strong { color: var(--accent); display: block; font-size: 0.7rem;
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+
+/* Memory tricks */
+.cs-memory {
+  background: rgba(168,85,247,0.05);
+  border: 1px dashed rgba(168,85,247,0.4);
+  border-radius: 0.5rem;
+  padding: 0.7rem 0.95rem;
+  margin-top: 0.85rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  line-height: 1.55;
+}
+.cs-memory strong { color: var(--secondary); font-style: normal; display: block;
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+
+@media(max-width:600px){
+  .cs-toc { top: 60px; }
+  .cs-terms-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">ML Visual Guide</a>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+  <div class="nav-links" id="navLinks">
+    <a href="../index.html">Home</a>
+    <a href="neural-networks.html">Neural Nets</a>
+    <a href="cnn.html">CNN</a>
+    <a href="attention.html">Attention</a>
+    <a href="generative-ai.html">Generative</a>
+    <a href="reinforcement.html">RL</a>
+    <a href="unsupervised.html">Unsupervised</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="evolution.html">Evolution</a>
+    <a href="final-exam.html">Final Exam</a>
+    <a href="cheatsheet.html" class="active">Cheat Sheet</a>
+  </div>
+</nav>
+
+<main class="container">
+
+  <section class="cs-hero">
+    <h1>Last-Minute <span class="gradient-text">Cheat Sheet</span></h1>
+    <p>Every topic distilled. High-level idea in plain English, key terms to memorize, and a separate red box for the mistakes students make on every exam.</p>
+  </section>
+
+  <nav class="cs-toc">
+    <a href="#nn" style="background:rgba(0,212,255,0.12);color:#00d4ff;border:1px solid rgba(0,212,255,0.3);">🧠 Neural Nets</a>
+    <a href="#cnn" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);">🖼️ CNN</a>
+    <a href="#rnn" style="background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.3);">🔄 RNN/LSTM</a>
+    <a href="#attn" style="background:rgba(168,85,247,0.12);color:#a855f7;border:1px solid rgba(168,85,247,0.3);">🎯 Attention</a>
+    <a href="#gen" style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.3);">🎨 Generative</a>
+    <a href="#rl" style="background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">🎮 RL</a>
+    <a href="#unsup" style="background:rgba(20,184,166,0.12);color:#14b8a6;border:1px solid rgba(20,184,166,0.3);">🔍 Unsupervised</a>
+    <a href="#theory" style="background:rgba(234,179,8,0.12);color:#eab308;border:1px solid rgba(234,179,8,0.3);">📐 Theory</a>
+  </nav>
+
+  <!-- ════════════════════════════════════════
+       1. NEURAL NETWORKS
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="nn">
+    <div class="cs-topic-header" style="background:rgba(0,212,255,0.07);border-color:rgba(0,212,255,0.3);">
+      <div class="cs-topic-emoji">🧠</div>
+      <div>
+        <div class="cs-topic-title" style="color:#00d4ff;">Neural Networks &amp; Backprop</div>
+        <div class="cs-topic-tldr">Perceptron → MLP → Deep Networks. Learn weights by gradient descent.</div>
+      </div>
+    </div>
+
+    <div class="cs-tldr-strip"><strong>TL;DR:</strong> A neural net is just a chain of (multiply by weights → add bias → apply non-linearity). Training nudges weights downhill on a loss surface using gradients computed by the chain rule (backpropagation).</div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 The Big Idea</div>
+      <div class="cs-text">
+        Each neuron computes <strong>z = w·x + b</strong>, then applies an activation function like ReLU or sigmoid. Stack neurons in layers — each layer's output is the next layer's input. The <strong>universal approximation theorem</strong> says one hidden layer with enough neurons can approximate any continuous function. We train by defining a loss (how wrong we are), computing <strong>∂L/∂w</strong> for every weight via the <strong>chain rule</strong>, and stepping each weight in the direction that reduces loss.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label terms">🔑 Key Terms (Memorize)</div>
+      <div class="cs-terms-grid">
+        <div class="cs-term"><div class="cs-term-name">Perceptron</div><div class="cs-term-def">Single neuron with step activation. Solves only linearly separable problems.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Activation Function</div><div class="cs-term-def">Non-linear function applied to z. Without it, layers collapse into one linear map.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Sigmoid σ(z)</div><div class="cs-term-def">1/(1+e⁻ᶻ). Range (0,1). Derivative ≤ 0.25 → vanishing gradient.</div></div>
+        <div class="cs-term"><div class="cs-term-name">ReLU</div><div class="cs-term-def">max(0, z). Default for hidden layers. Derivative = 1 for z&gt;0.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Softmax</div><div class="cs-term-def">Converts logits to probabilities that sum to 1. Used in multi-class output.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Backpropagation</div><div class="cs-term-def">Chain-rule application: gradients flow output → input through the computational graph.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Learning Rate η</div><div class="cs-term-def">Step size in weight update: w ← w − η·∂L/∂w. Too big = diverge, too small = slow.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Vanishing Gradient</div><div class="cs-term-def">In deep nets with sigmoid/tanh, gradients shrink to ~0, early layers don't learn.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Dropout</div><div class="cs-term-def">Randomly zero p% of neurons during training. Regularization, no extra params.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Batch Norm</div><div class="cs-term-def">Normalize activations per mini-batch. Enables higher LR, faster training.</div></div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label formulas">📐 Essential Formulas</div>
+      <div class="cs-formula"><div class="cs-formula-label">Perceptron Update</div><div id="f-perceptron"></div></div>
+      <div class="cs-formula"><div class="cs-formula-label">Sigmoid Derivative (USED IN BACKPROP)</div><div id="f-sigmoid-d"></div></div>
+      <div class="cs-formula"><div class="cs-formula-label">Cross-Entropy Loss (Classification)</div><div id="f-ce"></div></div>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Forgetting to add bias</strong> when computing z = w·x + b. Bias shifts the activation — without it, the line passes through origin.<br><span class="fix">Always include +b in your manual calculation.</span></li>
+        <li><strong>Confusing ŷ with z.</strong> z is the pre-activation; ŷ is after the activation function.<br><span class="fix">For perceptron: ŷ = step(z). For sigmoid output: ŷ = σ(z).</span></li>
+        <li><strong>Computing σ'(z) wrong.</strong> Many write σ'(z) = σ(z), missing the (1−σ(z)) factor.<br><span class="fix">σ'(z) = σ(z)·(1−σ(z)). If you already computed σ(z)=0.8, then σ'=0.8×0.2=0.16.</span></li>
+        <li><strong>Using MSE for classification.</strong> MSE gives weak gradients on confident-wrong predictions; cross-entropy gives strong correction signal.<br><span class="fix">MSE for regression, cross-entropy for classification.</span></li>
+        <li><strong>Applying step function with ≥ instead of &gt;.</strong> The perceptron convention is ŷ=1 if z&gt;0, ŷ=0 if z≤0. When z=0 exactly, output is 0.<br><span class="fix">If z=0 and y=1, error = 1 → update IS needed.</span></li>
+        <li><strong>Forgetting to update bias.</strong> The bias update is b ← b + η(y−ŷ), separate from weight updates.<br><span class="fix">Same learning rule applies to b, just without the xᵢ multiplier.</span></li>
+      </ul>
+
+      <div class="cs-edge">
+        <strong>⚡ Edge case</strong>
+        XOR is the classic non-linearly-separable problem. A single perceptron cannot solve it — you need at least one hidden layer. This is the historical reason MLPs were invented.
+      </div>
+    </div>
+
+    <div class="cs-memory">
+      <strong>🧠 Memory hook</strong>
+      "Forward: <em>z = Wx + b → activate → repeat</em>. Backward: <em>∂L/∂w = upstream_gradient × local_gradient × input</em>."
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       2. CNN
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="cnn">
+    <div class="cs-topic-header" style="background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.3);">
+      <div class="cs-topic-emoji">🖼️</div>
+      <div>
+        <div class="cs-topic-title" style="color:#f59e0b;">Convolutional Neural Networks</div>
+        <div class="cs-topic-tldr">Share weights across image positions. Learn hierarchical features.</div>
+      </div>
+    </div>
+
+    <div class="cs-tldr-strip"><strong>TL;DR:</strong> A CNN slides small learned filters across an image to detect patterns. Same filter weights apply at every position (weight sharing), so it learns once where an edge exists. Pooling then summarizes regions.</div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 The Big Idea</div>
+      <div class="cs-text">
+        A dense layer on a 1000×1000 image would need ~10⁹ weights and treat every pixel as independent. A CNN's <strong>convolution layer</strong> uses a small (e.g. 3×3) filter, slid across the image, with the same 9 weights at every position. Early layers learn edges, middle layers learn textures, deep layers learn object parts. <strong>Pooling</strong> (max or average over a 2×2 region) shrinks spatial dimensions and adds small-shift invariance.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label terms">🔑 Key Terms</div>
+      <div class="cs-terms-grid">
+        <div class="cs-term"><div class="cs-term-name">Filter / Kernel</div><div class="cs-term-def">Small matrix (F×F) of learned weights slid across input.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Stride S</div><div class="cs-term-def">How many pixels the filter moves each step. S=2 halves output size.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Padding P</div><div class="cs-term-def">Extra zero pixels at borders. "Same" padding preserves spatial size.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Feature Map</div><div class="cs-term-def">Output of a convolution. One per filter.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Receptive Field</div><div class="cs-term-def">Region of input that influences one output unit. Grows with depth.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Weight Sharing</div><div class="cs-term-def">Same filter weights reused at every spatial position.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Max Pooling</div><div class="cs-term-def">Take maximum in 2×2 window. No learnable parameters.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Translation Equivariance</div><div class="cs-term-def">Shifted input → shifted feature map. Conv has this; FC layers don't.</div></div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label formulas">📐 The Two Formulas You Must Know</div>
+      <div class="cs-formula"><div class="cs-formula-label">Output Spatial Size</div><div id="f-conv-out"></div></div>
+      <div class="cs-formula"><div class="cs-formula-label">Parameter Count Per Conv Layer</div><div id="f-conv-params"></div></div>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Forgetting the +1 in the output-size formula.</strong> A filter at position 0, 1, …, (W−F)/S occupies (W−F)/S + 1 positions.<br><span class="fix">Output = ⌊(W − F + 2P) / S⌋ + 1. Always add 1.</span></li>
+        <li><strong>Doubling padding by mistake.</strong> P=1 adds 1 pixel on each side → effective width is W + 2P, not W + P.<br><span class="fix">"+ 2P" in the formula already accounts for both sides.</span></li>
+        <li><strong>Forgetting the bias in parameter count.</strong> Each filter has F×F×Cᵢₙ weights PLUS 1 bias.<br><span class="fix">Params = (F·F·Cᵢₙ + 1) × Cₒᵤₜ. For 3 in, 64 out, 3×3: (27+1)×64 = 1,792.</span></li>
+        <li><strong>Confusing equivariance with invariance.</strong> Convolution is equivariant (shift in → shift out). Pooling adds the invariance.<br><span class="fix">Equivariant = output shifts with input. Invariant = output unchanged.</span></li>
+        <li><strong>Forgetting channels in 3D conv.</strong> For RGB input (3 channels), each 3×3 filter is actually 3×3×3 = 27 weights, not 9.<br><span class="fix">Filter shape always includes input channels.</span></li>
+        <li><strong>Treating pooling as having parameters.</strong> Max/average pooling has zero learnable weights.<br><span class="fix">Only conv and FC layers contribute to param count.</span></li>
+      </ul>
+
+      <div class="cs-edge">
+        <strong>⚡ Edge case — "Same" padding</strong>
+        For F=3, stride=1: P=1 gives same output size as input. For F=5, stride=1: P=2. General rule: P = (F−1)/2 for odd F.
+      </div>
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Non-integer output</strong>
+        If (W−F+2P)/S isn't an integer, you must floor it. The formula handles this with ⌊·⌋. Some frameworks instead pad to make it work — verify which convention your exam uses.
+      </div>
+    </div>
+
+    <div class="cs-memory">
+      <strong>🧠 Memory hook</strong>
+      "Stride shrinks. Padding grows. Filter eats. Bias adds one."
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       3. RNN / LSTM
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="rnn">
+    <div class="cs-topic-header" style="background:rgba(244,114,182,0.07);border-color:rgba(244,114,182,0.3);">
+      <div class="cs-topic-emoji">🔄</div>
+      <div>
+        <div class="cs-topic-title" style="color:#f472b6;">RNN / LSTM / GRU</div>
+        <div class="cs-topic-tldr">Networks with memory. Process sequences one step at a time.</div>
+      </div>
+    </div>
+
+    <div class="cs-tldr-strip"><strong>TL;DR:</strong> An RNN reuses the same weights at every time step and carries a hidden state forward as memory. LSTM adds gates and a cell-state highway to prevent gradients from vanishing across long sequences.</div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 The Big Idea</div>
+      <div class="cs-text">
+        Plain RNN: <strong>hₜ = tanh(Wₕhₜ₋₁ + Wₓxₜ + b)</strong>. Same weights at every step. Trained by <strong>backpropagation through time</strong> (BPTT) — unroll the network across time, compute gradients, sum updates. Problem: gradients multiplied by Wₕ at every step, so they vanish (|Wₕ|&lt;1) or explode (|Wₕ|&gt;1). <strong>LSTM</strong> solves this with a <strong>cell state</strong> Cₜ that flows through with minimal multiplications, plus <strong>three gates</strong> (forget, input, output) controlling what enters and exits.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label terms">🔑 Key Terms</div>
+      <div class="cs-terms-grid">
+        <div class="cs-term"><div class="cs-term-name">Hidden State hₜ</div><div class="cs-term-def">The RNN's memory at time t, passed to next step.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Cell State Cₜ</div><div class="cs-term-def">LSTM-only. Long-term memory conveyor belt.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Forget Gate f</div><div class="cs-term-def">σ(·). Decides what to erase from cell state.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Input Gate i</div><div class="cs-term-def">σ(·). Decides what new info to add.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Output Gate o</div><div class="cs-term-def">σ(·). Decides what to expose as hidden state.</div></div>
+        <div class="cs-term"><div class="cs-term-name">BPTT</div><div class="cs-term-def">Backprop Through Time. Unroll RNN, then standard backprop.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Gradient Clipping</div><div class="cs-term-def">Cap gradient norm to prevent explosion in RNNs.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Teacher Forcing</div><div class="cs-term-def">During training, feed true output as next input. Speeds convergence.</div></div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label compare">⚖️ Quick Compare: RNN vs LSTM vs GRU vs Transformer</div>
+      <table class="cs-compare">
+        <tr><th>Model</th><th>Memory</th><th>Long-Range</th><th>Parallelizable</th></tr>
+        <tr><td>Plain RNN</td><td>1 hidden state</td><td>❌ Vanishing gradient</td><td>❌ Sequential</td></tr>
+        <tr><td>LSTM</td><td>Cell + hidden, 3 gates</td><td>✅ Up to ~500 steps</td><td>❌ Sequential</td></tr>
+        <tr><td>GRU</td><td>Hidden + 2 gates</td><td>✅ Similar to LSTM</td><td>❌ Sequential</td></tr>
+        <tr><td>Transformer</td><td>Self-attention over all tokens</td><td>✅ Unlimited (O(1) path)</td><td>✅ Fully parallel</td></tr>
+      </table>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Forgetting RNN shares weights across time.</strong> It's NOT a different W per step.<br><span class="fix">Same Wₕ, Wₓ at every time step. That's why param count is independent of sequence length.</span></li>
+        <li><strong>Confusing vanishing with exploding gradient.</strong> Both happen in RNNs but require different fixes.<br><span class="fix">Vanishing → LSTM/GRU or skip connections. Exploding → gradient clipping.</span></li>
+        <li><strong>Claiming LSTM has no vanishing gradient.</strong> It reduces it dramatically, but doesn't eliminate it for very long sequences (1000+ steps).<br><span class="fix">LSTM handles ~500 steps reliably; Transformers handle much longer.</span></li>
+        <li><strong>Mixing up gate functions.</strong> Forget is for cell state, input is for new info, output is for hidden state.<br><span class="fix">Mnemonic: <em>Forget the past, Input the new, Output what to show.</em></span></li>
+        <li><strong>Saying "RNN can't be parallelized at all."</strong> Within a batch, examples ARE parallel. The sequence dimension is the unparallelizable axis.<br><span class="fix">Batch-parallel YES, time-parallel NO. This is why Transformers won.</span></li>
+      </ul>
+
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Bidirectional RNN</strong>
+        Run one RNN left→right and one right→left, concatenate hidden states. Captures both past and future context but requires the full sequence upfront — useless for online generation.
+      </div>
+    </div>
+
+    <div class="cs-memory">
+      <strong>🧠 Memory hook</strong>
+      "Plain RNN forgets fast. LSTM's cell state is a conveyor belt. Three gates decide: <em>erase, write, expose</em>."
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       4. ATTENTION / TRANSFORMERS
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="attn">
+    <div class="cs-topic-header" style="background:rgba(168,85,247,0.07);border-color:rgba(168,85,247,0.3);">
+      <div class="cs-topic-emoji">🎯</div>
+      <div>
+        <div class="cs-topic-title" style="color:#a855f7;">Attention &amp; Transformers</div>
+        <div class="cs-topic-tldr">Every token directly looks at every other token. Foundation of all modern LLMs.</div>
+      </div>
+    </div>
+
+    <div class="cs-tldr-strip"><strong>TL;DR:</strong> Each token emits a <strong>Query</strong>, a <strong>Key</strong>, and a <strong>Value</strong>. The query is compared against all keys (dot product), softmaxed to get attention weights, then used to mix the values. This lets every token see every other in one step.</div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 The Big Idea</div>
+      <div class="cs-text">
+        Imagine a library. Each book has a <strong>key</strong> (its topic) and a <strong>value</strong> (its content). When you (a token) want information, you submit a <strong>query</strong>. The library matches your query against every key (via dot product), scores the matches (softmax → probabilities), then gives you a weighted blend of values. Self-attention lets each token "ask the room a question" and get a context-aware answer in one step. <strong>Multi-head attention</strong> runs this in parallel with h different sets of (Q,K,V) projections to capture different types of relationships.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label terms">🔑 Key Terms</div>
+      <div class="cs-terms-grid">
+        <div class="cs-term"><div class="cs-term-name">Query Q</div><div class="cs-term-def">"What am I looking for?" — projection of current token.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Key K</div><div class="cs-term-def">"What do I represent?" — advertisement of each token.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Value V</div><div class="cs-term-def">"What do I pass along?" — content shared if selected.</div></div>
+        <div class="cs-term"><div class="cs-term-name">dₖ</div><div class="cs-term-def">Dimension of key vectors. We divide scores by √dₖ for stability.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Self-Attention</div><div class="cs-term-def">Q, K, V all from the same sequence (encoder).</div></div>
+        <div class="cs-term"><div class="cs-term-name">Cross-Attention</div><div class="cs-term-def">Q from decoder, K/V from encoder. Decoder reads encoder.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Masked Self-Attention</div><div class="cs-term-def">Causal mask prevents looking at future tokens. Used in GPT.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Positional Encoding</div><div class="cs-term-def">Added to embeddings so model knows token order.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Multi-Head</div><div class="cs-term-def">h parallel heads with d/h dimensions each. Concatenate outputs.</div></div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label formulas">📐 The Formula That Runs the World</div>
+      <div class="cs-formula"><div class="cs-formula-label">Scaled Dot-Product Attention</div><div id="f-attn"></div></div>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Forgetting the √dₖ scaling.</strong> Without it, dot products grow large for big dₖ → softmax saturates → near-zero gradients.<br><span class="fix">Always divide raw scores by √dₖ before softmax.</span></li>
+        <li><strong>Applying softmax to the wrong axis.</strong> Softmax is over <em>keys</em> (each query distributes 1 unit of attention over all keys).<br><span class="fix">For QKᵀ matrix of shape (n_query × n_key), softmax along the n_key axis (rows).</span></li>
+        <li><strong>Saying "attention has no parameters."</strong> The Wq, Wk, Wv, Wo projection matrices ARE learned parameters.<br><span class="fix">Q = X·Wq etc. The matrices are what's learned; the dot products are just operations.</span></li>
+        <li><strong>Forgetting positional encoding.</strong> Pure attention is order-agnostic — "dog bites man" = "man bites dog" without PE.<br><span class="fix">Add sinusoidal or learned positional encoding to embeddings BEFORE attention.</span></li>
+        <li><strong>Confusing self-attention with cross-attention.</strong> Self: Q,K,V all from same sequence. Cross: Q from one, K,V from another.<br><span class="fix">Encoder uses self. Decoder uses BOTH (masked self-attn over decoder, cross-attn to encoder).</span></li>
+        <li><strong>Believing multi-head adds parameters.</strong> Each head has d/h dimensions. h heads × d/h = d, same total as single head.<br><span class="fix">Param count of multi-head equals single-head — h is just how you split.</span></li>
+      </ul>
+
+      <div class="cs-edge">
+        <strong>⚡ Edge case — O(n²) memory</strong>
+        Attention is O(n²) in sequence length. A 4096-token context with d=512 needs ~67MB just for one attention matrix per head. Why context windows are expensive.
+      </div>
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Causal mask</strong>
+        In GPT-style models, mask is an upper-triangular matrix of −∞. After softmax, those positions get weight 0. Token t cannot attend to t+1, t+2, …
+      </div>
+    </div>
+
+    <div class="cs-memory">
+      <strong>🧠 Memory hook</strong>
+      "<em>Query asks. Keys advertise. Values deliver.</em> Scale by √dₖ. Softmax over keys. Multiply by V."
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       5. GENERATIVE AI
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="gen">
+    <div class="cs-topic-header" style="background:rgba(16,185,129,0.07);border-color:rgba(16,185,129,0.3);">
+      <div class="cs-topic-emoji">🎨</div>
+      <div>
+        <div class="cs-topic-title" style="color:#10b981;">Generative AI: GAN, VAE, Diffusion</div>
+        <div class="cs-topic-tldr">Three ways to generate new data from learned distributions.</div>
+      </div>
+    </div>
+
+    <div class="cs-tldr-strip"><strong>TL;DR:</strong> <strong>GAN</strong> = counterfeiter vs detective. <strong>VAE</strong> = autoencoder with smooth latent space. <strong>Diffusion</strong> = learn to denoise random noise back into images, step by step.</div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 The Big Idea</div>
+      <div class="cs-text">
+        <strong>GAN:</strong> A Generator turns noise z into fake images. A Discriminator tries to tell real from fake. They train against each other — Generator improves to fool D, D improves to detect G. Equilibrium = G's fakes are indistinguishable.<br><br>
+        <strong>VAE:</strong> An autoencoder where the encoder outputs <em>distributions</em> (μ, σ) instead of points. A KL-divergence term forces the latent space toward a Gaussian. Sampling z and decoding produces new examples. Smoother latents than AE, but blurrier outputs than GAN.<br><br>
+        <strong>Diffusion:</strong> Take a clean image, add noise over 1000 steps until it's pure noise. Train a U-Net to predict and remove noise step by step. To generate: start from random noise, denoise 1000 times. No adversarial dynamics, very stable.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label terms">🔑 Key Terms</div>
+      <div class="cs-terms-grid">
+        <div class="cs-term"><div class="cs-term-name">Generator G</div><div class="cs-term-def">Maps noise z to fake sample. Goal: fool D.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Discriminator D</div><div class="cs-term-def">Outputs P(real). Goal: D(real)→1, D(fake)→0.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Latent z</div><div class="cs-term-def">Random vector input to generator. Usually ~N(0, I).</div></div>
+        <div class="cs-term"><div class="cs-term-name">Mode Collapse</div><div class="cs-term-def">G outputs only one type of sample. Loses diversity.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Minimax Loss</div><div class="cs-term-def">min_G max_D V(D,G). G minimizes, D maximizes simultaneously.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Reparameterization</div><div class="cs-term-def">VAE trick: z=μ+σ·ε, ε~N(0,I). Allows backprop through random sampling.</div></div>
+        <div class="cs-term"><div class="cs-term-name">KL Divergence</div><div class="cs-term-def">Measure of distance between distributions. VAE regularizer.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Forward Process</div><div class="cs-term-def">Diffusion's noise-adding chain x₀ → xₜ.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Reverse Process</div><div class="cs-term-def">Diffusion's learned denoising xₜ → x₀.</div></div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label compare">⚖️ Compare: GAN vs VAE vs Diffusion</div>
+      <table class="cs-compare">
+        <tr><th>Property</th><th>GAN</th><th>VAE</th><th>Diffusion</th></tr>
+        <tr><td>Training stability</td><td>❌ Unstable</td><td>✅ Stable</td><td>✅ Very stable</td></tr>
+        <tr><td>Sample quality</td><td>✅ Sharp</td><td>❌ Blurry</td><td>✅ Sharpest</td></tr>
+        <tr><td>Has explicit likelihood</td><td>❌ No</td><td>✅ Approx (ELBO)</td><td>✅ Yes</td></tr>
+        <tr><td>Sampling speed</td><td>✅ One pass</td><td>✅ One pass</td><td>❌ 1000 passes (DDIM helps)</td></tr>
+        <tr><td>Mode coverage</td><td>❌ Mode collapse</td><td>✅ Good</td><td>✅ Excellent</td></tr>
+      </table>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Confusing G's objective with D's.</strong> G wants D(G(z))→1 (fool D). D wants D(real)→1 AND D(G(z))→0.<br><span class="fix">G minimizes log(1−D(G(z))); D maximizes log D(x) + log(1−D(G(z))).</span></li>
+        <li><strong>Forgetting why we need reparameterization.</strong> You cannot backpropagate through "sample from N(μ,σ)" — it's a discrete stochastic op.<br><span class="fix">Reparameterize as z = μ + σ·ε with ε~N(0,1). Now gradients flow through μ and σ.</span></li>
+        <li><strong>Calling autoencoders "generative."</strong> A plain AE only reconstructs; its latent space has no smooth distribution to sample from.<br><span class="fix">AE = compression. VAE = generation. The KL term is what makes VAE generative.</span></li>
+        <li><strong>Thinking GANs are always better than VAEs.</strong> GANs produce sharper images but suffer mode collapse and unstable training; VAEs are reliable but blurry.<br><span class="fix">Choose by use case: GAN for sharp images, VAE for stable training + interpretable latents.</span></li>
+        <li><strong>Confusing diffusion's "noise prediction" with "image prediction."</strong> The network predicts ε (the noise added), not the clean image directly.<br><span class="fix">Loss = ‖ε − ε_θ(xₜ, t)‖². Predicting noise is easier to train than predicting x₀.</span></li>
+        <li><strong>Forgetting that diffusion sampling is slow.</strong> Generating one image from DDPM needs 1000 forward passes through the U-Net.<br><span class="fix">DDIM, distillation, latent diffusion (Stable Diffusion) all aim to fix this.</span></li>
+      </ul>
+
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Conditional generation</strong>
+        cGAN, cVAE, classifier-free guidance (in diffusion) all condition on a label y. Feed y as an extra input to G and D (cGAN), or to the U-Net (diffusion).
+      </div>
+    </div>
+
+    <div class="cs-memory">
+      <strong>🧠 Memory hook</strong>
+      "GAN = forger vs cop. VAE = compressor with a smooth dial. Diffusion = walk noise back to image."
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       6. REINFORCEMENT LEARNING
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="rl">
+    <div class="cs-topic-header" style="background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.3);">
+      <div class="cs-topic-emoji">🎮</div>
+      <div>
+        <div class="cs-topic-title" style="color:#ef4444;">Reinforcement Learning</div>
+        <div class="cs-topic-tldr">Learn by trial and error. Maximize cumulative reward.</div>
+      </div>
+    </div>
+
+    <div class="cs-tldr-strip"><strong>TL;DR:</strong> An agent observes state s, picks action a, gets reward r, lands in s′. <strong>Q(s,a)</strong> estimates the total future reward from doing a in s. The Bellman update gradually refines Q toward the true value.</div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 The Big Idea</div>
+      <div class="cs-text">
+        RL frames problems as <strong>Markov Decision Processes (MDPs)</strong>: states, actions, rewards, transitions. The agent's job is to find a <strong>policy π(a|s)</strong> that maximizes expected discounted return <strong>Σ γᵗrₜ</strong>. <strong>Q-learning</strong> estimates Q(s,a) — "if I do a in s, then act optimally afterwards, what total reward do I get?" The <strong>Bellman update</strong> bootstraps: new estimate = (1−α)·old + α·(reward + γ · best next Q). Repeat until convergence.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label terms">🔑 Key Terms</div>
+      <div class="cs-terms-grid">
+        <div class="cs-term"><div class="cs-term-name">State s</div><div class="cs-term-def">Current situation observable to the agent.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Action a</div><div class="cs-term-def">Choice the agent makes from a set A(s).</div></div>
+        <div class="cs-term"><div class="cs-term-name">Reward r</div><div class="cs-term-def">Scalar feedback from environment after action.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Policy π(a|s)</div><div class="cs-term-def">Strategy: maps states to action probabilities.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Q-value Q(s,a)</div><div class="cs-term-def">Expected return from (s,a) under optimal future policy.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Discount γ</div><div class="cs-term-def">∈ (0,1). How much to value future vs immediate reward.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Learning Rate α</div><div class="cs-term-def">Step size for Q updates. Different from γ.</div></div>
+        <div class="cs-term"><div class="cs-term-name">TD Target</div><div class="cs-term-def">r + γ·maxQ(s′,a′). The improved estimate Q is pulled toward.</div></div>
+        <div class="cs-term"><div class="cs-term-name">TD Error</div><div class="cs-term-def">TD target − current Q. The correction signal.</div></div>
+        <div class="cs-term"><div class="cs-term-name">ε-greedy</div><div class="cs-term-def">Explore: random with prob ε. Exploit: argmax Q otherwise.</div></div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label formulas">📐 The Bellman Update (Most Tested Formula)</div>
+      <div class="cs-formula"><div class="cs-formula-label">Q-Learning Update Rule</div><div id="f-qlearn"></div></div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label compare">⚖️ Q-Learning vs SARSA (DON'T mix these up)</div>
+      <table class="cs-compare">
+        <tr><th></th><th>Q-Learning</th><th>SARSA</th></tr>
+        <tr><td>Policy type</td><td><strong>Off-policy</strong></td><td><strong>On-policy</strong></td></tr>
+        <tr><td>Update uses</td><td>max_a' Q(s',a')<br>(best possible)</td><td>Q(s',a')<br>(action actually taken)</td></tr>
+        <tr><td>Cliff-walking</td><td>Optimal but risky (falls during ε-exploration)</td><td>Safer — stays away from cliff</td></tr>
+      </table>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Confusing α (learning rate) with γ (discount).</strong> α is how fast Q updates. γ is how much you care about future.<br><span class="fix">α = step size on Q. γ = weight on future. Both ∈ (0,1) but mean different things.</span></li>
+        <li><strong>Computing TD target wrong.</strong> Many forget the max over a' or use the wrong Q.<br><span class="fix">TD target = R + γ · max_{a'} Q(s', a'). Use NEXT state's BEST Q, not current state.</span></li>
+        <li><strong>Forgetting to multiply by α.</strong> The update isn't Q ← TD target. It's Q ← Q + α·(TD target − Q).<br><span class="fix">Equivalent: Q ← (1−α)·Q + α·(TD target). Both forms test the same thing.</span></li>
+        <li><strong>Using Q-learning's max in SARSA.</strong> SARSA uses the actual next action's Q, not the max.<br><span class="fix">Q-learning: max Q(s',·). SARSA: Q(s', a' actually taken by ε-greedy).</span></li>
+        <li><strong>Saying Q-learning "doesn't explore."</strong> The behavior policy (ε-greedy) explores; the LEARNED policy is greedy.<br><span class="fix">Q-learning learns the optimal Q regardless of exploration policy — that's what off-policy means.</span></li>
+        <li><strong>Mixing up reward vs return.</strong> Reward = immediate r. Return = Σ γᵗrₜ cumulative.<br><span class="fix">Q(s,a) estimates RETURN, not immediate reward.</span></li>
+      </ul>
+
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Setting γ = 0</strong>
+        γ=0 → agent only cares about immediate reward. γ=1 → all future rewards equally weighted; can diverge if episode is infinite.
+      </div>
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Terminal state</strong>
+        When s' is terminal, there is no next state. The TD target collapses to just R (drop the γ·maxQ term).
+      </div>
+    </div>
+
+    <div class="cs-memory">
+      <strong>🧠 Memory hook</strong>
+      "Q-table is a cheat sheet: 'do a in s, expect this much future reward.' Bellman says: 'nudge old estimate toward what just happened + best you can hope for next.'"
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       7. UNSUPERVISED LEARNING
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="unsup">
+    <div class="cs-topic-header" style="background:rgba(20,184,166,0.07);border-color:rgba(20,184,166,0.3);">
+      <div class="cs-topic-emoji">🔍</div>
+      <div>
+        <div class="cs-topic-title" style="color:#14b8a6;">Unsupervised Learning &amp; Clustering</div>
+        <div class="cs-topic-tldr">Find structure in data without labels. K-Means, HAC, DBSCAN, PCA.</div>
+      </div>
+    </div>
+
+    <div class="cs-tldr-strip"><strong>TL;DR:</strong> <strong>K-Means</strong> = greedy iterative centroid update. <strong>HAC</strong> = bottom-up merging into a tree. <strong>DBSCAN</strong> = density-based, handles weird shapes. <strong>PCA</strong> = project onto directions of maximum variance.</div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 The Big Idea</div>
+      <div class="cs-text">
+        <strong>K-Means:</strong> Pick K. Randomly place centroids. Assign each point to nearest centroid. Move each centroid to the mean of its cluster. Repeat. Minimizes within-cluster squared distance.<br><br>
+        <strong>HAC:</strong> Start with every point as its own cluster. Merge the two closest. Repeat until one cluster. Result = dendrogram you can cut at any height. <strong>Single-linkage</strong> uses min distance between clusters; <strong>complete</strong> uses max; <strong>average</strong> uses mean; <strong>Ward</strong> minimizes variance increase.<br><br>
+        <strong>DBSCAN:</strong> Define ε-neighborhood and min_samples. Points with enough neighbors = "core." Reachable core points form clusters. Handles arbitrary shapes + finds noise points.<br><br>
+        <strong>PCA:</strong> Find directions (eigenvectors of covariance) along which data varies most. Project onto top k → dimensionality reduction.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label terms">🔑 Key Terms</div>
+      <div class="cs-terms-grid">
+        <div class="cs-term"><div class="cs-term-name">Centroid μₖ</div><div class="cs-term-def">Mean of cluster k. K-Means moves these.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Inertia</div><div class="cs-term-def">Σ ‖xᵢ−μ_{c(i)}‖² — K-Means objective.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Elbow Method</div><div class="cs-term-def">Plot inertia vs K, find the bend.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Silhouette</div><div class="cs-term-def">s = (b−a)/max(a,b). +1 good, 0 ambiguous, −1 wrong cluster.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Linkage</div><div class="cs-term-def">How to measure distance between clusters in HAC.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Dendrogram</div><div class="cs-term-def">Binary tree of merges. Cut at any height = clustering.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Core Point (DBSCAN)</div><div class="cs-term-def">Point with ≥ min_samples in ε-radius.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Eigenvector</div><div class="cs-term-def">Direction in PCA. Eigenvalue = variance along it.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Explained Variance</div><div class="cs-term-def">λᵢ / Σλⱼ. Fraction of total variance captured.</div></div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label compare">⚖️ Which Algorithm When?</div>
+      <table class="cs-compare">
+        <tr><th>Algorithm</th><th>Strengths</th><th>Avoid When</th></tr>
+        <tr><td>K-Means</td><td>Fast, scales, spherical clusters</td><td>Non-convex shapes, unknown K, varying densities</td></tr>
+        <tr><td>HAC</td><td>No K needed, dendrogram</td><td>Large datasets (O(n³))</td></tr>
+        <tr><td>DBSCAN</td><td>Arbitrary shapes, finds noise</td><td>Varying densities, high dimensions</td></tr>
+        <tr><td>PCA</td><td>Reduce dimensions, decorrelate</td><td>Features uncorrelated, need interpretability</td></tr>
+      </table>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Running K-Means on concentric circles.</strong> K-Means splits by Euclidean distance → cuts the rings in half rather than separating inner/outer.<br><span class="fix">For ring/moon shapes, use DBSCAN or spectral clustering.</span></li>
+        <li><strong>Forgetting to standardize features before K-Means / PCA.</strong> A feature in the thousands dominates one in the 0–1 range.<br><span class="fix">Always StandardScaler before distance-based methods.</span></li>
+        <li><strong>Wrong linkage update formula.</strong> For single-linkage merge of {A,B}: d({A,B}, C) = <strong>min</strong>(d(A,C), d(B,C)). Many use max.<br><span class="fix">Single → min. Complete → max. Average → mean. Memorize which is which.</span></li>
+        <li><strong>Confusing PCA components with original features.</strong> PC1 is a <em>combination</em> of all features, not one feature.<br><span class="fix">Each PC = weighted sum of original features. Loadings tell you the weights.</span></li>
+        <li><strong>Sorting eigenvectors by eigenvalue magnitude wrong way.</strong> PC1 has the LARGEST eigenvalue.<br><span class="fix">Sort descending: largest λ first. That's the direction of most variance.</span></li>
+        <li><strong>Treating K-Means as deterministic.</strong> Random init means different runs give different results.<br><span class="fix">Use K-Means++ init and run multiple times — sklearn does this by default (n_init).</span></li>
+      </ul>
+
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Single-link "chaining"</strong>
+        Single-linkage can connect two distant clusters through a chain of intermediate points. Sometimes useful (elongated clusters), sometimes a bug (sensitive to outliers).
+      </div>
+      <div class="cs-edge">
+        <strong>⚡ Edge case — DBSCAN border points</strong>
+        Border points are within ε of a core but aren't core themselves. They belong to a cluster but can't extend it.
+      </div>
+    </div>
+
+    <div class="cs-memory">
+      <strong>🧠 Memory hook</strong>
+      "K-Means averages. HAC merges. DBSCAN densifies. PCA rotates."
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       8. THEORY (SVM, regularization, bias-variance, eval)
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="theory">
+    <div class="cs-topic-header" style="background:rgba(234,179,8,0.07);border-color:rgba(234,179,8,0.3);">
+      <div class="cs-topic-emoji">📐</div>
+      <div>
+        <div class="cs-topic-title" style="color:#eab308;">Theory: SVM · Bias-Variance · Regularization · Metrics</div>
+        <div class="cs-topic-tldr">The fundamentals that appear in every exam.</div>
+      </div>
+    </div>
+
+    <div class="cs-tldr-strip"><strong>TL;DR:</strong> <strong>Bias</strong> = wrong model. <strong>Variance</strong> = too sensitive to data. <strong>L1</strong> = sparse weights. <strong>L2</strong> = small weights. <strong>SVM</strong> = max margin. <strong>Cross-entropy</strong> for classification, <strong>MSE</strong> for regression.</div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 Bias-Variance in One Picture</div>
+      <div class="cs-text">
+        Total error = <strong>Bias² + Variance + irreducible noise</strong>. High bias = underfitting (model too simple). High variance = overfitting (model memorizes noise). More data reduces variance but not bias. More model complexity reduces bias but increases variance. The sweet spot is found via cross-validation.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">💡 SVM, Regularization, Loss Functions</div>
+      <div class="cs-text">
+        <strong>SVM:</strong> Maximize the margin <em>2/‖w‖</em> between classes. Only support vectors (points on the margin) determine the hyperplane. The <strong>kernel trick</strong> maps to higher dimensions via K(xᵢ,xⱼ) = φ(xᵢ)·φ(xⱼ) without computing φ explicitly.<br><br>
+        <strong>L1 vs L2:</strong> L1 penalty Σ|wⱼ| → diamond constraint → solution often hits axis corner → some weights become exactly 0 (sparsity). L2 penalty Σwⱼ² → spherical constraint → smooth shrinkage to small but non-zero weights.<br><br>
+        <strong>Cross-entropy:</strong> −Σ yᵢ log ŷᵢ. Gives steep gradient when confident-wrong. Used with sigmoid (binary) or softmax (multi-class) output.
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label terms">🔑 Key Terms</div>
+      <div class="cs-terms-grid">
+        <div class="cs-term"><div class="cs-term-name">Bias</div><div class="cs-term-def">Systematic error from oversimplified model.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Variance</div><div class="cs-term-def">Sensitivity to training data noise.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Overfitting</div><div class="cs-term-def">Low train error, high test error.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Underfitting</div><div class="cs-term-def">High train AND test error.</div></div>
+        <div class="cs-term"><div class="cs-term-name">L1 / Lasso</div><div class="cs-term-def">Σ|w|. Produces sparse weights → feature selection.</div></div>
+        <div class="cs-term"><div class="cs-term-name">L2 / Ridge</div><div class="cs-term-def">Σw². Shrinks all weights smoothly.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Support Vector</div><div class="cs-term-def">Point exactly on margin boundary in SVM.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Kernel Trick</div><div class="cs-term-def">K(x,x') = φ(x)·φ(x'). Implicit high-dim mapping.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Confusion Matrix</div><div class="cs-term-def">TP, FP, FN, TN counts. Basis of all metrics.</div></div>
+        <div class="cs-term"><div class="cs-term-name">Precision</div><div class="cs-term-def">TP/(TP+FP). Of predicted positive, how many real?</div></div>
+        <div class="cs-term"><div class="cs-term-name">Recall</div><div class="cs-term-def">TP/(TP+FN). Of real positive, how many caught?</div></div>
+        <div class="cs-term"><div class="cs-term-name">F1 Score</div><div class="cs-term-def">2·P·R/(P+R). Harmonic mean of precision and recall.</div></div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label formulas">📐 Must-Know Formulas</div>
+      <div class="cs-formula"><div class="cs-formula-label">Bias-Variance Decomposition</div><div id="f-bv"></div></div>
+      <div class="cs-formula"><div class="cs-formula-label">L1 vs L2 Regularized Loss</div><div id="f-l1l2"></div></div>
+      <div class="cs-formula"><div class="cs-formula-label">SVM Primal Problem</div><div id="f-svm"></div></div>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Confusing precision and recall.</strong> Precision = "of what I PREDICTED positive." Recall = "of what's ACTUALLY positive."<br><span class="fix">Precision denominator = TP+FP. Recall denominator = TP+FN.</span></li>
+        <li><strong>Reporting accuracy on imbalanced data.</strong> 95% accuracy on 95/5 split is meaningless (predict majority class).<br><span class="fix">Use F1, AUC-ROC, or balanced accuracy for imbalanced classes.</span></li>
+        <li><strong>Saying L1 always beats L2.</strong> L1 helps when you suspect many features are irrelevant. L2 is usually a safer default.<br><span class="fix">L1 = feature selection. L2 = general regularization. Elastic Net = both.</span></li>
+        <li><strong>Believing SVM is "all points matter."</strong> Only support vectors (boundary points) determine the hyperplane.<br><span class="fix">Far-from-margin points have zero gradient — removing them changes nothing.</span></li>
+        <li><strong>Forgetting kernel trick = implicit mapping.</strong> You don't compute φ(x). You only evaluate K(xᵢ, xⱼ).<br><span class="fix">RBF kernel = exp(−γ‖xᵢ−xⱼ‖²). Maps to ∞-dim space without computing it.</span></li>
+        <li><strong>Wrong sign on bias-variance trade-off.</strong> More complexity → less bias, more variance. The opposite for both.<br><span class="fix">Simple model = high bias, low variance. Complex = low bias, high variance.</span></li>
+        <li><strong>Using cross-entropy with sigmoid output for multi-class.</strong> Sigmoid is binary; softmax is multi-class.<br><span class="fix">Binary → sigmoid + binary cross-entropy. Multi-class → softmax + categorical cross-entropy.</span></li>
+      </ul>
+
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Training accuracy increases, validation accuracy decreases</strong>
+        Classic overfitting. Use dropout, L2, data augmentation, or early stopping.
+      </div>
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Both training AND validation accuracy stagnate</strong>
+        Underfitting. Need more model capacity, less regularization, or better features.
+      </div>
+      <div class="cs-edge">
+        <strong>⚡ Edge case — Curse of dimensionality</strong>
+        In high dimensions, all points are roughly equidistant. KNN, K-Means, anything Euclidean-based degrades. Reduce dimensions first (PCA) or use methods robust to it (tree-based).
+      </div>
+    </div>
+
+    <div class="cs-memory">
+      <strong>🧠 Memory hook</strong>
+      "Bias = wrong shape. Variance = wiggly fit. L1 sparses. L2 shrinks. SVM widens. Cross-entropy punishes confidence."
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       9. EXAM-DAY TIPS
+  ════════════════════════════════════════ -->
+  <section class="cs-topic" id="examday">
+    <div class="cs-topic-header" style="background:rgba(0,212,255,0.07);border-color:rgba(0,212,255,0.3);">
+      <div class="cs-topic-emoji">🎓</div>
+      <div>
+        <div class="cs-topic-title" style="color:#00d4ff;">Exam-Day Tips</div>
+        <div class="cs-topic-tldr">Final tactical advice for the test itself.</div>
+      </div>
+    </div>
+
+    <div class="cs-section">
+      <div class="cs-label idea">⏱️ Strategy</div>
+      <div class="cs-text">
+        <strong>1. Skim first.</strong> Read every question before answering. Identify low-hanging fruit.<br>
+        <strong>2. Manual calculations: show every step.</strong> Partial credit comes from showing you understood the process, even if the final number is wrong.<br>
+        <strong>3. Sanity check arithmetic.</strong> Quick check: does Q-value go up or down after a positive reward? Does conv output get smaller after pooling?<br>
+        <strong>4. If stuck on a formula, derive from the concept.</strong> Don't remember the LSTM gate? Remember it has 3 sigmoids gating an input/cell/output.<br>
+        <strong>5. Manage time:</strong> if a question takes &gt;1.5× expected, move on. Come back later.
+      </div>
+    </div>
+
+    <div class="cs-mistake-box">
+      <ul class="cs-mistake-list">
+        <li><strong>Spending too long on one question.</strong> Easy points elsewhere are worth more than partial credit on hard ones.<br><span class="fix">Budget: total minutes / questions. Hard cap per problem.</span></li>
+        <li><strong>Skipping the "explain in plain English" part.</strong> Most rubrics give 30-40% for the intuition.<br><span class="fix">Always write 1-2 sentences after the math: "Intuitively, this means…"</span></li>
+        <li><strong>Not labeling axes / variables on diagrams.</strong> An unlabeled graph gets few points.<br><span class="fix">Always label: axes, units, key points (support vectors, margins, decision boundary).</span></li>
+        <li><strong>Confusing definitions vs. computations.</strong> "Define overfitting" is one sentence; "Compute the gradient" needs work shown.<br><span class="fix">Read the verb: define, compute, derive, explain, compare. Match your answer to it.</span></li>
+        <li><strong>Forgetting units / dimensions.</strong> 28×28 not 28. 1,792 params, not 1792 (clarity).<br><span class="fix">Include shape, units, parameter counts, and what each represents.</span></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// Nav toggle
+document.getElementById('navToggle').addEventListener('click', function() {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// KaTeX rendering
+function rk(id, tex) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  try { katex.render(tex, el, { displayMode: true, throwOnError: false }); }
+  catch(e) { el.textContent = tex; }
+}
+
+rk('f-perceptron', '\\mathbf{w} \\leftarrow \\mathbf{w} + \\eta (y - \\hat{y}) \\mathbf{x}, \\quad b \\leftarrow b + \\eta (y - \\hat{y})');
+rk('f-sigmoid-d', "\\sigma'(z) = \\sigma(z)\\,(1 - \\sigma(z))");
+rk('f-ce', 'L_{CE} = -\\sum_i y_i \\log \\hat{y}_i');
+rk('f-conv-out', '\\text{Out} = \\left\\lfloor \\frac{W - F + 2P}{S} \\right\\rfloor + 1');
+rk('f-conv-params', '\\text{Params} = (F \\times F \\times C_{in} + 1) \\times C_{out}');
+rk('f-attn', '\\text{Attention}(Q,K,V) = \\text{softmax}\\!\\left(\\frac{QK^\\top}{\\sqrt{d_k}}\\right) V');
+rk('f-qlearn', 'Q(s,a) \\leftarrow Q(s,a) + \\alpha \\Big[ R + \\gamma \\max_{a\'} Q(s\',a\') - Q(s,a) \\Big]');
+rk('f-bv', '\\mathbb{E}[\\text{Error}] = \\text{Bias}^2 + \\text{Variance} + \\sigma^2_{\\text{noise}}');
+rk('f-l1l2', 'L_{L1} = L + \\lambda \\sum_j |w_j| \\qquad L_{L2} = L + \\lambda \\sum_j w_j^2');
+rk('f-svm', '\\min_{w,b} \\tfrac{1}{2}\\|w\\|^2 \\;\\;\\text{s.t.}\\;\\; y_i(w \\cdot x_i + b) \\geq 1');
+</script>
+</body>
+</html>
