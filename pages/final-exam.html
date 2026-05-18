@@ -171,7 +171,7 @@ canvas { display: block; border-radius: 0.5rem; }
     <!-- ── Neural Network Backprop & Architecture ── -->
     <div class="exam-set-header"><h3>🧠 Neural Network Architecture &amp; Backprop</h3><span>Q1 from Sample-Questions PDF</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="nn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V1</div>
         <div class="vq-question">The figure shows a neural network that is <strong>not fully-connected</strong>. When training this network, errors from which nodes will be used to compute the error at node <strong>h₂</strong>? Updates on which weights will be influenced by the error at h₂?</div>
@@ -262,7 +262,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- ── Output Layer Design ── -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="nn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V2</div>
         <div class="vq-question">A neural network is designed for a classification task with <strong>4 classes</strong> and <strong>7 features</strong>. How many nodes in the output layer? What activation function? How do output values indicate the class?</div>
@@ -290,7 +290,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- ── Method Identification ── -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="theory">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V3</div>
         <div class="vq-question">Name the ML method covered in the course: (i) most human-interpretable classification, (ii) no training work, all work at testing, (iii) needs only one pass through training data, (iv) designed specifically for sequential inputs.</div>
@@ -325,7 +325,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- ── Linear → Binary Classification ── -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="theory">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V4</div>
         <div class="vq-question">Linear regression predicts a number between −∞ and +∞. Can linear regression be adapted to predict a binary class? If yes, how? If not, why not? (2–3 sentences)</div>
@@ -358,7 +358,7 @@ canvas { display: block; border-radius: 0.5rem; }
     <div class="exam-set-header"><h3>🖼️ CNN — Convolution &amp; Layer Identification</h3><span>Q1, Q2, Q5 across sample exams</span></div>
 
     <!-- 4x4 Image Conv -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="cnn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V5</div>
         <div class="vq-question">A 4×4 image with one channel. Using a 3×3 convolution filter with stride (1,1) and <strong>valid padding</strong>: (i) output size? (ii) unique weights in the filter (ignore bias)? (iii) if instead a dense layer with 3 nodes connects to the image, how many weights (ignore bias)? (iv) one advantage of conv over dense.</div>
@@ -422,7 +422,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- Layer Naming -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="cnn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V6</div>
         <div class="vq-question">Name the neural network layer: (i) prevents overfitting, (ii) downsamples to reduce computational load, (iii) outputs classification probabilities, (iv) makes it possible to identify something in one part of the input even though it was trained with examples having it in other parts.</div>
@@ -459,7 +459,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- Deep NN raw features -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="nn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V7</div>
         <div class="vq-question">What enables deep neural networks to directly work with raw features (e.g. pixel values) without needing us to manually engineer features? (2–3 sentences)</div>
@@ -485,7 +485,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- ReLU vs Sigmoid plot identification -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="nn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V8</div>
         <div class="vq-question">Two activation function plots are shown: (i) piecewise-linear, zero for x&lt;0, identity for x≥0, range [0,10] over x∈[-10,10]; (ii) S-shaped curve, asymptotes at 0 and 1. Name both. Which is preferred in deep networks and why?</div>
@@ -547,7 +547,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- CNN layer purposes -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="cnn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V9</div>
         <div class="vq-question">Describe in 1–2 sentences the purpose of each: (i) convolutional layer, (ii) pooling layer, (iii) dropout layer.</div>
@@ -572,7 +572,7 @@ canvas { display: block; border-radius: 0.5rem; }
     ════════════════════════════════════════════════════════════════ -->
     <div class="exam-set-header"><h3>🔄 RNN — Unrolling &amp; Backprop Through Time</h3><span>Q6 from Sample-Final-Exam2</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="rnn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V10</div>
         <div class="vq-question">Figure 1: an RNN with weights W_hx, W_hh, W_yh. Figure 2: unrolled over 3 timesteps with connections A–H. (i) What weights are on A–H? (ii) Error from output Y₁ backpropagates through which connections (A–H)?</div>
@@ -618,41 +618,52 @@ canvas { display: block; border-radius: 0.5rem; }
             <line x1="320" y1="190" x2="320" y2="155" stroke="#10b981" stroke-width="1.5"/><text x="326" y="178" fill="#10b981" font-size="11" font-weight="700">C</text>
             <line x1="210" y1="136" x2="290" y2="136" stroke="#a855f7" stroke-width="1.5"/><text x="245" y="130" fill="#a855f7" font-size="11" font-weight="700">E</text>
           </svg>
-          <div class="vq-diagram-caption">Red highlighted: edges that backpropagate Y₁'s error (G → B → D → A)</div>
+          <div class="vq-diagram-caption">Red-highlighted connections show the backprop path for Y₁'s error: <strong>hidden→output at t=1, input→hidden at t=1, hidden→hidden from t=0 to t=1, input→hidden at t=0</strong></div>
         </div>
 
         <div class="vq-block official">
           <div class="vq-block-label">✅ Official Answer</div>
-          <strong>(i)</strong> Weights for A, B, C = <strong>W_hx</strong> · Weights for D, E = <strong>W_hh</strong> · Weights for F, G, H = <strong>W_yh</strong><br>
-          <strong>(ii)</strong> Error from Y₁ backpropagates through <strong>G, B, D, A</strong>.
+          <strong>(i) Weight assignment on each connection:</strong>
+          <ul style="margin:0.4rem 0 0.6rem 1.2rem;line-height:1.7">
+            <li>Connections <strong>A, B, C (input → hidden, at each timestep) → weight W_hx</strong></li>
+            <li>Connections <strong>D, E (hidden → hidden, between timesteps) → weight W_hh</strong></li>
+            <li>Connections <strong>F, G, H (hidden → output, at each timestep) → weight W_yh</strong></li>
+          </ul>
+          <strong>(ii)</strong> The error from output Y₁ backpropagates through these four connections (in order, going backward from the output):
+          <ul style="margin:0.4rem 0 0.3rem 1.2rem;line-height:1.7">
+            <li><strong>G</strong> — the hidden→output connection at timestep 1</li>
+            <li><strong>B</strong> — the input→hidden connection at timestep 1 (input X₁ contributed to hidden state h₁)</li>
+            <li><strong>D</strong> — the hidden→hidden connection from timestep 0 to timestep 1 (h₀ also contributed to h₁)</li>
+            <li><strong>A</strong> — the input→hidden connection at timestep 0 (input X₀ contributed to h₀)</li>
+          </ul>
         </div>
 
         <div class="vq-block steps">
-          <div class="vq-block-label">📐 Step-by-Step Reasoning</div>
+          <div class="vq-block-label">📐 Step-by-Step Reasoning (using full names, not letters)</div>
           <ol class="step-list">
-            <li><strong>Weight assignment:</strong> RNN shares weights across time. Input→hidden uses W_hx everywhere (A, B, C). Hidden→hidden uses W_hh (D, E). Hidden→output uses W_yh (F, G, H).</li>
-            <li><strong>Y₁ backprop path:</strong> Y₁ comes from h₁ via G (hidden→output at t=1).</li>
-            <li>h₁ depends on x₁ via B AND on h₀ via D.</li>
-            <li>h₀ depends on x₀ via A.</li>
-            <li>So gradient flows: <strong>G → B (and through h₁ to D → A)</strong>.</li>
+            <li><strong>Why the same weight appears in multiple connections:</strong> an RNN shares one weight matrix across all timesteps. Every input→hidden connection uses W_hx; every hidden→hidden connection uses W_hh; every hidden→output connection uses W_yh. The unrolled diagram only LOOKS like a deep network with many weights — the weights are tied.</li>
+            <li><strong>Trace Y₁'s gradient backward, step 1:</strong> the output at timestep 1 came from the hidden state at timestep 1 (h₁), through the hidden→output connection at timestep 1. So gradient first flows back through that connection.</li>
+            <li><strong>Step 2 — h₁'s parents:</strong> the hidden state h₁ has two inputs — the current input X₁ (via the input→hidden connection at timestep 1) and the previous hidden state h₀ (via the hidden→hidden connection from t=0 to t=1). Gradient splits and flows back through BOTH.</li>
+            <li><strong>Step 3 — h₀'s parents:</strong> follow the hidden→hidden branch back to h₀. The hidden state h₀ was produced from the input X₀ via the input→hidden connection at timestep 0. Gradient flows back through that connection.</li>
+            <li><strong>Y₁'s error never touches Y₀, Y₂, or any connection at timestep 2</strong> — those nodes are not ancestors of Y₁ in the computation graph.</li>
           </ol>
         </div>
 
         <div class="vq-block explain">
-          <div class="vq-block-label">💡 Why "Backprop Through Time" (BPTT)</div>
-          <div class="sol-text">Even though the unrolled network looks deeper, the same shared weight W_hh gets gradient contributions from EVERY timestep that uses it. During SGD update, you sum all contributions: ∂L/∂W_hh = Σₜ (gradient at timestep t).</div>
+          <div class="vq-block-label">💡 Why "Backpropagation Through Time" (BPTT)</div>
+          <div class="sol-text">Even though the unrolled network looks deeper, the same shared weight W_hh receives gradient contributions from EVERY timestep that used it. During the SGD update, you sum all contributions: ∂L/∂W_hh = Σ over timesteps t of the gradient contribution at timestep t. This shared-weight summation is what makes "BPTT" different from regular backprop.</div>
         </div>
 
         <div class="vq-block related">
           <div class="vq-block-label">🔗 Related Practice Questions</div>
-          <div class="related-q"><strong>Sub-topic — Y₂ backprop path:</strong> Through which edges does Y₂'s error propagate?
-            <span class="ans">Answer: H, C, E, B, D, A. Y₂ comes from h₂ via H; h₂ from x₂ (C) and h₁ (E); h₁ from x₁ (B) and h₀ (D); h₀ from x₀ (A).</span></div>
-          <div class="related-q"><strong>Sub-topic — vanishing gradient in RNN:</strong> Why does this BPTT path cause vanishing gradient?
-            <span class="ans">Answer: gradient multiplied by W_hh and tanh' at every backward step. After many timesteps, product → 0.</span></div>
+          <div class="related-q"><strong>Sub-topic — backprop path for Y₂:</strong> Which connections carry Y₂'s gradient backward?
+            <span class="ans">Answer: hidden→output at timestep 2 (H), input→hidden at timestep 2 (C), hidden→hidden from t=1 to t=2 (E), input→hidden at timestep 1 (B), hidden→hidden from t=0 to t=1 (D), input→hidden at timestep 0 (A). Y₂'s gradient reaches every earlier timestep because h₂ ultimately depends on h₁ which depends on h₀.</span></div>
+          <div class="related-q"><strong>Sub-topic — vanishing gradient in RNNs:</strong> Why does this BPTT path cause vanishing gradient over long sequences?
+            <span class="ans">Answer: at every backward step through a hidden→hidden connection, the gradient is multiplied by the shared W_hh and by the activation derivative tanh'. Over many timesteps, the product shrinks toward zero — early timesteps receive no useful gradient signal.</span></div>
           <div class="related-q"><strong>Sub-topic — LSTM fix:</strong> How does LSTM mitigate the vanishing gradient?
-            <span class="ans">Answer: cell state Cₜ flows through unchanged (no multiplication by W) — gradient highway. Gates control modification multiplicatively.</span></div>
-          <div class="related-q"><strong>Sub-topic — parameter count:</strong> If hidden dim = 100, input dim = 50, output dim = 10, total RNN parameters (no bias)?
-            <span class="ans">Answer: W_hx (50×100) + W_hh (100×100) + W_yh (100×10) = 5000 + 10000 + 1000 = 16,000.</span></div>
+            <span class="ans">Answer: LSTM adds a cell state that flows through timesteps with minimal multiplicative modification — it acts as a gradient highway. Gates (forget, input, output) control what is read/written, but the cell state itself is preserved largely intact, so gradients flow back through long sequences without vanishing.</span></div>
+          <div class="related-q"><strong>Sub-topic — parameter count:</strong> If hidden dimension = 100, input dimension = 50, output dimension = 10, what is the total RNN parameter count (ignoring biases)?
+            <span class="ans">Answer: W_hx is (50 × 100) = 5,000 weights; W_hh is (100 × 100) = 10,000 weights; W_yh is (100 × 10) = 1,000 weights. Total = 16,000 parameters. Notice this is INDEPENDENT of sequence length, because the same weights are reused at every timestep.</span></div>
         </div>
       </div>
     </div>
@@ -662,7 +673,7 @@ canvas { display: block; border-radius: 0.5rem; }
     ════════════════════════════════════════════════════════════════ -->
     <div class="exam-set-header"><h3>🎯 Attention &amp; Self-Attention</h3><span>Q9 from Sample Final Exam (PDF 4)</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="attention">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V11</div>
         <div class="vq-question">For "I ate apple", new representation <em>ate'</em> is built by self-attention using four functions f, g, h, i:<br><code style="font-size:0.78rem;background:rgba(0,0,0,0.3);padding:0.4rem;display:block;margin:0.5rem 0;">ate' = f(I)·g(h(ate), i(I)) + f(ate)·g(h(ate), i(ate)) + f(apple)·g(h(ate), i(apple))</code>Which function is: (i) compatibility, (ii) value, (iii) query, (iv) key?</div>
@@ -670,20 +681,28 @@ canvas { display: block; border-radius: 0.5rem; }
       </div>
       <div class="vq-body">
         <div class="vq-block official">
-          <div class="vq-block-label">✅ Official Answer</div>
-          (i) Compatibility = <strong>g</strong> · (ii) Value = <strong>f</strong> · (iii) Query = <strong>h</strong> · (iv) Key = <strong>i</strong>
+          <div class="vq-block-label">✅ Official Answer (with full names spelled out)</div>
+          <ul style="margin:0.3rem 0 0 1.2rem;line-height:1.7">
+            <li>(i) The <strong>compatibility function</strong> (computes attention score between query and key) → <strong>function g</strong></li>
+            <li>(ii) The mapping from a word to its <strong>value representation</strong> → <strong>function f</strong></li>
+            <li>(iii) The mapping from a word to its <strong>query representation</strong> → <strong>function h</strong></li>
+            <li>(iv) The mapping from a word to its <strong>key representation</strong> → <strong>function i</strong></li>
+          </ul>
         </div>
         <div class="vq-block steps">
           <div class="vq-block-label">📐 How to Decode the Formula</div>
           <ol class="step-list">
-            <li><strong>What gets multiplied by what?</strong> f(word) is being scaled by a scalar weight g(...,...). That weight is the attention coefficient → g is the compatibility (Q·K) function. f is the value (V).</li>
-            <li><strong>g takes two inputs:</strong> h(ate) — the SAME word every time (this is the query, asking the question), and i(other_word) — different each time (the key being matched against). So h = query, i = key.</li>
-            <li><strong>Cross-check:</strong> in standard attention, output_for_ate = Σ_w softmax(Q_ate · K_w) · V_w. Matches: g(h(ate), i(w)) = compatibility(Q_ate, K_w); f(w) = V_w.</li>
+            <li><strong>Identify what is being summed:</strong> the formula has three terms, one per word ("I", "ate", "apple"). Each term has the form <em>[mapping of that word]</em> multiplied by <em>[a scalar weight]</em>. Whatever produces the scalar weight is the compatibility function; whatever produces the thing being weighted is the value function.</li>
+            <li><strong>Find the value function:</strong> the factor that changes with each word and gets multiplied by the weight is <em>f(I)</em>, <em>f(ate)</em>, <em>f(apple)</em>. So <strong>function f produces the value representation</strong> for each word.</li>
+            <li><strong>Find the compatibility function:</strong> the scalar weight is produced by a function taking two arguments — <em>g( · , · )</em>. So <strong>function g is the compatibility (query·key) function</strong>.</li>
+            <li><strong>Distinguish query from key:</strong> inside <em>g</em>, the first argument is the SAME across all three terms — <em>h(ate)</em> appears in every row because we are computing a new representation FOR the word "ate". A fixed first argument that asks the question = the <strong>query → function h is the query mapping</strong>.</li>
+            <li><strong>The second argument of <em>g</em></strong> changes per term — <em>i(I)</em>, <em>i(ate)</em>, <em>i(apple)</em>. It represents what each candidate word offers to be matched against the query. That makes <strong>function i the key mapping</strong>.</li>
+            <li><strong>Cross-check with standard attention:</strong> standard formula is output_for_ate = Σ over words w of <em>compatibility(Q_ate, K_w) × V_w</em>. Lining up: <em>compatibility</em> = function g, <em>Q_ate</em> = h(ate) for every term (query), <em>K_w</em> = i(w) (key of each word), <em>V_w</em> = f(w) (value of each word). Match confirmed.</li>
           </ol>
         </div>
         <div class="vq-block explain">
           <div class="vq-block-label">💡 Memory Hook</div>
-          <div class="sol-text">The query is whose representation you're computing (h is applied to "ate" three times — it's the question being asked). Keys are what each word advertises (i is applied to all three different words). Values are what gets returned (f, multiplied by the weights).</div>
+          <div class="sol-text">The <strong>query</strong> represents the word whose new representation you are computing — in this formula, function h is always applied to "ate" because the output is <em>ate'</em>. The <strong>keys</strong> are what each candidate word advertises about itself — function i is applied to a different word in each row. The <strong>values</strong> are what gets returned and mixed — function f produces what each word contributes once it has been selected by attention.</div>
         </div>
         <div class="vq-block related">
           <div class="vq-block-label">🔗 Related Practice Questions</div>
@@ -704,7 +723,7 @@ canvas { display: block; border-radius: 0.5rem; }
     ════════════════════════════════════════════════════════════════ -->
     <div class="exam-set-header"><h3>🎨 GAN — Components &amp; Training</h3><span>Q6 from Sample Final Exam (PDFs 2 &amp; 4)</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="gen">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V12</div>
         <div class="vq-question">A GAN diagram shows components A, B, C, D. (i) Name them. (ii) Which component is being trained in this figure? (iii) Which component is used after the entire network has been trained? (iv) What is a GAN used for?</div>
@@ -747,32 +766,38 @@ canvas { display: block; border-radius: 0.5rem; }
 
         <div class="vq-block official">
           <div class="vq-block-label">✅ Official Answers</div>
-          <strong>(i)</strong> A = Random vector · B = Generator · C = Discriminator · D = Training data<br>
-          <strong>(ii)</strong> The <strong>Discriminator</strong> is being trained (the figure shows it receiving both fake and real samples to classify).<br>
-          <strong>(iii)</strong> After training, only the <strong>Generator</strong> is used (to produce new samples from random z).<br>
-          <strong>(iv)</strong> To generate realistic novel examples (e.g. images).
+          <strong>(i) Component names:</strong>
+          <ul style="margin:0.4rem 0 0.6rem 1.2rem;line-height:1.7">
+            <li><strong>A → Random vector (latent noise z)</strong></li>
+            <li><strong>B → Generator</strong></li>
+            <li><strong>C → Discriminator</strong></li>
+            <li><strong>D → Training data (real samples)</strong></li>
+          </ul>
+          <strong>(ii)</strong> The <strong>Discriminator</strong> is being trained in this figure — it receives both real samples (from Training data) and fake samples (from the Generator) and learns to tell them apart.<br>
+          <strong>(iii)</strong> After training, only the <strong>Generator</strong> is used — it produces new samples from a random noise vector.<br>
+          <strong>(iv)</strong> A GAN is used to <strong>generate realistic novel examples</strong> (e.g. images of faces, scenes).
         </div>
 
         <div class="vq-block steps">
-          <div class="vq-block-label">📐 GAN Training Cycle</div>
+          <div class="vq-block-label">📐 GAN Training Cycle (using full names)</div>
           <ol class="step-list">
-            <li><strong>Discriminator phase (this figure):</strong> sample real x from D, fake G(z) from B. Train C to output 1 for real, 0 for fake.</li>
-            <li><strong>Generator phase:</strong> freeze C. Sample z, generate G(z). Train B to make C output 1 on G(z) (fool the discriminator).</li>
-            <li><strong>Alternate</strong> until equilibrium — both phases happen many times per epoch.</li>
-            <li><strong>At inference:</strong> discard C. Sample z ~ N(0,I), output G(z). That's the new image.</li>
+            <li><strong>Discriminator training phase</strong> (what this figure depicts): sample a real image from the <strong>Training data</strong>; sample a random noise vector and pass it through the <strong>Generator</strong> to produce a fake image. Feed both to the <strong>Discriminator</strong>. Train the Discriminator to output 1 (real) for real images and 0 (fake) for generated images.</li>
+            <li><strong>Generator training phase</strong>: freeze the Discriminator. Sample a new random noise vector, generate a fake image, and feed it to the frozen Discriminator. Train the Generator so the Discriminator outputs 1 (real) on its fakes — i.e. the Generator gets better at fooling the Discriminator.</li>
+            <li><strong>Alternate</strong> the Discriminator phase and Generator phase repeatedly until equilibrium — both phases happen many times per training epoch.</li>
+            <li><strong>At inference (after training)</strong>: throw away the Discriminator. Sample a random noise vector from a Gaussian distribution, pass it through the trained Generator, and the output is your new synthetic image.</li>
           </ol>
         </div>
 
         <div class="vq-block related">
           <div class="vq-block-label">🔗 Related Practice Questions</div>
           <div class="related-q"><strong>Sub-topic — mode collapse:</strong> What is it?
-            <span class="ans">Answer: G finds one output (or a few) that fools D and produces only those — diversity is lost.</span></div>
+            <span class="ans">Answer: the Generator finds one output (or a few) that consistently fools the Discriminator and produces only those — diversity in generated samples is lost.</span></div>
           <div class="related-q"><strong>Sub-topic — Conditional GAN:</strong> How does cGAN let you say "generate a cat"?
-            <span class="ans">Answer: pass class label y as additional input to BOTH G and D. G learns to produce class-y samples; D learns "real/fake given y".</span></div>
-          <div class="related-q"><strong>Sub-topic — Diffusion vs GAN:</strong> Why are diffusion models more stable?
-            <span class="ans">Answer: each step is supervised regression (predict noise). No adversarial game → no mode collapse, no oscillation. Trade-off: slow sampling.</span></div>
+            <span class="ans">Answer: pass the class label (e.g. "cat") as an extra input to BOTH the Generator and the Discriminator. The Generator learns to produce samples that match the requested class; the Discriminator learns to judge "real or fake given this class".</span></div>
+          <div class="related-q"><strong>Sub-topic — Diffusion vs GAN:</strong> Why are diffusion models more stable to train?
+            <span class="ans">Answer: each diffusion denoising step is a supervised regression problem (predict the noise that was added). There is no adversarial game between two networks → no mode collapse, no oscillation. Trade-off: sampling is slow (hundreds of denoising steps per image).</span></div>
           <div class="related-q"><strong>Sub-topic — VAE vs GAN output quality:</strong>
-            <span class="ans">Answer: VAE outputs are blurrier (MSE averages plausible reconstructions). GAN outputs are sharper (adversarial signal prevents blur).</span></div>
+            <span class="ans">Answer: VAE outputs are blurrier because MSE reconstruction loss averages over plausible pixel values. GAN outputs are sharper because the adversarial signal from the Discriminator punishes any blur (a blurry image is obviously fake).</span></div>
         </div>
       </div>
     </div>
@@ -782,7 +807,7 @@ canvas { display: block; border-radius: 0.5rem; }
     ════════════════════════════════════════════════════════════════ -->
     <div class="exam-set-header"><h3>🔁 Autoencoder Identification</h3><span>Q6 from Sample-Questions PDF</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="gen">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V13</div>
         <div class="vq-question">A neural network has hourglass shape: 5 input nodes (values 1.2, 2.3, 1.9, 0.5, 1.6) at the bottom, narrowing through hidden layers to a single bottleneck, then widening to 5 output nodes (same values). Identify the type and purpose.</div>
@@ -857,7 +882,7 @@ canvas { display: block; border-radius: 0.5rem; }
     ════════════════════════════════════════════════════════════════ -->
     <div class="exam-set-header"><h3>🎮 Reinforcement Learning &amp; Q-Learning</h3><span>Q7 (Sample-Questions) &amp; Q5 (Final-Exam PDFs)</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="rl">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V14</div>
         <div class="vq-question">The Q-learning update equation is:<br><code style="display:block;font-size:0.82rem;background:rgba(0,0,0,0.3);padding:0.5rem;margin:0.5rem 0;text-align:center;">Q_{k+1}(s,a) = (1−α)·Q_k(s,a) + α·(R(s,a,s′) + γ·max_{a′} Q_k(s′,a′))</code>What are s, a, s′, α, R(s,a,s′), and Q_{k+1}(s,a)?</div>
@@ -901,7 +926,7 @@ canvas { display: block; border-radius: 0.5rem; }
     ════════════════════════════════════════════════════════════════ -->
     <div class="exam-set-header"><h3>🧮 Perceptron Training Rule</h3><span>Q7 from all 3 main exam PDFs</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="nn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V15</div>
         <div class="vq-question">The perceptron weight update rule is wᵢ = wᵢ + η(y − y′)xᵢ. (i) What are η, y, y′, xᵢ? (ii) Under what circumstance does the perceptron training algorithm converge?</div>
@@ -942,7 +967,7 @@ canvas { display: block; border-radius: 0.5rem; }
     <div class="exam-set-header"><h3>📐 Classical ML — SVM, Logistic Regression, Overfitting</h3><span>Q8, Q9 across sample exams</span></div>
 
     <!-- SVM Separator selection -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="theory">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V16</div>
         <div class="vq-question">Positive (red empty circles) and negative (blue filled circles) examples are shown with 2 features. Three separators A, B, C are drawn. Which is most likely to be learned by SVM and why?</div>
@@ -977,20 +1002,20 @@ canvas { display: block; border-radius: 0.5rem; }
               <circle cx="180" cy="170" r="5"/><circle cx="225" cy="180" r="5"/>
             </g>
           </svg>
-          <div class="vq-diagram-caption">Three candidate separators · cyan (B) is the maximum-margin choice</div>
+          <div class="vq-diagram-caption">Three candidate separators on the diagram: A = the leftmost near-vertical line hugging the positive class, B = the cyan middle straight line, C = the curved line on the right. SVM picks B.</div>
         </div>
 
         <div class="vq-block official">
           <div class="vq-block-label">✅ Official Answer</div>
-          <strong>Separator B</strong> is most likely to be learned by SVM. SVM learns the separator that <strong>maximizes the margin</strong> between training examples on either side — hence the middle-most line.
+          <strong>Separator B (the middle straight line)</strong> is most likely to be learned by SVM. SVM learns the separator that <strong>maximizes the margin</strong> between the training examples on either side, so it picks the line that is the most equidistant from both classes — the middle-most line.
         </div>
 
         <div class="vq-block steps">
-          <div class="vq-block-label">📐 Why Not A or C?</div>
+          <div class="vq-block-label">📐 Why Not the Other Two Separators?</div>
           <ol class="step-list">
-            <li><strong>A</strong> hugs the positive class too closely — tiny margin → poor generalization to new points slightly to the left.</li>
-            <li><strong>C</strong> is a curve. SVM (linear kernel) only learns hyperplanes (straight lines in 2D). A curve would require a non-linear kernel (RBF/polynomial).</li>
-            <li><strong>B</strong> is roughly equidistant from both classes' nearest points — maximum margin. The support vectors are the closest points from each side.</li>
+            <li><strong>Separator A (the leftmost near-vertical line):</strong> it hugs the positive class very closely. The margin (distance to the nearest positive point) is tiny. Any new positive point slightly to the left of the existing ones would be misclassified. Poor generalization.</li>
+            <li><strong>Separator C (the curved line on the right):</strong> it is not a straight line. A standard (linear-kernel) SVM only learns hyperplanes, which in 2D are straight lines. A curved boundary like this could only be learned by an SVM with a non-linear kernel (RBF or polynomial), which is not what's being asked.</li>
+            <li><strong>Separator B (the middle straight line):</strong> it is straight (so SVM can produce it) AND it is roughly equidistant from the closest positive and closest negative points. That equal-distance property is exactly the maximum margin. The closest points from each class — the ones that "touch" the margin boundary — are the support vectors.</li>
           </ol>
         </div>
 
@@ -1009,7 +1034,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- Circular dataset / logistic regression -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="theory">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V17</div>
         <div class="vq-question">A 2D dataset has positives (+) in the center forming a small cluster, negatives (−) around them in a ring. Will logistic regression do well? If yes, why? If no, what adaptation will make it work?</div>
@@ -1071,7 +1096,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- Overfitting / Universal representation -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="theory">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V18</div>
         <div class="vq-question">A method uses a representation that can represent ANY function from features to target. Will it be prone to underfitting, overfitting, or neither? Explain in one sentence.</div>
@@ -1105,7 +1130,7 @@ canvas { display: block; border-radius: 0.5rem; }
     ════════════════════════════════════════════════════════════════ -->
     <div class="exam-set-header"><h3>🔍 Hierarchical Clustering (HAC)</h3><span>Q1 from Sample-Final-Exam2</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="unsup">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V19</div>
         <div class="vq-question">2D examples A, B, C, D positioned roughly: A far left, B middle, C and D close together on the right. Show HAC iterations using <strong>single-link</strong> and Euclidean distance.</div>
@@ -1121,26 +1146,26 @@ canvas { display: block; border-radius: 0.5rem; }
             <circle cx="270" cy="60" r="5" fill="#f59e0b"/><text x="270" y="100" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="700">C</text>
             <circle cx="290" cy="60" r="5" fill="#f59e0b"/><text x="295" y="100" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="700">D</text>
           </svg>
-          <div class="vq-diagram-caption">A, B, C, D on a horizontal line · C and D are closest (smallest gap)</div>
+          <div class="vq-diagram-caption">Four points on a horizontal line: A (far left), B (middle), and C and D (a close pair on the right). C–D have the smallest pairwise distance.</div>
         </div>
 
         <div class="vq-block official">
-          <div class="vq-block-label">✅ Official Answer</div>
-          <ul style="list-style:none;padding:0;margin:0">
-            <li><strong>Iteration 1 (start):</strong> (A), (B), (C), (D) — every point its own cluster</li>
-            <li><strong>Iteration 2:</strong> (A), (B), (C, D) — C and D are closest, merge first</li>
-            <li><strong>Iteration 3:</strong> (A), (B, C, D) — single-link distance from {C,D} to B is min(d(B,C), d(B,D)) which is smaller than d(A, B)</li>
-            <li><strong>Iteration 4:</strong> (A, B, C, D) — final merge</li>
+          <div class="vq-block-label">✅ Official Answer — the iterations</div>
+          <ul style="list-style:none;padding:0;margin:0;line-height:1.7">
+            <li><strong>Iteration 1 (starting state):</strong> {A}, {B}, {C}, {D} — every point is its own cluster.</li>
+            <li><strong>Iteration 2:</strong> {A}, {B}, {C, D} — the two closest points (C and D on the right) merge first because the gap between them is the smallest pairwise distance.</li>
+            <li><strong>Iteration 3:</strong> {A}, {B, C, D} — the middle point B is closer to the {C, D} cluster than to A, so B joins {C, D}.</li>
+            <li><strong>Iteration 4 (final):</strong> {A, B, C, D} — the leftmost point A merges with the rest.</li>
           </ul>
         </div>
 
         <div class="vq-block steps">
-          <div class="vq-block-label">📐 Single-Link Distance Recap</div>
+          <div class="vq-block-label">📐 Why Each Merge Happens (single-link definition recap)</div>
           <ol class="step-list">
-            <li><strong>Single-link:</strong> d(cluster1, cluster2) = min over all pairs (xᵢ ∈ cluster1, xⱼ ∈ cluster2) of d(xᵢ, xⱼ).</li>
-            <li>Iteration 2: smallest pairwise distance is d(C, D). Merge.</li>
-            <li>Iteration 3: now compare (A, B), (A, {C,D}), (B, {C,D}). Single-link of (B, {C,D}) = min(d(B,C), d(B,D)) = d(B,C). Compared to d(A,B), d(B,C) is smaller. Merge B with {C,D}.</li>
-            <li>Iteration 4: only A and {B,C,D} remain. Merge.</li>
+            <li><strong>Single-link distance:</strong> the distance between two clusters is the MINIMUM pairwise distance between any point in the first cluster and any point in the second. (Complete-link would use the maximum; average-link would use the mean.)</li>
+            <li><strong>Iteration 2 — first merge:</strong> all four points are still singletons. The smallest pairwise distance in the dataset is between the right-side pair (C and D). They merge.</li>
+            <li><strong>Iteration 3 — second merge:</strong> now compare every remaining cluster pair. Distance from the leftmost point A to the middle point B is d(A, B). Distance from the middle point B to the {C, D} cluster (single-link) is the minimum of d(B, C) and d(B, D), which is just d(B, C). Because B is closer to C than to A in this layout, d(B, C) &lt; d(A, B), so the middle point B joins the right-side cluster.</li>
+            <li><strong>Iteration 4 — final merge:</strong> only two clusters remain, the leftmost point A and the merged {B, C, D}. They join into a single cluster.</li>
           </ol>
         </div>
 
@@ -1163,7 +1188,7 @@ canvas { display: block; border-radius: 0.5rem; }
     ════════════════════════════════════════════════════════════════ -->
     <div class="exam-set-header"><h3>📊 Evaluation Metrics &amp; Cross-Validation</h3><span>Q11 across all sample exams</span></div>
 
-    <div class="vq-card">
+    <div class="vq-card" data-topic="theory">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V20</div>
         <div class="vq-question">Multi-part: (i) Naive Bayes with target Y and features F1, F2, F3 — what probabilities are estimated? (ii) Can one trivially get 100% sensitivity? (iii) kNN with k = n on n training examples — what does it predict? (iv) 90% sensitivity + 80% specificity → what is recall? (v) Show one full 3-fold CV split of {A,B,C,D,E,F}. (vi) How show the sensitivity-specificity trade-off? What single number summarizes it?</div>
@@ -1209,7 +1234,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- One-hot encoding -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="theory">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V21</div>
         <div class="vq-question">Features: color ∈ {red, blue, green}, size (numeric), shape ∈ {circle, triangle}. A method only takes numeric features. Describe how to transform; apply to (color=blue, size=2.4, shape=circle).</div>
@@ -1238,7 +1263,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- Decision tree on 100 features one relevant -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="theory">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V22</div>
         <div class="vq-question">A task has 100 features but the target depends entirely on just 1 of them. Of Naive Bayes, 1-NN, and Decision Tree — which works best, and why?</div>
@@ -1270,7 +1295,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- Vanishing gradient practical problem -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="nn">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V23</div>
         <div class="vq-question">A 100-layer deep neural network with logistic activation barely changes weights during training. Increasing the learning rate doesn't help. What's the problem? What fixes it?</div>
@@ -1298,7 +1323,7 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
 
     <!-- Unsupervised evaluation -->
-    <div class="vq-card">
+    <div class="vq-card" data-topic="unsup">
       <div class="vq-header" onclick="toggleVQ(this)">
         <div class="vq-tag">V24</div>
         <div class="vq-question">Why can't we use the evaluation measures of supervised learning for unsupervised learning?</div>
@@ -2278,13 +2303,42 @@ document.getElementById('topicTabs').addEventListener('click', function(e) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   e.target.classList.add('active');
   const f = e.target.dataset.filter;
+  const match = (t) => f === 'all' || t === f;
+
+  // Filter original exam-cards
   document.querySelectorAll('.exam-card').forEach(c => {
-    c.style.display = (f === 'all' || c.dataset.topic === f) ? '' : 'none';
+    c.style.display = match(c.dataset.topic) ? '' : 'none';
   });
+  // Filter verbatim vq-cards
+  document.querySelectorAll('.vq-card').forEach(c => {
+    c.style.display = match(c.dataset.topic) ? '' : 'none';
+  });
+  // Hide q-sections with no visible cards
   document.querySelectorAll('.q-section').forEach(s => {
-    const topic = s.dataset.topic;
-    s.style.display = (f === 'all' || topic === f) ? '' : 'none';
+    const anyVisible = Array.from(s.querySelectorAll('.exam-card'))
+      .some(c => c.style.display !== 'none');
+    s.style.display = anyVisible ? '' : 'none';
   });
+  // Hide exam-set-header if its following vq-cards (up to next header) are all hidden
+  document.querySelectorAll('.exam-set-header').forEach(h => {
+    let visible = false;
+    let sib = h.nextElementSibling;
+    while (sib && !sib.classList.contains('exam-set-header')) {
+      if (sib.classList.contains('vq-card') && sib.style.display !== 'none') {
+        visible = true; break;
+      }
+      sib = sib.nextElementSibling;
+    }
+    h.style.display = visible ? '' : 'none';
+  });
+  // Hide verbatim banner if zero vq-cards visible
+  const vs = document.querySelector('.verbatim-section');
+  if (vs) {
+    const anyVQ = Array.from(vs.querySelectorAll('.vq-card'))
+      .some(c => c.style.display !== 'none');
+    const banner = vs.querySelector('.verbatim-banner');
+    if (banner) banner.style.display = anyVQ ? '' : 'none';
+  }
 });
 
 // ── KaTeX rendering ──
