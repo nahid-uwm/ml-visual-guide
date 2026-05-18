@@ -126,8 +126,14 @@
 
   <section class="mf-hero">
     <h1>Math for <span class="gradient-text">Final Exam</span></h1>
-    <p>15 computational problems covering the final-exam syllabus. Each one requires real calculation and step-by-step reasoning — like the midterm's kNN, Naïve Bayes, and confusion-matrix problems, but for deep learning, attention, RL, and unsupervised topics.</p>
+    <p>Concept scenarios and calculation problems covering the entire final-exam syllabus — every question can be solved by understanding the theory clearly.</p>
   </section>
+
+  <div class="exam-rule-banner">
+    <h3>📋 Exam Rule</h3>
+    <p><strong>No calculator is needed for this exam.</strong> If a question requires calculation, the values will be small/obvious or already provided. The exam mainly tests whether the theory is clear enough to recognize and apply concepts in a scenario.</p>
+    <p>This page has <strong>two sections</strong>: (1) 20 concept scenarios — no-calculator, recognize-the-method style; (2) 15 worked computations — practice the steps end-to-end when values would be given on the exam.</p>
+  </div>
 
   <div class="toolbar">
     <button class="tool-btn" onclick="mfOpenAll()">Open All</button>
@@ -135,7 +141,9 @@
   </div>
 
   <div class="mf-tabs" id="mfTabs">
-    <button class="mf-tab active" data-filter="all">All 15</button>
+    <button class="mf-tab active" data-filter="all">All 35</button>
+    <button class="mf-tab" data-filter="concept">Concept scenarios</button>
+    <button class="mf-tab" data-filter="compute">Worked compute</button>
     <button class="mf-tab" data-filter="nn">Neural Nets</button>
     <button class="mf-tab" data-filter="cnn">CNN</button>
     <button class="mf-tab" data-filter="seq">RNN / Attention</button>
@@ -144,8 +152,685 @@
     <button class="mf-tab" data-filter="gen">Generative</button>
   </div>
 
+  <!-- ════════════════════════════════════════════════
+       SECTION 1 — CONCEPT SCENARIO QUESTIONS (20)
+  ════════════════════════════════════════════════ -->
+  <div class="mf-divider">
+    <h2>🎯 Section 1 — Concept Scenarios</h2>
+    <span>20 no-calculator questions · recognize the method and apply the rule</span>
+  </div>
+
+  <!-- ════════════════════════ S1 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S1</div>
+      <span class="mf-topic">Softmax</span>
+      <div class="mf-q"><strong>Softmax — choosing the predicted class.</strong> A network outputs softmax probabilities: Cat = 0.20, Dog = 0.65, Bird = 0.15. What class will the network predict, and why?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Look at the probability for each class.</li>
+            <li>Pick the class with the highest probability.</li>
+            <li>The highest is 0.65 → Dog.</li>
+          </ol>
+        </div>
+        <div class="final-box">Predicted class: Dog</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">A softmax output layer gives class probabilities that sum to 1. The model predicts the class with the highest probability — no other arithmetic needed.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Predict the class with the highest probability."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet · Activations</a>
+        <a class="related-chip" href="#q5">Compute version · Q5</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S2 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S2</div>
+      <span class="mf-topic">Softmax</span>
+      <div class="mf-q"><strong>Softmax — what it does.</strong> Raw scores: Red = 4, Blue = 2, Green = 1. Without computing exact softmax probabilities, which class will get the highest probability? Why?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Softmax converts raw scores into probabilities.</li>
+            <li>It preserves the ranking — the biggest score gets the biggest probability.</li>
+            <li>The largest raw score is 4, belonging to Red.</li>
+          </ol>
+        </div>
+        <div class="final-box">Red has the highest softmax probability</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Softmax is a monotonic transformation — it stretches the gaps but never flips the order. No exponentials needed if you only need to know which class wins.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Can be treated as probabilities of the classes."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S3 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S3</div>
+      <span class="mf-topic">Cross-Entropy</span>
+      <div class="mf-q"><strong>Cross-entropy — good vs bad prediction.</strong> True class is Positive. Model A predicts P(Positive)=0.90, P(Negative)=0.10. Model B predicts P(Positive)=0.40, P(Negative)=0.60. Which has lower cross-entropy loss? (No logarithms needed.)</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Cross-entropy looks only at the probability assigned to the correct class.</li>
+            <li>The correct class is Positive.</li>
+            <li>Model A → 0.90 on Positive · Model B → 0.40 on Positive.</li>
+            <li>Higher probability on the true class = lower loss.</li>
+          </ol>
+        </div>
+        <div class="final-box">Model A has lower cross-entropy loss</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Cross-entropy = −log(p_true_class). The more confidently right you are, the smaller −log(p) becomes (and log(1) = 0). A confident-but-correct model is barely penalized; a wishy-washy or wrong model is heavily penalized.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "If the predicted probability for the true class is high, close to 1, error will be very low (because ln(1)=0)."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet · Loss</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S4 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S4</div>
+      <span class="mf-topic">One-Hot</span>
+      <div class="mf-q"><strong>One-hot encoding.</strong> A network classifies into [Red, Blue, Green]. The correct class for one example is Green. What is the one-hot target output vector?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>One-hot uses one output node per class.</li>
+            <li>The correct class slot gets 1, all others get 0.</li>
+            <li>Order is [Red, Blue, Green] and Green is correct → [0, 0, 1].</li>
+          </ol>
+        </div>
+        <div class="final-box">Target: [0, 0, 1]</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">One-hot encoding represents a categorical label as a binary indicator vector. Combined with softmax + cross-entropy, this is the standard setup for multi-class classification.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "One-hot encoding."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="final-exam.html">Final exam · one-hot question</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S5 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S5</div>
+      <span class="mf-topic">ReLU</span>
+      <div class="mf-q"><strong>ReLU — which neurons activate?</strong> A hidden layer with ReLU has four neurons with net inputs −3, 0, 2, 5. Which neurons are active?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>ReLU outputs 0 for inputs ≤ 0.</li>
+            <li>ReLU keeps positive inputs unchanged.</li>
+            <li>Apply: −3 → 0 (inactive), 0 → 0 (inactive), 2 → 2 (active), 5 → 5 (active).</li>
+          </ol>
+        </div>
+        <div class="final-box">Active neurons: inputs 2 and 5</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">ReLU is a piecewise linear gate — only positive inputs pass through. This produces sparse activations (typically only a fraction of neurons fire), which is computationally efficient and helps avoid the vanishing-gradient problem of sigmoid/tanh.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Note that ReLU is 0 for half of its domain values."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet · ReLU</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S6 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S6</div>
+      <span class="mf-topic">Dying ReLU</span>
+      <div class="mf-q"><strong>Dying ReLU.</strong> During training, one ReLU neuron has negative input for every training example and outputs 0 every time. Why is this a problem?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>ReLU outputs 0 for all negative inputs.</li>
+            <li>If a neuron is always at output 0, its gradient is also 0 (the ReLU slope is 0 there).</li>
+            <li>Zero gradient means the neuron's weights don't get updated.</li>
+            <li>The neuron may stay dead forever — adding no value to the network.</li>
+          </ol>
+        </div>
+        <div class="final-box">A dead ReLU neuron stops learning permanently and wastes capacity</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">A dead neuron is a stuck hidden unit. The network effectively becomes smaller. Causes include bad weight initialization or too-large learning rates that push pre-activations into the negative region.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "If a neuron does not activate for any training example in an iteration then it will never become active again."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="evolution.html">Evolution · ReLU → Leaky ReLU</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S7 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S7</div>
+      <span class="mf-topic">Leaky ReLU</span>
+      <div class="mf-q"><strong>Leaky ReLU.</strong> Many ReLU neurons in a network have stopped activating. Which activation helps reduce this — standard ReLU or Leaky ReLU? Why?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Standard ReLU outputs exactly 0 for negative inputs (and 0 gradient).</li>
+            <li>Leaky ReLU outputs a small non-zero value (e.g., 0.01·x) for negative inputs.</li>
+            <li>Because the gradient is non-zero in the negative region, weights can still update.</li>
+            <li>Dead neurons can recover.</li>
+          </ol>
+        </div>
+        <div class="final-box">Use Leaky ReLU</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Leaky ReLU breaks the "trap" of the dying ReLU by allowing a small signal through even when inputs are negative — so the neuron always has a path to recover via gradient updates.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Prevents dying ReLUs problem."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="evolution.html">Evolution · ReLU chain</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S8 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="cnn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S8</div>
+      <span class="mf-topic">CNN vs Dense</span>
+      <div class="mf-q"><strong>CNN vs dense layer.</strong> You're classifying large images. Important patterns (edges, objects) can appear anywhere. Why is a CNN better than a fully connected dense network?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Images have spatial structure — nearby pixels matter together.</li>
+            <li>CNN filters scan the image locally with shared weights.</li>
+            <li>The same filter detects the same pattern anywhere in the image (translation equivariance).</li>
+            <li>Dense layers treat every pixel as a unique input — they don't know that a cat in the corner is the same kind of object as a cat in the center.</li>
+          </ol>
+        </div>
+        <div class="final-box">CNN wins via local connections + shared weights + spatial structure</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">A 1000×1000 image fed to a dense layer has ~1 billion weights just in the first layer. A CNN with a 3×3 filter uses only 9 weights for that filter, reused across the whole image — dramatically more efficient and inductively biased toward the right structure.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "CNN is a type of deep learning architecture designed to work with grid-like input."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#cnn">Cheat sheet · CNN</a>
+        <a class="related-chip" href="cnn.html">CNN page</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S9 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="cnn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S9</div>
+      <span class="mf-topic">CNN Output Size</span>
+      <div class="mf-q"><strong>CNN output size — small numbers.</strong> Input image 5 × 5. Conv filter 3 × 3, stride 1, no padding. What is the output size?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>With no padding the filter must fit fully inside the image.</li>
+            <li>Along one dimension: 5 − 3 + 1 = 3.</li>
+            <li>Same calculation for height and width.</li>
+          </ol>
+        </div>
+        <div class="final-box">Output size: 3 × 3</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">The output shrinks because the filter can't extend past the edges. Padding can keep the size the same; striding can shrink it faster. General formula: ⌊(W − F + 2P)/S⌋ + 1.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "It reduces the size of the next layer."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="#q2">Compute version · Q2</a>
+        <a class="related-chip" href="cheatsheet.html#cnn">Cheat sheet</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S10 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="cnn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S10</div>
+      <span class="mf-topic">Max Pooling</span>
+      <div class="mf-q"><strong>Max pooling.</strong> A 2 × 2 region has values [[1, 4], [2, 3]]. What value is passed forward by max pooling?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Max pooling outputs the maximum value of the region.</li>
+            <li>Values in the region: 1, 4, 2, 3.</li>
+            <li>Maximum is 4.</li>
+          </ol>
+        </div>
+        <div class="final-box">Pass forward: 4</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Max pooling keeps the strongest activation from a region. This gives translation invariance (exact position within the window stops mattering) and shrinks the feature map for computational savings. Average pooling is an alternative that smooths instead.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "A popular way to pool is 'max', i.e. pass only the maximum of the incoming nodes (MaxPooling); an alternate is 'average' pooling."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#cnn">Cheat sheet · Pooling</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S11 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="cnn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S11</div>
+      <span class="mf-topic">Transfer Learning</span>
+      <div class="mf-q"><strong>Transfer learning scenario.</strong> You want to classify horses, zebras, and mules. You have only a few hundred labeled images. Train a large CNN from scratch or use a pretrained CNN and fine-tune? Why?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>A large CNN from scratch needs huge labeled data (~millions of images).</li>
+            <li>A pretrained CNN already knows generic image features — edges, textures, shapes.</li>
+            <li>Fine-tuning just adapts the top layers to your small new dataset.</li>
+            <li>With only a few hundred images, scratch training will overfit immediately; fine-tuning will work.</li>
+          </ol>
+        </div>
+        <div class="final-box">Use a pretrained CNN and fine-tune</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Transfer learning reuses already-learned generic features. The bottom CNN layers (edge detectors, color blobs, texture patches) are reusable across nearly any image task. Only the high-level classification head needs to learn the new task.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Fine-tuned using far fewer images."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="evolution.html">Evolution · Transfer Learning</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S12 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S12</div>
+      <span class="mf-topic">Early Stopping</span>
+      <div class="mf-q"><strong>Early stopping scenario.</strong> Training error keeps decreasing, but validation error starts increasing. What's happening, and what should you do?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Training error decreasing → the model is fitting the training data better.</li>
+            <li>Validation error increasing → it's getting worse on unseen data.</li>
+            <li>This is overfitting.</li>
+            <li>Stop training and keep the model from the epoch with the lowest validation error.</li>
+          </ol>
+        </div>
+        <div class="final-box">Overfitting → use early stopping; save the best-validation model</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Beyond a certain point, the network starts memorizing noise specific to the training set. Early stopping freezes the model at its best generalization snapshot — a free regularization technique with no extra hyperparameters except patience.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Stop training when additional epochs actually increase validation error."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#theory">Cheat sheet · Regularization</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S13 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="nn" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S13</div>
+      <span class="mf-topic">Dropout</span>
+      <div class="mf-q"><strong>Dropout scenario.</strong> A network does very well on training data but poorly on validation. How can dropout help?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Big train-vs-validation gap = overfitting.</li>
+            <li>Dropout randomly removes a fraction of neurons during each training pass.</li>
+            <li>This stops the network from depending too heavily on any one neuron.</li>
+            <li>The network learns more redundant, robust patterns and generalizes better.</li>
+          </ol>
+        </div>
+        <div class="final-box">Dropout reduces overfitting by forcing the network to learn robust patterns</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Dropout acts like training an implicit ensemble of thinned sub-networks — each training pass uses a different random subset. At test time, all neurons are present (with rescaling), giving an average over many sub-models.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Dropout: Each time we load a training example, drop a random set of neurons from hidden and input layers."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#theory">Cheat sheet · Dropout</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S14 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="seq" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S14</div>
+      <span class="mf-topic">Attention</span>
+      <div class="mf-q"><strong>Attention — context dependence.</strong> "The animal did not cross the street because it was tired." Why is attention useful when computing the representation of the word "it"?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>"It" by itself has no meaning — it depends on what it refers to.</li>
+            <li>The model needs to connect "it" to "animal" earlier in the sentence.</li>
+            <li>Attention lets each word's representation pull information from every other word.</li>
+            <li>The representation of "it" can be shaped strongly by "animal."</li>
+          </ol>
+        </div>
+        <div class="final-box">Attention links "it" to "animal" — context resolves pronoun reference</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Static word embeddings give every "it" the same vector. Self-attention produces a context-dependent representation, so the same word in different sentences gets different vectors based on what it relates to.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "New representation of each word is influenced by all other words."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="attention.html">Attention page</a>
+        <a class="related-chip" href="cheatsheet.html#attn">Cheat sheet · Attention</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S15 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="seq" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S15</div>
+      <span class="mf-topic">Encoder-Decoder Attention</span>
+      <div class="mf-q"><strong>Self vs encoder-decoder attention.</strong> In a translation Transformer (English → Spanish), where do queries come from during encoder-decoder attention, and where do keys and values come from?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Encoder-decoder attention is the bridge between the encoder and decoder.</li>
+            <li>The decoder is producing the next output word and needs to ask: "which input words matter for this output?"</li>
+            <li>Queries (the question) come from the decoder.</li>
+            <li>Keys and values (the answer pool) come from the encoder output.</li>
+          </ol>
+        </div>
+        <div class="final-box">Q ← decoder · K, V ← encoder</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">This is how the decoder selectively reads the encoded input. Compare with self-attention, where Q, K, V all come from the SAME sequence — that's used within the encoder (every input word attending to every other input word) and within the decoder (each output word attending to earlier output words).</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Encoder-decoder attention: The queries come from the previous decoder layer and keys and values come from the last encoder layer."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="attention.html">Attention page</a>
+        <a class="related-chip" href="final-exam.html">Final exam · self-attention</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S16 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="rl" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S16</div>
+      <span class="mf-topic">RL Scenario</span>
+      <div class="mf-q"><strong>RL scenario.</strong> A robot learns to walk. It gets no correct-action label per step — only rewards depending on whether it balances or falls. Why is this reinforcement learning, not supervised learning?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Supervised learning needs (input, correct-answer) pairs at every step.</li>
+            <li>Here, the agent has no labeled correct actions — only rewards.</li>
+            <li>Reward = scalar feedback about how good the result was.</li>
+            <li>The agent must learn a policy that maximizes total reward by trial and error.</li>
+          </ol>
+        </div>
+        <div class="final-box">Reinforcement learning — agent learns from rewards, not labeled actions</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Reward is a much weaker signal than an explicit label, but it applies to a much wider class of problems — anywhere we can measure the result of a sequence of actions but don't know the optimal action in advance (games, robotics, dialogue).</div>
+        <div class="slide-quote"><strong>Slide:</strong> "No labelled correct actions."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="reinforcement.html">RL page</a>
+        <a class="related-chip" href="cheatsheet.html#rl">Cheat sheet · RL</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S17 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="rl" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S17</div>
+      <span class="mf-topic">Q-Values</span>
+      <div class="mf-q"><strong>Choosing the best action.</strong> In state s the Q-values are: Q(s, Left) = 5, Q(s, Right) = 2, Q(s, Jump) = 4. Which action does an optimal policy choose?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>An optimal policy picks the action with the highest Q-value.</li>
+            <li>Compare: 5 (Left), 2 (Right), 4 (Jump).</li>
+            <li>Highest is 5 → Left.</li>
+          </ol>
+        </div>
+        <div class="final-box">Choose Left</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Q(s, a) is the estimated total future reward from doing action a in state s and then acting optimally. The optimal policy is simply π*(s) = argmax_a Q(s, a). During training the agent might explore (ε-greedy) — but the greedy choice always picks the highest Q.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Take that action, a, from state s which has the highest Q(s, a)."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="#q10">Compute · Q10 Bellman</a>
+        <a class="related-chip" href="reinforcement.html">RL page</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S18 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="gen" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S18</div>
+      <span class="mf-topic">GAN Training</span>
+      <div class="mf-q"><strong>GAN training dynamics.</strong> The generator currently produces fakes that the discriminator catches easily. What should happen as training continues?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>The discriminator improves at telling real from fake.</li>
+            <li>The generator improves at producing more realistic fakes.</li>
+            <li>The two networks compete — their goals are opposite.</li>
+            <li>Over time, the generator's fakes become harder to detect.</li>
+          </ol>
+        </div>
+        <div class="final-box">Generator improves to fool the discriminator; discriminator keeps improving in response</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">GAN training is adversarial: a minimax game. Equilibrium is reached when the generator produces samples indistinguishable from real. Practical risks include mode collapse (generator settles on one good fake) and instability if the discriminator is too strong too early.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Generator gradually learns to generate more and more realistic images to dupe the discriminator!"</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="generative-ai.html">Generative AI page</a>
+        <a class="related-chip" href="#q15">Compute · Q15 GAN loss</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S19 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="gen" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S19</div>
+      <span class="mf-topic">GAN Labels</span>
+      <div class="mf-q"><strong>GAN discriminator labels.</strong> During discriminator training, what label should be assigned to (a) generated images, (b) training-set images?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Generated images come from the generator, not the real training set → Fake.</li>
+            <li>Training-set images are real examples → Real.</li>
+            <li>The discriminator learns supervised binary classification on this mixed batch.</li>
+          </ol>
+        </div>
+        <div class="final-box">Generated images → Fake · Training images → Real</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">The discriminator's task is plain binary classification — it just happens to have a special data source (the generator) feeding it negatives. This labeling is what gives the generator its training signal: gradients flow back through D into G when G's outputs are misclassified as Real.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "Obtain some images from generator using random vectors as inputs, label their targets 'Fake'."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="generative-ai.html">Generative AI</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ S20 ════════════════════════ -->
+  <div class="mf-card concept" data-topic="gen" data-kind="concept">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">S20</div>
+      <span class="mf-topic">Autoencoder</span>
+      <div class="mf-q"><strong>Autoencoder bottleneck.</strong> An autoencoder is trained with input = target. The middle (bottleneck) layer is much smaller than the input. What is the purpose of this smaller middle layer?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>The autoencoder must reconstruct the input from the bottleneck.</li>
+            <li>Because the bottleneck is smaller than the input, it can't copy everything directly.</li>
+            <li>It must learn to compress — keep what's essential, drop what's redundant.</li>
+            <li>The result is a compact representation of the input.</li>
+          </ol>
+        </div>
+        <div class="final-box">The bottleneck forces a compact, learned representation</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Without the bottleneck, an autoencoder could just learn the identity function and be useless. The narrow waist is the regularizer — it forces the encoder to discover an efficient code. That code (the bottleneck activations) is a learned feature vector useful for downstream tasks, anomaly detection, denoising, etc.</div>
+        <div class="slide-quote"><strong>Slide:</strong> "The bottleneck layer needs to capture all the useful information in the input to be able to reconstruct it."</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="evolution.html">Evolution · Autoencoder</a>
+        <a class="related-chip" href="final-exam.html">Final exam · autoencoder ID</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       SECTION 2 — WORKED COMPUTATION DIVIDER
+  ════════════════════════════════════════════════ -->
+  <div class="mf-divider" style="background:rgba(0,212,255,0.05);border-left-color:var(--primary);">
+    <h2 style="color:var(--primary)">🧮 Section 2 — Worked Computations</h2>
+    <span>15 problems · practice the full numerical steps end-to-end</span>
+  </div>
+
   <!-- ════════════════════════ Q1 ════════════════════════ -->
-  <div class="mf-card" data-topic="nn">
+  <div class="mf-card" data-topic="nn" data-kind="compute" id="q1">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q1</div>
       <span class="mf-topic">Perceptron</span>
@@ -192,7 +877,7 @@ b    = 0.1 + 0.2 · 1     = 0.3</span>
   </div>
 
   <!-- ════════════════════════ Q2 ════════════════════════ -->
-  <div class="mf-card" data-topic="cnn">
+  <div class="mf-card" data-topic="cnn" data-kind="compute" id="q2">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q2</div>
       <span class="mf-topic">CNN</span>
@@ -239,7 +924,7 @@ b    = 0.1 + 0.2 · 1     = 0.3</span>
   </div>
 
   <!-- ════════════════════════ Q3 ════════════════════════ -->
-  <div class="mf-card" data-topic="cnn">
+  <div class="mf-card" data-topic="cnn" data-kind="compute" id="q3">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q3</div>
       <span class="mf-topic">CNN</span>
@@ -271,7 +956,7 @@ b    = 0.1 + 0.2 · 1     = 0.3</span>
   </div>
 
   <!-- ════════════════════════ Q4 ════════════════════════ -->
-  <div class="mf-card" data-topic="nn">
+  <div class="mf-card" data-topic="nn" data-kind="compute" id="q4">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q4</div>
       <span class="mf-topic">Backprop</span>
@@ -304,7 +989,7 @@ b    = 0.1 + 0.2 · 1     = 0.3</span>
   </div>
 
   <!-- ════════════════════════ Q5 ════════════════════════ -->
-  <div class="mf-card" data-topic="nn">
+  <div class="mf-card" data-topic="nn" data-kind="compute" id="q5">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q5</div>
       <span class="mf-topic">Activations</span>
@@ -348,7 +1033,7 @@ p₂ = 1.105 / 11.212 ≈ 0.099</span>
   </div>
 
   <!-- ════════════════════════ Q6 ════════════════════════ -->
-  <div class="mf-card" data-topic="nn">
+  <div class="mf-card" data-topic="nn" data-kind="compute" id="q6">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q6</div>
       <span class="mf-topic">Vanishing Gradient</span>
@@ -387,7 +1072,7 @@ p₂ = 1.105 / 11.212 ≈ 0.099</span>
   </div>
 
   <!-- ════════════════════════ Q7 ════════════════════════ -->
-  <div class="mf-card" data-topic="seq">
+  <div class="mf-card" data-topic="seq" data-kind="compute" id="q7">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q7</div>
       <span class="mf-topic">Attention</span>
@@ -435,7 +1120,7 @@ Sum = 13.83
   </div>
 
   <!-- ════════════════════════ Q8 ════════════════════════ -->
-  <div class="mf-card" data-topic="seq">
+  <div class="mf-card" data-topic="seq" data-kind="compute" id="q8">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q8</div>
       <span class="mf-topic">Multi-Head Attention</span>
@@ -478,7 +1163,7 @@ Wv: 512 × 512 = 262,144</span>
   </div>
 
   <!-- ════════════════════════ Q9 ════════════════════════ -->
-  <div class="mf-card" data-topic="seq">
+  <div class="mf-card" data-topic="seq" data-kind="compute" id="q9">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q9</div>
       <span class="mf-topic">RNN</span>
@@ -512,7 +1197,7 @@ Wv: 512 × 512 = 262,144</span>
   </div>
 
   <!-- ════════════════════════ Q10 ════════════════════════ -->
-  <div class="mf-card" data-topic="rl">
+  <div class="mf-card" data-topic="rl" data-kind="compute" id="q10">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q10</div>
       <span class="mf-topic">Q-Learning</span>
@@ -551,7 +1236,7 @@ Wv: 512 × 512 = 262,144</span>
   </div>
 
   <!-- ════════════════════════ Q11 ════════════════════════ -->
-  <div class="mf-card" data-topic="rl">
+  <div class="mf-card" data-topic="rl" data-kind="compute" id="q11">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q11</div>
       <span class="mf-topic">RL — Multi-Step</span>
@@ -586,7 +1271,7 @@ Wv: 512 × 512 = 262,144</span>
   </div>
 
   <!-- ════════════════════════ Q12 ════════════════════════ -->
-  <div class="mf-card" data-topic="unsup">
+  <div class="mf-card" data-topic="unsup" data-kind="compute" id="q12">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q12</div>
       <span class="mf-topic">K-Means</span>
@@ -640,7 +1325,7 @@ Cluster 1 = {1, 2, 4}, Cluster 2 = {8, 9}</span>
   </div>
 
   <!-- ════════════════════════ Q13 ════════════════════════ -->
-  <div class="mf-card" data-topic="unsup">
+  <div class="mf-card" data-topic="unsup" data-kind="compute" id="q13">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q13</div>
       <span class="mf-topic">HAC</span>
@@ -702,7 +1387,7 @@ d(P3, P4) = 2</span>
   </div>
 
   <!-- ════════════════════════ Q14 ════════════════════════ -->
-  <div class="mf-card" data-topic="unsup">
+  <div class="mf-card" data-topic="unsup" data-kind="compute" id="q14">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q14</div>
       <span class="mf-topic">PCA</span>
@@ -747,7 +1432,7 @@ After PC4: 93.75%  ← crosses 90%</span>
   </div>
 
   <!-- ════════════════════════ Q15 ════════════════════════ -->
-  <div class="mf-card" data-topic="gen">
+  <div class="mf-card" data-topic="gen" data-kind="compute" id="q15">
     <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
       <div class="mf-num">Q15</div>
       <span class="mf-topic">GAN</span>
@@ -796,14 +1481,33 @@ After PC4: 93.75%  ← crosses 90%</span>
 function mfOpenAll() { document.querySelectorAll('.mf-card').forEach(c => c.classList.add('open')); }
 function mfCloseAll() { document.querySelectorAll('.mf-card').forEach(c => c.classList.remove('open')); }
 
-// Topic filter
+// Topic + kind filter (concept / compute / topic name)
+const kindFilters = new Set(['concept', 'compute']);
 document.getElementById('mfTabs').addEventListener('click', e => {
   if (!e.target.matches('.mf-tab')) return;
   document.querySelectorAll('.mf-tab').forEach(b => b.classList.remove('active'));
   e.target.classList.add('active');
   const f = e.target.dataset.filter;
+
   document.querySelectorAll('.mf-card').forEach(c => {
-    c.style.display = (f === 'all' || c.dataset.topic === f) ? '' : 'none';
+    let show;
+    if (f === 'all') show = true;
+    else if (kindFilters.has(f)) show = c.dataset.kind === f;
+    else show = c.dataset.topic === f;
+    c.style.display = show ? '' : 'none';
+  });
+
+  // Hide section dividers when no matching cards follow
+  document.querySelectorAll('.mf-divider').forEach(div => {
+    let sib = div.nextElementSibling;
+    let any = false;
+    while (sib && !sib.classList.contains('mf-divider')) {
+      if (sib.classList.contains('mf-card') && sib.style.display !== 'none') {
+        any = true; break;
+      }
+      sib = sib.nextElementSibling;
+    }
+    div.style.display = any ? '' : 'none';
   });
 });
 </script>
