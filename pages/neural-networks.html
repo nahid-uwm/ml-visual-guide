@@ -30,34 +30,8 @@
 </style>
 </head>
 <body>
-<nav class="nav">
-  <div class="nav-logo"><div class="dot"></div><a href="../index.html" style="color:white;font-weight:800;">ML Visual Guide</a></div>
-  <div class="nav-links">
-    <a href="neural-networks.html" class="active">Neural Nets</a>
-    <a href="deep-learning.html">Deep Learning</a>
-    <a href="cnn.html">CNNs</a>
-    <a href="generative-ai.html">Generative AI</a>
-    <a href="attention.html">Attention</a>
-    <a href="reinforcement.html">RL</a>
-    <a href="unsupervised.html">Unsupervised</a>
-    <a href="quiz.html">Quiz</a>
-    <a href="evolution.html">Evolution</a>
-    <a href="final-exam.html">Final Exam</a>
-  </div>
-  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
-</nav>
-<div class="nav-mobile" id="mobileNav">
-  <a href="neural-networks.html">🧠 Neural Networks</a>
-  <a href="deep-learning.html">🔥 Deep Learning</a>
-  <a href="cnn.html">🖼️ CNNs</a>
-  <a href="generative-ai.html">✨ Generative AI</a>
-  <a href="attention.html">👁️ Attention</a>
-  <a href="reinforcement.html">🎮 RL</a>
-  <a href="unsupervised.html">🔍 Unsupervised</a>
-  <a href="quiz.html">📝 Quiz</a>
-  <a href="evolution.html">🔗 Evolution</a>
-  <a href="final-exam.html">📋 Final Exam</a>
-</div>
+<div id="site-nav"></div>
+<script src="../js/nav.js"></script>
 
 <!-- Header -->
 <div class="page-header">
@@ -785,10 +759,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Tabs
   initAllTabs();
-  // Mobile nav
-  const hamburger = document.getElementById('hamburger');
-  const mobileNav = document.getElementById('mobileNav');
-  if(hamburger) hamburger.addEventListener('click', ()=>mobileNav.classList.toggle('open'));
 });
 </script>
 </body>

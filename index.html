@@ -29,40 +29,11 @@
 </style>
 </head>
 <body>
+<div id="site-nav"></div>
+<script src="js/nav.js"></script>
+
 
 <!-- Navigation -->
-<nav class="nav">
-  <div class="nav-logo">
-    <div class="dot"></div>
-    ML Visual Guide
-  </div>
-  <div class="nav-links">
-    <a href="pages/neural-networks.html">Neural Nets</a>
-    <a href="pages/deep-learning.html">Deep Learning</a>
-    <a href="pages/cnn.html">CNNs</a>
-    <a href="pages/generative-ai.html">Generative AI</a>
-    <a href="pages/attention.html">Attention</a>
-    <a href="pages/reinforcement.html">RL</a>
-    <a href="pages/unsupervised.html">Unsupervised</a>
-    <a href="pages/quiz.html">Quiz</a>
-    <a href="pages/evolution.html">Evolution</a>
-  </div>
-  <div class="nav-hamburger" id="hamburger">
-    <span></span><span></span><span></span>
-  </div>
-</nav>
-<div class="nav-mobile" id="mobileNav">
-  <a href="pages/neural-networks.html">🧠 Neural Networks</a>
-  <a href="pages/deep-learning.html">🔥 Deep Learning</a>
-  <a href="pages/cnn.html">🖼️ CNNs</a>
-  <a href="pages/generative-ai.html">✨ Generative AI</a>
-  <a href="pages/attention.html">👁️ Attention & Transformers</a>
-  <a href="pages/reinforcement.html">🎮 Reinforcement Learning</a>
-  <a href="pages/unsupervised.html">🔍 Unsupervised Learning</a>
-  <a href="pages/quiz.html">📝 Quiz</a>
-  <a href="pages/evolution.html">🔗 ML Evolution Flow</a>
-</div>
-
 <!-- Hero -->
 <section class="hero">
   <canvas id="heroBg" class="hero-canvas"></canvas>
@@ -322,16 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
     heroCanvas.width = window.innerWidth;
     heroCanvas.height = window.innerHeight;
     initNeuralNetBg('heroBg', { layers: [3,6,6,6,3], xSpread: 5.5, ySpread: 1.8, camZ: 22 });
-  }
-
-  // Mobile nav
-  const hamburger = document.getElementById('hamburger');
-  const mobileNav = document.getElementById('mobileNav');
-  if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', () => mobileNav.classList.toggle('open'));
-    document.addEventListener('click', e => {
-      if (!hamburger.contains(e.target) && !mobileNav.contains(e.target)) mobileNav.classList.remove('open');
-    });
   }
 
   // Scroll animations
