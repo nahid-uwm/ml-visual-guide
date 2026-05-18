@@ -13,6 +13,7 @@
     { href: 'unsupervised.html',    label: 'Unsupervised' },
     { href: 'quiz.html',            label: 'Quiz' },
     { href: 'midterm-quiz.html',    label: 'Midterm Quiz' },
+    { href: 'midterm-exam.html',    label: 'Midterm Exam' },
     { href: 'evolution.html',       label: 'Evolution' },
     { href: 'final-exam.html',      label: 'Final Exam' },
     { href: 'cheatsheet.html',      label: 'Cheat Sheet' }

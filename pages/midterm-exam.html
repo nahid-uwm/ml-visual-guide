@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Midterm Exam Prep — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+<style>
+.me-hero { padding: 6rem 0 2rem; text-align: center; }
+.me-hero h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 900; margin-bottom: 0.5rem; }
+.me-hero p { color: var(--text-muted); max-width: 640px; margin: 0 auto 1.5rem; font-size: 0.92rem; line-height: 1.55; }
+
+.me-card { background: var(--card); border: 1px solid var(--border); border-radius: 0.9rem;
+  margin-bottom: 1rem; overflow: hidden; transition: border-color 0.2s; }
+.me-card.open { border-color: var(--accent); }
+.me-header { padding: 1.1rem 1.4rem; cursor: pointer; display: flex; align-items: flex-start; gap: 0.85rem; }
+.me-num { min-width: 2.8rem; height: 1.7rem; padding: 0 0.55rem; border-radius: 4px;
+  background: rgba(245,158,11,0.18); color: var(--accent);
+  font-size: 0.76rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.me-q { flex: 1; font-size: 0.94rem; line-height: 1.55; }
+.me-q strong { color: var(--text); }
+.me-chev { font-size: 1.2rem; color: var(--accent); transition: transform 0.3s; flex-shrink: 0; font-weight: 900; }
+.me-card.open .me-chev { transform: rotate(180deg); }
+
+.me-body { display: none; border-top: 1px solid var(--border); padding: 1.3rem; }
+.me-card.open .me-body { display: block; }
+
+.me-part { margin-bottom: 1.3rem; padding: 0.9rem 1.1rem; border-radius: 0.55rem;
+  border-left: 3px solid; background: rgba(255,255,255,0.02); }
+.me-part-head { font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.me-part.answer { border-left-color: var(--green); background: rgba(16,185,129,0.05); }
+.me-part.answer .me-part-head { color: var(--green); }
+.me-part.steps { border-left-color: var(--primary); background: rgba(0,212,255,0.04); }
+.me-part.steps .me-part-head { color: var(--primary); }
+.me-part.plain { border-left-color: var(--accent); background: rgba(245,158,11,0.05); }
+.me-part.plain .me-part-head { color: var(--accent); }
+.me-part.related { border-left-color: #f472b6; background: rgba(244,114,182,0.04); }
+.me-part.related .me-part-head { color: #f472b6; }
+.me-part.diagram { border-left-color: var(--secondary); background: rgba(168,85,247,0.04); text-align: center; }
+.me-part.diagram .me-part-head { color: var(--secondary); }
+
+.me-text { font-size: 0.9rem; line-height: 1.65; color: rgba(255,255,255,0.85); }
+.me-text ul, .me-text ol { margin: 0.4rem 0 0.4rem 1.4rem; padding: 0; }
+.me-text li { margin-bottom: 0.3rem; }
+
+.me-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 0.4rem 0; }
+.me-table th, .me-table td { padding: 0.4rem 0.7rem; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
+.me-table th { background: rgba(245,158,11,0.1); color: var(--accent); font-weight: 700; font-size: 0.75rem; }
+.me-table td.num { font-family: monospace; text-align: right; }
+.me-table td.highlight { background: rgba(16,185,129,0.08); color: var(--green); font-weight: 700; }
+.me-table td.zero { background: rgba(239,68,68,0.08); color: #fca5a5; font-weight: 700; }
+
+.me-formula { background: rgba(0,0,0,0.3); padding: 0.7rem 0.9rem; border-radius: 0.4rem;
+  font-family: monospace; font-size: 0.84rem; margin: 0.5rem 0; overflow-x: auto; }
+
+.me-q-sub { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem; padding-left: 0.5rem; border-left: 2px solid rgba(255,255,255,0.1); }
+
+.related-chip { display: inline-block; padding: 0.3rem 0.75rem; margin: 0.2rem 0.3rem 0.2rem 0;
+  background: rgba(244,114,182,0.08); border: 1px solid rgba(244,114,182,0.3); border-radius: 1rem;
+  font-size: 0.78rem; color: #f472b6; text-decoration: none; }
+.related-chip:hover { background: rgba(244,114,182,0.18); }
+
+svg.diagram { max-width: 100%; height: auto; background: rgba(0,0,0,0.25); border-radius: 0.5rem; padding: 0.5rem; }
+.diagram-caption { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic; }
+
+.toolbar { display:flex; gap:0.5rem; justify-content:center; margin-bottom: 1.5rem; flex-wrap:wrap; }
+.tool-btn { padding: 0.4rem 1rem; border: 1px solid var(--border); background: transparent;
+  color: var(--text-muted); border-radius: 2rem; cursor: pointer; font-size: 0.78rem; font-weight: 600; transition: all 0.2s; }
+.tool-btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div id="site-nav"></div>
+<script src="../js/nav.js"></script>
+
+<main class="container">
+
+  <section class="me-hero">
+    <h1>Midterm Exam <span class="gradient-text">Solutions</span></h1>
+    <p>Every long-form midterm question with step-by-step solutions, recreated diagrams, plain-English explanations, and related-topic links to deepen understanding.</p>
+  </section>
+
+  <div class="toolbar">
+    <button class="tool-btn" onclick="meOpenAll()">Open All</button>
+    <button class="tool-btn" onclick="meCloseAll()">Close All</button>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       Q1 — kNN PREDICTION
+  ════════════════════════════════════════════════ -->
+  <div class="me-card">
+    <div class="me-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="me-num">Q1</div>
+      <div class="me-q"><strong>k-Nearest Neighbor Prediction.</strong> A test example has these distances to seven training examples:<br>
+        Triangles at distances <strong>2, 8, 9, 10</strong>; Squares at distances <strong>3, 3, 4</strong>.<br>
+        (i) What does 1-NN, 3-NN, and 7-NN predict? (ii) Which prediction is likely correct, and why?</div>
+      <div class="me-chev">⌄</div>
+    </div>
+
+    <div class="me-body">
+
+      <div class="me-part diagram">
+        <div class="me-part-head">📐 Recreated Diagram</div>
+        <svg viewBox="0 0 460 220" class="diagram">
+          <!-- Test point at center -->
+          <circle cx="230" cy="110" r="11" fill="#00d4ff" stroke="#00d4ff" stroke-width="2"/>
+          <text x="230" y="114" text-anchor="middle" fill="#000" font-size="11" font-weight="800">?</text>
+          <text x="230" y="135" text-anchor="middle" fill="#00d4ff" font-size="10">Test</text>
+
+          <!-- Triangle training points -->
+          <!-- distance 2 (closest) -->
+          <g transform="translate(245,95)"><polygon points="0,-8 7,5 -7,5" fill="rgba(245,158,11,0.5)" stroke="#f59e0b" stroke-width="1.5"/></g>
+          <line x1="230" y1="110" x2="245" y2="95" stroke="#f59e0b" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="252" y="89" fill="#f59e0b" font-size="10" font-weight="700">d=2</text>
+
+          <!-- distance 8 -->
+          <g transform="translate(290,60)"><polygon points="0,-8 7,5 -7,5" fill="rgba(245,158,11,0.5)" stroke="#f59e0b" stroke-width="1.5"/></g>
+          <line x1="230" y1="110" x2="290" y2="60" stroke="#f59e0b" stroke-width="0.7" stroke-dasharray="2,2"/>
+          <text x="295" y="56" fill="#f59e0b" font-size="10">d=8</text>
+
+          <!-- distance 9 -->
+          <g transform="translate(160,40)"><polygon points="0,-8 7,5 -7,5" fill="rgba(245,158,11,0.5)" stroke="#f59e0b" stroke-width="1.5"/></g>
+          <line x1="230" y1="110" x2="160" y2="40" stroke="#f59e0b" stroke-width="0.7" stroke-dasharray="2,2"/>
+          <text x="135" y="35" fill="#f59e0b" font-size="10">d=9</text>
+
+          <!-- distance 10 -->
+          <g transform="translate(370,170)"><polygon points="0,-8 7,5 -7,5" fill="rgba(245,158,11,0.5)" stroke="#f59e0b" stroke-width="1.5"/></g>
+          <line x1="230" y1="110" x2="370" y2="170" stroke="#f59e0b" stroke-width="0.7" stroke-dasharray="2,2"/>
+          <text x="380" y="175" fill="#f59e0b" font-size="10">d=10</text>
+
+          <!-- Square training points -->
+          <!-- distance 3 -->
+          <g transform="translate(207,100)"><rect x="-6" y="-6" width="12" height="12" fill="rgba(168,85,247,0.5)" stroke="#a855f7" stroke-width="1.5"/></g>
+          <line x1="230" y1="110" x2="207" y2="100" stroke="#a855f7" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="180" y="105" fill="#a855f7" font-size="10" font-weight="700">d=3</text>
+
+          <!-- distance 3 -->
+          <g transform="translate(238,135)"><rect x="-6" y="-6" width="12" height="12" fill="rgba(168,85,247,0.5)" stroke="#a855f7" stroke-width="1.5"/></g>
+          <line x1="230" y1="110" x2="238" y2="135" stroke="#a855f7" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="248" y="148" fill="#a855f7" font-size="10" font-weight="700">d=3</text>
+
+          <!-- distance 4 -->
+          <g transform="translate(212,140)"><rect x="-6" y="-6" width="12" height="12" fill="rgba(168,85,247,0.5)" stroke="#a855f7" stroke-width="1.5"/></g>
+          <line x1="230" y1="110" x2="212" y2="140" stroke="#a855f7" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="186" y="148" fill="#a855f7" font-size="10" font-weight="700">d=4</text>
+
+          <!-- Legend -->
+          <g transform="translate(20,15)"><polygon points="0,-7 6,5 -6,5" fill="rgba(245,158,11,0.5)" stroke="#f59e0b" stroke-width="1.5"/></g>
+          <text x="32" y="20" fill="#f59e0b" font-size="11" font-weight="700">Triangle (4 examples)</text>
+          <g transform="translate(20,40)"><rect x="-6" y="-6" width="12" height="12" fill="rgba(168,85,247,0.5)" stroke="#a855f7" stroke-width="1.5"/></g>
+          <text x="32" y="45" fill="#a855f7" font-size="11" font-weight="700">Square (3 examples)</text>
+        </svg>
+        <div class="diagram-caption">Test point in the middle, with dashed lines showing distance to each of the 7 training examples (4 triangles + 3 squares).</div>
+      </div>
+
+      <div class="me-part steps">
+        <div class="me-part-head">📐 Step-by-Step (sort all distances)</div>
+        <div class="me-text">
+          Sorted distances (closest first):
+          <ol>
+            <li><strong>d = 2 → Triangle</strong></li>
+            <li><strong>d = 3 → Square</strong></li>
+            <li><strong>d = 3 → Square</strong></li>
+            <li><strong>d = 4 → Square</strong></li>
+            <li><strong>d = 8 → Triangle</strong></li>
+            <li><strong>d = 9 → Triangle</strong></li>
+            <li><strong>d = 10 → Triangle</strong></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (i) — Predictions</div>
+        <div class="me-text">
+          <ul>
+            <li><strong>1-NN:</strong> the single closest neighbor is at d=2 (Triangle) → predict <strong>Triangle</strong>.</li>
+            <li><strong>3-NN:</strong> the three closest are d=2 (Triangle), d=3 (Square), d=3 (Square) → majority is 2 Squares vs 1 Triangle → predict <strong>Square</strong>.</li>
+            <li><strong>7-NN:</strong> all 7 examples vote → 4 Triangles vs 3 Squares → predict <strong>Triangle</strong>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (ii) — Which is likely correct, and why?</div>
+        <div class="me-text">
+          <strong>3-NN is most likely correct.</strong> The single closest example (1-NN at d=2) may be noise — relying on it alone is risky. 7-NN drags in faraway examples (d=8, 9, 10) which are not local evidence. 3-NN balances locality and noise resistance — it looks at the immediate neighborhood (a small Square cluster around the test point), giving Square as the local-majority class.
+        </div>
+      </div>
+
+      <div class="me-part plain">
+        <div class="me-part-head">💡 Plain English</div>
+        <div class="me-text">k controls a bias/variance trade-off: small k = sensitive to noise (overfit), large k = washes out local signal (underfit). Pick k by validation.</div>
+      </div>
+
+      <div class="me-part related">
+        <div class="me-part-head">🔗 Related Topics</div>
+        <a class="related-chip" href="cheatsheet.html#unsup">Cheat sheet · kNN</a>
+        <a class="related-chip" href="evolution.html">Evolution · kNN node</a>
+        <a class="related-chip" href="midterm-quiz.html">Midterm quiz · Q11–20</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       Q2 — INFORMATION GAIN
+  ════════════════════════════════════════════════ -->
+  <div class="me-card">
+    <div class="me-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="me-num">Q2</div>
+      <div class="me-q"><strong>Information Gain.</strong> For 4 training examples with binary features F1, F2, F3 and binary target Positive/Negative, compute the information gain when splitting by each feature. Which feature would a decision tree pick at the root?</div>
+      <div class="me-chev">⌄</div>
+    </div>
+
+    <div class="me-body">
+
+      <div class="me-part diagram">
+        <div class="me-part-head">📋 Training Data</div>
+        <table class="me-table">
+          <tr><th>Example</th><th>F1</th><th>F2</th><th>F3</th><th>Target</th></tr>
+          <tr><td>1</td><td>True</td><td>True</td><td>True</td><td style="color:#10b981">Positive</td></tr>
+          <tr><td>2</td><td>True</td><td>False</td><td>False</td><td style="color:#ef4444">Negative</td></tr>
+          <tr><td>3</td><td>True</td><td>False</td><td>True</td><td style="color:#ef4444">Negative</td></tr>
+          <tr><td>4</td><td>False</td><td>True</td><td>False</td><td style="color:#10b981">Positive</td></tr>
+        </table>
+      </div>
+
+      <div class="me-part steps">
+        <div class="me-part-head">📐 Step 1 — Initial entropy</div>
+        <div class="me-text">
+          2 Positive + 2 Negative out of 4 → 50/50 → entropy is at its maximum:
+          <div class="me-formula">H(target) = −(2/4)·log₂(2/4) − (2/4)·log₂(2/4) = 1.0</div>
+        </div>
+      </div>
+
+      <div class="me-part steps">
+        <div class="me-part-head">📐 Step 2 — Information Gain for F1</div>
+        <div class="me-text">
+          <strong>F1 = True</strong> (Ex 1, 2, 3): 1 Positive + 2 Negative → entropy = −(1/3)log₂(1/3) − (2/3)log₂(2/3) ≈ <strong>0.92</strong><br>
+          <strong>F1 = False</strong> (Ex 4): 1 Positive + 0 Negative → entropy = <strong>0</strong> (pure)
+          <div class="me-formula">IG(F1) = 1 − [(3/4)(0.92) + (1/4)(0)] = 1 − 0.69 = <strong style="color:#f59e0b">0.31</strong></div>
+        </div>
+      </div>
+
+      <div class="me-part steps">
+        <div class="me-part-head">📐 Step 3 — Information Gain for F2</div>
+        <div class="me-text">
+          <strong>F2 = True</strong> (Ex 1, 4): 2 Positive + 0 Negative → entropy = <strong>0</strong> (pure)<br>
+          <strong>F2 = False</strong> (Ex 2, 3): 0 Positive + 2 Negative → entropy = <strong>0</strong> (pure)
+          <div class="me-formula">IG(F2) = 1 − [(2/4)(0) + (2/4)(0)] = <strong style="color:#10b981">1.0</strong> (maximum possible!)</div>
+        </div>
+      </div>
+
+      <div class="me-part steps">
+        <div class="me-part-head">📐 Step 4 — Information Gain for F3</div>
+        <div class="me-text">
+          <strong>F3 = True</strong> (Ex 1, 3): 1 Positive + 1 Negative → entropy = <strong>1</strong> (worst case, still 50/50)<br>
+          <strong>F3 = False</strong> (Ex 2, 4): 1 Positive + 1 Negative → entropy = <strong>1</strong>
+          <div class="me-formula">IG(F3) = 1 − [(2/4)(1) + (2/4)(1)] = <strong style="color:#ef4444">0</strong> (useless!)</div>
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Final Answer</div>
+        <div class="me-text">
+          <strong>IG(F1) = 0.31, IG(F2) = 1.0, IG(F3) = 0.</strong><br>
+          A decision tree picks the feature with the highest information gain, so it picks <strong>F2</strong> as the root split. F2 perfectly separates Positive from Negative — both branches become pure leaves immediately. F3 is completely useless (gain = 0); F1 is helpful but not as decisive as F2.
+        </div>
+      </div>
+
+      <div class="me-part plain">
+        <div class="me-part-head">💡 Plain English</div>
+        <div class="me-text">Information gain measures how much a split reduces randomness. A "pure" subset has zero entropy (you know the answer). F2 is the dream feature here — it splits the data into two perfectly pure groups, so all the uncertainty disappears in one step.</div>
+      </div>
+
+      <div class="me-part related">
+        <div class="me-part-head">🔗 Related Topics</div>
+        <a class="related-chip" href="cheatsheet.html#theory">Cheat sheet · Theory</a>
+        <a class="related-chip" href="evolution.html">Evolution · Decision Tree node</a>
+        <a class="related-chip" href="midterm-quiz.html">Midterm quiz · Q31–40</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       Q3 — NAIVE BAYES PROBABILITY TABLE
+  ════════════════════════════════════════════════ -->
+  <div class="me-card">
+    <div class="me-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="me-num">Q3</div>
+      <div class="me-q"><strong>Naïve Bayes Probability Estimation.</strong> A binary classification task has features Sky and Temp. (i) Fill in the probability table without smoothing. (ii) Which probabilities make smoothing necessary? (iii) Express P(sky=cloudy, temp=hot | positive).</div>
+      <div class="me-chev">⌄</div>
+    </div>
+
+    <div class="me-body">
+
+      <div class="me-part diagram">
+        <div class="me-part-head">📋 Training Data (6 examples)</div>
+        <table class="me-table">
+          <tr><th>Example</th><th>Sky</th><th>Temp</th><th>Label</th></tr>
+          <tr><td>1</td><td>sunny</td><td>hot</td><td style="color:#ef4444">negative</td></tr>
+          <tr><td>2</td><td>cloudy</td><td>cold</td><td style="color:#ef4444">negative</td></tr>
+          <tr><td>3</td><td>rainy</td><td>pleasant</td><td style="color:#10b981">positive</td></tr>
+          <tr><td>4</td><td>sunny</td><td>cold</td><td style="color:#10b981">positive</td></tr>
+          <tr><td>5</td><td>cloudy</td><td>pleasant</td><td style="color:#10b981">positive</td></tr>
+          <tr><td>6</td><td>rainy</td><td>hot</td><td style="color:#10b981">positive</td></tr>
+        </table>
+        <div class="diagram-caption">4 positives (Ex 3, 4, 5, 6) and 2 negatives (Ex 1, 2).</div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (i) — Probability Estimates</div>
+        <table class="me-table">
+          <tr><th>Probability</th><th>positive</th><th>negative</th></tr>
+          <tr><td><strong>P(Y)</strong></td><td class="num">4/6</td><td class="num">2/6</td></tr>
+          <tr><td>P(sky = sunny | Y)</td><td class="num">1/4</td><td class="num">1/2</td></tr>
+          <tr><td>P(sky = cloudy | Y)</td><td class="num">1/4</td><td class="num">1/2</td></tr>
+          <tr><td>P(sky = rainy | Y)</td><td class="num">2/4</td><td class="num zero">0/2</td></tr>
+          <tr><td>P(temp = hot | Y)</td><td class="num">1/4</td><td class="num">1/2</td></tr>
+          <tr><td>P(temp = cold | Y)</td><td class="num">1/4</td><td class="num">1/2</td></tr>
+          <tr><td>P(temp = pleasant | Y)</td><td class="num">2/4</td><td class="num zero">0/2</td></tr>
+        </table>
+      </div>
+
+      <div class="me-part steps">
+        <div class="me-part-head">📐 How to read the table</div>
+        <div class="me-text">
+          For each cell, count how many training examples of that class have that feature value, then divide by the total examples in that class. Example: P(sky=rainy | positive) — among 4 positives, examples 3 and 6 are rainy → 2/4. P(sky=rainy | negative) — among 2 negatives, none are rainy → 0/2.
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (ii) — Zero probabilities (smoothing needed)</div>
+        <div class="me-text">
+          The two cells highlighted in red are <strong>zero</strong>:
+          <ul>
+            <li><strong>P(sky = rainy | negative) = 0</strong></li>
+            <li><strong>P(temp = pleasant | negative) = 0</strong></li>
+          </ul>
+          Without smoothing, ANY test example with sky=rainy or temp=pleasant would get P(features | negative) = 0 (zero anywhere in the product kills the whole thing) — so Naïve Bayes would refuse to ever predict "negative" for those examples, even when other features strongly suggest negative. Laplace smoothing adds a small count (+1) to each cell to avoid this collapse.
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (iii) — Joint conditional under NB assumption</div>
+        <div class="me-formula">P(sky=cloudy, temp=hot | positive) = P(sky=cloudy | positive) × P(temp=hot | positive)</div>
+        <div class="me-text">
+          Naïve Bayes assumes features are conditionally independent given the target, so the joint conditional factors into a product. Plugging in: (1/4) × (1/4) = <strong>1/16</strong>.
+        </div>
+      </div>
+
+      <div class="me-part plain">
+        <div class="me-part-head">💡 Plain English</div>
+        <div class="me-text">Naïve Bayes assumes once you know the class, the features don't influence each other. That lets you multiply individual conditional probabilities instead of estimating one giant joint table — which is why NB needs only LINEAR (not exponential) parameters in the number of features.</div>
+      </div>
+
+      <div class="me-part related">
+        <div class="me-part-head">🔗 Related Topics</div>
+        <a class="related-chip" href="cheatsheet.html#theory">Cheat sheet · NB</a>
+        <a class="related-chip" href="midterm-quiz.html">Midterm quiz · Q1–10 (NB)</a>
+        <a class="related-chip" href="final-exam.html">Final exam · NB probabilities</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       Q4 — CONFUSION MATRIX METRICS
+  ════════════════════════════════════════════════ -->
+  <div class="me-card">
+    <div class="me-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="me-num">Q4</div>
+      <div class="me-q"><strong>Evaluation Metrics.</strong> 100 test examples: 60 positive, 40 negative. The classifier correctly classified 50 of the 60 positives and 20 of the 40 negatives. Compute sensitivity, specificity, precision, recall, and accuracy.</div>
+      <div class="me-chev">⌄</div>
+    </div>
+
+    <div class="me-body">
+
+      <div class="me-part diagram">
+        <div class="me-part-head">📋 Confusion Matrix</div>
+        <table class="me-table" style="max-width:420px;margin:0 auto">
+          <tr><th></th><th>Predicted +</th><th>Predicted −</th><th>Row total</th></tr>
+          <tr><td><strong>Actual +</strong></td><td class="num" style="background:rgba(16,185,129,0.15);color:#6ee7b7">TP = 50</td><td class="num" style="background:rgba(239,68,68,0.10);color:#fca5a5">FN = 10</td><td class="num">60</td></tr>
+          <tr><td><strong>Actual −</strong></td><td class="num" style="background:rgba(239,68,68,0.10);color:#fca5a5">FP = 20</td><td class="num" style="background:rgba(16,185,129,0.15);color:#6ee7b7">TN = 20</td><td class="num">40</td></tr>
+          <tr><td><strong>Column total</strong></td><td class="num">70</td><td class="num">30</td><td class="num">100</td></tr>
+        </table>
+      </div>
+
+      <div class="me-part steps">
+        <div class="me-part-head">📐 Step 1 — Extract TP, FN, FP, TN</div>
+        <div class="me-text">
+          <ul>
+            <li><strong>TP = 50</strong> (positives correctly predicted positive)</li>
+            <li><strong>FN = 10</strong> (60 positives − 50 caught = 10 missed)</li>
+            <li><strong>TN = 20</strong> (negatives correctly predicted negative)</li>
+            <li><strong>FP = 20</strong> (40 negatives − 20 caught = 20 wrongly flagged positive)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Computed Metrics</div>
+        <div class="me-text">
+          <ul>
+            <li><strong>Sensitivity</strong> = TP / (TP + FN) = 50 / 60 = <strong>5/6 ≈ 0.833</strong></li>
+            <li><strong>Specificity</strong> = TN / (TN + FP) = 20 / 40 = <strong>1/2 = 0.50</strong></li>
+            <li><strong>Precision</strong> = TP / (TP + FP) = 50 / 70 = <strong>5/7 ≈ 0.714</strong></li>
+            <li><strong>Recall</strong> = TP / (TP + FN) = 50 / 60 = <strong>5/6 ≈ 0.833</strong> (same as sensitivity)</li>
+            <li><strong>Accuracy</strong> = (TP + TN) / Total = (50 + 20) / 100 = <strong>0.70</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="me-part plain">
+        <div class="me-part-head">💡 Plain English</div>
+        <div class="me-text">
+          <strong>Sensitivity (=Recall)</strong> answers: of all real positives, how many did we catch? Here, 5 out of 6 → good.<br>
+          <strong>Specificity</strong> answers: of all real negatives, how many did we correctly leave alone? Here, only half → the classifier is over-eager to predict positive.<br>
+          <strong>Precision</strong> answers: of those we predicted positive, how many were actually positive? Here, 5 out of 7 → reasonable.<br>
+          <strong>Accuracy</strong> is overall correctness — 70 out of 100.
+        </div>
+      </div>
+
+      <div class="me-part related">
+        <div class="me-part-head">🔗 Related Topics</div>
+        <a class="related-chip" href="cheatsheet.html#theory">Cheat sheet · Metrics</a>
+        <a class="related-chip" href="midterm-quiz.html">Midterm quiz · Q21–30</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q20</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       Q5 — LEARNING CURVE + ROC CURVE
+  ════════════════════════════════════════════════ -->
+  <div class="me-card">
+    <div class="me-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="me-num">Q5</div>
+      <div class="me-q"><strong>Curves.</strong> Label the two axes and draw a typical shape for: (i) a learning curve for accuracy, (ii) an ROC curve.</div>
+      <div class="me-chev">⌄</div>
+    </div>
+
+    <div class="me-body">
+
+      <div class="me-part diagram">
+        <div class="me-part-head">📈 (i) Learning Curve</div>
+        <svg viewBox="0 0 360 200" class="diagram">
+          <!-- axes -->
+          <line x1="40" y1="170" x2="340" y2="170" stroke="#888" stroke-width="1"/>
+          <line x1="40" y1="20" x2="40" y2="170" stroke="#888" stroke-width="1"/>
+          <text x="190" y="195" text-anchor="middle" fill="#a855f7" font-size="11" font-weight="700">X-axis: # Training examples</text>
+          <text x="15" y="100" text-anchor="middle" fill="#00d4ff" font-size="11" font-weight="700" transform="rotate(-90 15 100)">Y-axis: Test Accuracy</text>
+          <!-- learning curve -->
+          <path d="M 40 165 Q 80 130, 130 80 T 220 40 L 340 35" fill="none" stroke="#10b981" stroke-width="2.5"/>
+          <!-- annotations -->
+          <text x="100" y="115" fill="#10b981" font-size="9">steep early gain</text>
+          <text x="250" y="55" fill="#10b981" font-size="9">plateau</text>
+        </svg>
+        <div class="diagram-caption">Y-axis: Test Accuracy · X-axis: Number of training examples. Accuracy rises steeply with the first few examples, then flattens — more data eventually stops helping.</div>
+      </div>
+
+      <div class="me-part diagram">
+        <div class="me-part-head">📈 (ii) ROC Curve</div>
+        <svg viewBox="0 0 360 220" class="diagram">
+          <!-- axes -->
+          <line x1="40" y1="190" x2="340" y2="190" stroke="#888" stroke-width="1"/>
+          <line x1="40" y1="20" x2="40" y2="190" stroke="#888" stroke-width="1"/>
+          <text x="190" y="215" text-anchor="middle" fill="#a855f7" font-size="11" font-weight="700">X-axis: 1 − Specificity (False Positive Rate)</text>
+          <text x="15" y="105" text-anchor="middle" fill="#00d4ff" font-size="11" font-weight="700" transform="rotate(-90 15 105)">Y: Sensitivity (TPR)</text>
+          <!-- random baseline diagonal -->
+          <line x1="40" y1="190" x2="340" y2="20" stroke="#888" stroke-width="1" stroke-dasharray="4,4"/>
+          <text x="280" y="115" fill="#888" font-size="9">random (AUC=0.5)</text>
+          <!-- ROC curve -->
+          <path d="M 40 190 Q 60 100, 120 50 T 340 25" fill="none" stroke="#f59e0b" stroke-width="2.5"/>
+          <!-- ideal point -->
+          <circle cx="40" cy="20" r="4" fill="#10b981"/>
+          <text x="50" y="20" fill="#10b981" font-size="9" font-weight="700">← Perfect (0,1)</text>
+          <text x="60" y="80" fill="#f59e0b" font-size="9">bends toward top-left</text>
+          <!-- corner labels -->
+          <text x="38" y="200" fill="#888" font-size="8">(0,0)</text>
+          <text x="320" y="200" fill="#888" font-size="8">(1,0)</text>
+          <text x="320" y="15" fill="#888" font-size="8">(1,1)</text>
+        </svg>
+        <div class="diagram-caption">Y-axis: Sensitivity (TPR) · X-axis: 1 − Specificity (FPR). A good ROC bends toward the top-left corner (perfect = (0, 1)). Diagonal dashed line is random guessing.</div>
+      </div>
+
+      <div class="me-part plain">
+        <div class="me-part-head">💡 Plain English</div>
+        <div class="me-text">
+          <strong>Learning curve</strong> answers "do I need more data?" — if the curve has plateaued, more data won't help; if it's still rising, collect more.<br>
+          <strong>ROC curve</strong> answers "how do I tune the decision threshold?" — each point is one threshold. The curve shape summarizes ranking quality; AUC is its single-number summary.
+        </div>
+      </div>
+
+      <div class="me-part related">
+        <div class="me-part-head">🔗 Related Topics</div>
+        <a class="related-chip" href="cheatsheet.html#theory">Cheat sheet · ROC/AUC</a>
+        <a class="related-chip" href="midterm-quiz.html">Midterm quiz · Q24, Q28, Q30</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       Q6 — INDUCTIVE BIAS
+  ════════════════════════════════════════════════ -->
+  <div class="me-card">
+    <div class="me-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="me-num">Q6</div>
+      <div class="me-q"><strong>Inductive Bias.</strong> (i) Besides consistency with training data, what is fundamentally necessary for an ML method to predict on previously unseen examples? (ii) Can two methods that perfectly fit the training data make different predictions on test data?</div>
+      <div class="me-chev">⌄</div>
+    </div>
+
+    <div class="me-body">
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (i)</div>
+        <div class="me-text">
+          <strong>Inductive bias</strong> is fundamentally necessary. Training data alone is consistent with infinitely many functions — without a preference (a "bias") for some hypotheses over others, the learner has no principled way to pick one extrapolation over another. Inductive bias = the set of assumptions a learner uses to generalize.
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (ii)</div>
+        <div class="me-text">
+          <strong>Yes</strong>, because they may have different inductive biases. Two models that fit the training data perfectly can still disagree on unseen examples — they extrapolate according to different assumptions about which patterns are "natural" or "preferred".
+        </div>
+      </div>
+
+      <div class="me-part diagram">
+        <div class="me-part-head">🖼️ Visual Intuition</div>
+        <svg viewBox="0 0 380 200" class="diagram">
+          <!-- axes -->
+          <line x1="30" y1="170" x2="350" y2="170" stroke="#666"/>
+          <line x1="30" y1="20" x2="30" y2="170" stroke="#666"/>
+          <!-- training points -->
+          <g fill="#00d4ff">
+            <circle cx="80" cy="130" r="5"/><circle cx="140" cy="100" r="5"/>
+            <circle cx="200" cy="115" r="5"/><circle cx="260" cy="80" r="5"/>
+          </g>
+          <text x="40" y="190" fill="#00d4ff" font-size="10">Same training points fit by two models →</text>
+          <!-- Model A: linear -->
+          <path d="M 30,165 L 350,30" stroke="#10b981" stroke-width="2"/>
+          <text x="260" y="40" fill="#10b981" font-size="10">Linear (low complexity)</text>
+          <!-- Model B: wiggly -->
+          <path d="M 30,160 Q 80,130 140,100 T 260,80 Q 320,50 350,150" fill="none" stroke="#f59e0b" stroke-width="2"/>
+          <text x="240" y="160" fill="#f59e0b" font-size="10">Polynomial (high complexity)</text>
+        </svg>
+        <div class="diagram-caption">Both curves pass through all four training points perfectly, but predict wildly different values for new inputs — the difference is purely inductive bias (preference for simpler vs more flexible functions).</div>
+      </div>
+
+      <div class="me-part plain">
+        <div class="me-part-head">💡 Plain English</div>
+        <div class="me-text">"No free lunch" — without assumptions, no learner can outperform random guessing on average across all problems. Useful learners commit to assumptions about what real-world patterns look like (smoothness, low complexity, locality, etc.).</div>
+      </div>
+
+      <div class="me-part related">
+        <div class="me-part-head">🔗 Related Topics</div>
+        <a class="related-chip" href="cheatsheet.html#theory">Cheat sheet · Theory</a>
+        <a class="related-chip" href="midterm-quiz.html">Midterm quiz · Q42, Q46, Q47, Q48</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       Q7 — GRADIENT DESCENT
+  ════════════════════════════════════════════════ -->
+  <div class="me-card">
+    <div class="me-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="me-num">Q7</div>
+      <div class="me-q"><strong>Gradient Descent.</strong> Identify each symbol in the update rule, and state one convergence criterion.</div>
+      <div class="me-chev">⌄</div>
+    </div>
+
+    <div class="me-body">
+
+      <div class="me-part diagram">
+        <div class="me-part-head">📐 The Update Rule</div>
+        <div id="gd-formula" style="text-align:center;padding:0.5rem 0"></div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (i) — Symbol Meanings</div>
+        <table class="me-table">
+          <tr><th>Symbol</th><th>Meaning</th></tr>
+          <tr><td><strong>tᵢ</strong></td><td>The actual (true) target value of training example i</td></tr>
+          <tr><td><strong>M_w(dᵢ)</strong></td><td>The model's predicted value for example i (using current weights w)</td></tr>
+          <tr><td><strong>(tᵢ − M_w(dᵢ))</strong></td><td>The prediction error on example i (true minus predicted)</td></tr>
+          <tr><td><strong>w[j]</strong></td><td>The weight for feature j (the parameter being updated)</td></tr>
+          <tr><td><strong>α</strong></td><td>The learning rate — how big each update step is</td></tr>
+          <tr><td><strong>dᵢ[j]</strong></td><td>The value of feature j in example i</td></tr>
+          <tr><td><strong>Σᵢ</strong></td><td>Sum over all n training examples — this is batch gradient descent</td></tr>
+        </table>
+      </div>
+
+      <div class="me-part steps">
+        <div class="me-part-head">📐 Intuition for the update direction</div>
+        <div class="me-text">
+          <ul>
+            <li>If the error (tᵢ − M_w(dᵢ)) is positive (model predicted too low), we want to INCREASE weights for features whose dᵢ[j] is positive — that nudges the prediction up next time.</li>
+            <li>If the error is negative (predicted too high), the same product term is negative, pushing the weight down.</li>
+            <li>Multiplying by feature value dᵢ[j] concentrates the update on features that actually played a role in the prediction.</li>
+            <li>α controls step size: too big → diverge or oscillate; too small → slow convergence.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ Answer (ii) — Convergence Criterion</div>
+        <div class="me-text">
+          Common criteria include:
+          <ul>
+            <li><strong>Small change in error</strong> from one iteration to the next: |L_t − L_{t−1}| &lt; ε. The algorithm has stopped improving.</li>
+            <li><strong>Small gradient norm:</strong> ‖∇L‖ &lt; ε. We're near a stationary point.</li>
+            <li><strong>Maximum iterations reached</strong> (safety cap).</li>
+            <li><strong>Validation error stops decreasing</strong> (early stopping).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="me-part related">
+        <div class="me-part-head">🔗 Related Topics</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet · NN training</a>
+        <a class="related-chip" href="neural-networks.html">Neural Networks page</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Perceptron</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       Q8 — SHORT-ANSWER ROUND-UP
+  ════════════════════════════════════════════════ -->
+  <div class="me-card">
+    <div class="me-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="me-num">Q8</div>
+      <div class="me-q"><strong>Short-Answer Round-Up.</strong> Five sub-questions on evaluation, feature selection, curse of dimensionality, overfitting prevention, and distance measures.</div>
+      <div class="me-chev">⌄</div>
+    </div>
+
+    <div class="me-body">
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ (i) Why not tune parameters using test data?</div>
+        <div class="me-text">
+          The test set must remain <strong>unseen</strong> until final evaluation. Tuning on test data leaks information — every choice you make based on test performance fits the test set itself, so the reported number becomes a biased overestimate of true generalization. Use a separate <strong>validation set</strong> for tuning.
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ (ii) What features could forward feature selection miss?</div>
+        <div class="me-text">
+          <strong>Interacting features.</strong> Forward selection adds one feature at a time based on individual gain. Two features that are weak alone but powerful together (XOR-like patterns) are never picked because neither one individually improves the score.
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ (iii) High-dimensional curse — name and most-affected method</div>
+        <div class="me-text">
+          The phenomenon is the <strong>curse of dimensionality</strong>. The method most affected is <strong>k-Nearest Neighbor</strong>. kNN depends on the meaningfulness of distance, and in high dimensions all pairs of points have similar Euclidean distances → the notion of "nearest" loses discriminative power.
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ (iv) Preventing overfitting</div>
+        <div class="me-text">
+          <ul>
+            <li><strong>k-Nearest Neighbor:</strong> use a larger k (chosen via validation / internal cross-validation). Larger k smooths out noise — 1-NN is the extreme overfitting case.</li>
+            <li><strong>Decision Tree:</strong> use pruning — pre-pruning (stop growing when a criterion is met, e.g., min samples per leaf, max depth) or post-pruning (build full tree then trim back nodes whose removal improves validation accuracy, a.k.a. Reduced Error Pruning).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="me-part answer">
+        <div class="me-part-head">✅ (v) Distance measures</div>
+        <div class="me-text">
+          <ul>
+            <li><strong>Sequence of characters</strong> → <strong>Edit distance</strong> (a.k.a. Levenshtein distance) — counts insertions, deletions, substitutions needed to turn one string into another.</li>
+            <li><strong>Time series data</strong> → <strong>Dynamic Time Warping (DTW)</strong> — aligns two sequences in time (allowing stretches and shifts) before computing distance, robust to phase shifts that would break Euclidean distance.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="me-part related">
+        <div class="me-part-head">🔗 Related Topics</div>
+        <a class="related-chip" href="cheatsheet.html#theory">Cheat sheet · Theory</a>
+        <a class="related-chip" href="cheatsheet.html#unsup">Cheat sheet · kNN</a>
+        <a class="related-chip" href="midterm-quiz.html">Midterm quiz · all sections</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// Open/close all
+function meOpenAll() { document.querySelectorAll('.me-card').forEach(c => c.classList.add('open')); }
+function meCloseAll() { document.querySelectorAll('.me-card').forEach(c => c.classList.remove('open')); }
+
+// KaTeX render
+function rk(id, tex) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  try { katex.render(tex, el, { displayMode: true, throwOnError: false }); }
+  catch(e) { el.textContent = tex; }
+}
+rk('gd-formula', 'w[j] \\leftarrow w[j] + \\alpha \\sum_{i=1}^{n} \\big( t_i - M_w(d_i) \\big) \\cdot d_i[j]');
+</script>
+</body>
+</html>
