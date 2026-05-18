@@ -17,6 +17,7 @@
     { href: 'evolution.html',       label: 'Evolution' },
     { href: 'final-exam.html',      label: 'Final Exam' },
     { href: 'math-for-final.html',  label: 'Math for Final' },
+    { href: 'keywords-glossary.html', label: 'Keywords' },
     { href: 'cheatsheet.html',      label: 'Cheat Sheet' }
   ];
 

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keywords & Glossary — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<style>
+.kg-hero { padding: 5.5rem 0 2rem; text-align: center; }
+.kg-hero h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 900; margin-bottom: 0.5rem; }
+.kg-hero p { color: var(--text-muted); max-width: 700px; margin: 0 auto 1.5rem; font-size: 0.92rem; line-height: 1.6; }
+
+.kg-toc { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center;
+  padding: 0.85rem; background: rgba(15,18,28,0.92); border: 1px solid var(--border);
+  border-radius: 1rem; margin-bottom: 2rem; position: sticky; top: 70px; z-index: 50;
+  backdrop-filter: blur(10px); }
+.kg-toc a { padding: 0.35rem 0.85rem; font-size: 0.76rem; font-weight: 700;
+  border-radius: 2rem; text-decoration: none; transition: transform 0.15s; }
+.kg-toc a:hover { transform: translateY(-1px); }
+
+.likelihood-key {
+  background: rgba(168,85,247,0.06);
+  border: 1px solid rgba(168,85,247,0.25);
+  border-radius: 0.85rem;
+  padding: 1rem 1.2rem;
+  margin-bottom: 2rem;
+}
+.likelihood-key h3 { color: var(--secondary); font-size: 0.95rem; font-weight: 800; margin-bottom: 0.5rem; }
+.likelihood-key p { font-size: 0.86rem; line-height: 1.6; color: rgba(255,255,255,0.8); margin: 0.3rem 0; }
+.likelihood-key .legend { display:flex; flex-wrap:wrap; gap:0.85rem; margin-top:0.6rem; }
+.legend-pill { display:inline-flex; align-items:center; gap:0.35rem; font-size:0.8rem; }
+
+.topic-block { margin-bottom: 3.5rem; scroll-margin-top: 140px; }
+.topic-head {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.1rem 1.4rem; border-radius: 0.9rem; margin-bottom: 1rem;
+  border: 1px solid; border-left-width: 5px;
+}
+.topic-head .emoji { font-size: 1.9rem; flex-shrink: 0; }
+.topic-head h2 { font-size: 1.3rem; font-weight: 800; }
+.topic-head .tldr { font-size: 0.85rem; opacity: 0.85; margin-top: 0.2rem; line-height: 1.5; }
+
+.overview-box {
+  background: rgba(0,212,255,0.04);
+  border-left: 3px solid var(--primary);
+  padding: 0.85rem 1.1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.85);
+}
+.overview-box strong { color: var(--primary); }
+
+.kg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  background: rgba(255,255,255,0.02);
+  border-radius: 0.7rem;
+  overflow: hidden;
+}
+.kg-table thead {
+  background: rgba(0,212,255,0.12);
+  border-bottom: 2px solid var(--primary);
+}
+.kg-table th {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.kg-table td {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  vertical-align: top;
+  line-height: 1.55;
+}
+.kg-table tr:hover { background: rgba(255,255,255,0.025); }
+.kg-table .term { font-weight: 700; color: var(--secondary); white-space: nowrap; }
+.kg-table .meaning { color: rgba(255,255,255,0.88); }
+.kg-table .use { color: rgba(255,255,255,0.75); font-style: italic; }
+
+.lk { padding: 0.18rem 0.5rem; border-radius: 0.4rem; font-weight: 800;
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; display:inline-block; white-space:nowrap; }
+.lk-h { background: rgba(239,68,68,0.18); color: #fca5a5; border: 1px solid rgba(239,68,68,0.4); }
+.lk-m { background: rgba(245,158,11,0.18); color: #fcd34d; border: 1px solid rgba(245,158,11,0.4); }
+.lk-l { background: rgba(100,116,139,0.18); color: #cbd5e1; border: 1px solid rgba(100,116,139,0.4); }
+
+.extra-tips {
+  background: rgba(244,114,182,0.05);
+  border-left: 3px solid #f472b6;
+  border-radius: 0.5rem;
+  padding: 0.85rem 1.1rem;
+  margin-top: 1rem;
+  font-size: 0.86rem;
+  line-height: 1.65;
+}
+.extra-tips strong { color: #f472b6; display:block; font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.3rem; }
+
+@media (max-width: 700px) {
+  .kg-toc { top: 60px; }
+  .kg-table { font-size: 0.78rem; }
+  .kg-table th, .kg-table td { padding: 0.5rem 0.6rem; }
+  .kg-table .term { white-space: normal; }
+}
+</style>
+</head>
+<body>
+
+<div id="site-nav"></div>
+<script src="../js/nav.js"></script>
+
+<main class="container">
+
+  <section class="kg-hero">
+    <h1>Keywords &amp; <span class="gradient-text">Glossary</span></h1>
+    <p>Every key term per topic — meaning, where it's used, and how likely it shows up on the exam. Pre-exam scan-and-recall reference.</p>
+  </section>
+
+  <div class="likelihood-key">
+    <h3>📊 How to read the Exam Likelihood column</h3>
+    <p>Ratings based on frequency across <strong>4 sample final-exam PDFs</strong>, <strong>5 midterm-style quizzes</strong>, and <strong>slide emphasis</strong>.</p>
+    <div class="legend">
+      <span class="legend-pill"><span class="lk lk-h">HIGH</span> appeared in ≥ 3 sample exams or repeated explicitly in slides</span>
+      <span class="legend-pill"><span class="lk lk-m">MED</span> appeared once or twice, or commonly tested adjacent concept</span>
+      <span class="legend-pill"><span class="lk lk-l">LOW</span> rare but possible; know name + 1-sentence definition</span>
+    </div>
+  </div>
+
+  <nav class="kg-toc">
+    <a href="#nn" style="background:rgba(0,212,255,0.12);color:#00d4ff;border:1px solid rgba(0,212,255,0.3);">🧠 Neural Nets</a>
+    <a href="#cnn" style="background:rgba(245,158,11,0.12);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);">🖼️ CNN</a>
+    <a href="#rnn" style="background:rgba(244,114,182,0.12);color:#f472b6;border:1px solid rgba(244,114,182,0.3);">🔄 RNN/LSTM</a>
+    <a href="#attn" style="background:rgba(168,85,247,0.12);color:#a855f7;border:1px solid rgba(168,85,247,0.3);">🎯 Attention</a>
+    <a href="#gen" style="background:rgba(16,185,129,0.12);color:#10b981;border:1px solid rgba(16,185,129,0.3);">🎨 Generative</a>
+    <a href="#rl" style="background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.3);">🎮 RL</a>
+    <a href="#unsup" style="background:rgba(20,184,166,0.12);color:#14b8a6;border:1px solid rgba(20,184,166,0.3);">🔍 Unsupervised</a>
+    <a href="#theory" style="background:rgba(234,179,8,0.12);color:#eab308;border:1px solid rgba(234,179,8,0.3);">📐 Theory</a>
+    <a href="#eval" style="background:rgba(100,116,139,0.18);color:#cbd5e1;border:1px solid rgba(100,116,139,0.4);">📊 Evaluation</a>
+  </nav>
+
+  <!-- ══════════ NEURAL NETWORKS ══════════ -->
+  <section class="topic-block" id="nn">
+    <div class="topic-head" style="background:rgba(0,212,255,0.07);border-color:rgba(0,212,255,0.3);">
+      <div class="emoji">🧠</div>
+      <div>
+        <h2 style="color:#00d4ff">Neural Networks &amp; Training</h2>
+        <div class="tldr">Perceptron → MLP → backprop → activations → regularization.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> Stack neurons in layers. Each neuron computes weighted sum + bias, applies non-linear activation. Train by gradient descent + backpropagation. Use ReLU for hidden layers, softmax/sigmoid for output, cross-entropy loss for classification, dropout + early stopping to prevent overfitting.
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">Perceptron</td><td class="meaning">Single neuron with step activation. Learns linear decision boundary.</td><td class="use">Update rule w ← w + η(y − ŷ)x. Convergence theorem.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Learning rate (η)</td><td class="meaning">Step size for weight updates. Too big = diverge; too small = slow.</td><td class="use">Every gradient descent update.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Weight (w)</td><td class="meaning">How much each input contributes to neuron's output.</td><td class="use">The learnable parameter. What training adjusts.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Bias (b)</td><td class="meaning">Constant shift added to weighted sum. Lets neuron fire even with zero input.</td><td class="use">Always +b in z = w·x + b. Updated like weights.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Activation function</td><td class="meaning">Non-linear function applied after weighted sum. Without it, stacking layers = same as one layer.</td><td class="use">ReLU/sigmoid/tanh in hidden; softmax/sigmoid in output.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Sigmoid σ(z)</td><td class="meaning">Squashes any real number to (0, 1). Derivative ≤ 0.25.</td><td class="use">Binary output. Avoid in deep hidden layers (vanishing gradient).</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">ReLU max(0, z)</td><td class="meaning">Outputs z if positive, else 0. Derivative = 1 when active.</td><td class="use">Default for hidden layers in deep nets. Solves vanishing gradient.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Leaky ReLU</td><td class="meaning">Small slope (0.01) for negative inputs instead of zero. Prevents dead neurons.</td><td class="use">When dying ReLU problem appears in training.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Softmax</td><td class="meaning">Converts logits to probabilities summing to 1. Biggest logit → biggest probability.</td><td class="use">Output layer for multi-class classification.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">One-hot encoding</td><td class="meaning">Binary vector with 1 at correct class index, 0 elsewhere.</td><td class="use">Target representation for multi-class classification.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Backpropagation</td><td class="meaning">Compute gradients layer-by-layer using chain rule, output → input.</td><td class="use">Every neural net training step.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Chain rule</td><td class="meaning">dL/dw = dL/dŷ · dŷ/dz · dz/dw. Multiply local derivatives.</td><td class="use">Foundation of backprop.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Cross-entropy loss</td><td class="meaning">L = −log(p_true). Big penalty for confident-wrong prediction.</td><td class="use">Classification loss. Pair with softmax/sigmoid output.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">MSE loss</td><td class="meaning">L = ½(y − ŷ)². Squared error.</td><td class="use">Regression. Wrong choice for classification.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Gradient descent</td><td class="meaning">Move weights opposite to gradient direction to reduce loss.</td><td class="use">Standard training algorithm.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Vanishing gradient</td><td class="meaning">Gradient shrinks toward zero in deep networks. Early layers stop learning.</td><td class="use">Diagnosing why deep sigmoid nets fail. Fix: ReLU, BN, skip connections.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Dying ReLU</td><td class="meaning">Neuron stuck at zero output forever because input always negative.</td><td class="use">Common failure. Fix: Leaky ReLU, smaller LR, better init.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Dropout</td><td class="meaning">Randomly zero some neurons during training. Forces robustness.</td><td class="use">Regularization. Reduces overfitting. Off at test time.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Early stopping</td><td class="meaning">Stop training when validation error stops improving.</td><td class="use">Free regularization. Save best-validation checkpoint.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Universal approximation</td><td class="meaning">Theorem: 1 hidden layer with enough neurons approximates any continuous function.</td><td class="use">Why MLPs are powerful in theory.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">XOR problem</td><td class="meaning">Two classes arranged so no straight line separates them.</td><td class="use">Historical reason perceptron failed → MLPs invented.</td><td><span class="lk lk-m">MED</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      Perceptron update calculation (very common). ReLU vs sigmoid choice + why (very common). Cross-entropy vs MSE for classification. Compute σ'(z) using ŷ(1−ŷ) trick.
+    </div>
+  </section>
+
+  <!-- ══════════ CNN ══════════ -->
+  <section class="topic-block" id="cnn">
+    <div class="topic-head" style="background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.3);">
+      <div class="emoji">🖼️</div>
+      <div>
+        <h2 style="color:#f59e0b">Convolutional Neural Networks</h2>
+        <div class="tldr">Filters slide across image with shared weights. Detect local patterns anywhere.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> Designed for grid-like input (images). Conv layer applies small learned filters across the image. Pooling shrinks size + adds invariance. Stack conv+pool+conv+pool, then FC head. Transfer learning + augmentation key for small datasets.
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">Convolution layer</td><td class="meaning">Slides small filter across input, computes weighted sum at each position.</td><td class="use">Detect local patterns. Replace dense layer for images.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Filter / Kernel</td><td class="meaning">Small matrix of learnable weights (e.g., 3×3, 5×5).</td><td class="use">Each filter detects one type of feature (edges, textures, etc.).</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Feature map</td><td class="meaning">Output of one filter applied across the input.</td><td class="use">N filters → N feature maps as output.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Stride (S)</td><td class="meaning">How many pixels the filter jumps between applications.</td><td class="use">S=2 halves output size; S=1 keeps it nearly full.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Padding (P)</td><td class="meaning">Extra zero pixels added around input borders.</td><td class="use">"Same" padding preserves size; "valid" (P=0) shrinks.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Output size formula</td><td class="meaning">⌊(W − F + 2P) / S⌋ + 1.</td><td class="use">Must know cold. Tested in every CNN exam.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Parameter count</td><td class="meaning">(F·F·C_in + 1) × C_out per conv layer.</td><td class="use">Tested. Don't forget bias and input channels.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Weight sharing</td><td class="meaning">Same filter weights reused at every position.</td><td class="use">Why CNNs have far fewer params than dense layers.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Translation equivariance</td><td class="meaning">Shift input → feature map shifts by same amount.</td><td class="use">Why CNNs detect features anywhere in image.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Translation invariance</td><td class="meaning">Shift input → output unchanged.</td><td class="use">Achieved through pooling. Different from equivariance.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Max pooling</td><td class="meaning">Output max of each small window (e.g., 2×2).</td><td class="use">Reduce size, add invariance. No learnable parameters.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Average pooling</td><td class="meaning">Output average of window instead of max.</td><td class="use">Alternative to max pooling. Smoother.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Receptive field</td><td class="meaning">Region of input that affects one output unit. Grows with depth.</td><td class="use">Deeper layers "see" larger image patches.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Channels (C_in, C_out)</td><td class="meaning">Depth of input/output. RGB image has C_in=3.</td><td class="use">Each filter spans all input channels.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Transfer learning</td><td class="meaning">Take pretrained CNN, replace last layer, fine-tune on new task.</td><td class="use">Small dataset scenarios. Avoids overfitting.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Fine-tuning</td><td class="meaning">Re-train last few layers (or all) on new task data.</td><td class="use">Adapt pretrained model. Use small learning rate.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Data augmentation</td><td class="meaning">Random flips, rotations, crops applied to training images.</td><td class="use">Multiply data + add robustness. Free regularization.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">U-Net</td><td class="meaning">Encoder-decoder CNN with skip connections.</td><td class="use">Image segmentation. Per-pixel labels.</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">YOLO</td><td class="meaning">Single-pass CNN that predicts bounding boxes + classes.</td><td class="use">Real-time object detection.</td><td><span class="lk lk-l">LOW</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      Conv output size (5×5 image, 3×3 filter → 3×3 output). Param count for given filter+channels. Conv vs dense advantages. Max pooling output of small region.
+    </div>
+  </section>
+
+  <!-- ══════════ RNN/LSTM ══════════ -->
+  <section class="topic-block" id="rnn">
+    <div class="topic-head" style="background:rgba(244,114,182,0.07);border-color:rgba(244,114,182,0.3);">
+      <div class="emoji">🔄</div>
+      <div>
+        <h2 style="color:#f472b6">RNN / LSTM / GRU</h2>
+        <div class="tldr">Networks with memory. Process sequences one step at a time.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> Same weights reused at every timestep. Hidden state carries memory forward. Plain RNN suffers vanishing gradient over long sequences. LSTM/GRU add gates and cell state to remember long-range info. Trained by BPTT (Backprop Through Time).
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">RNN</td><td class="meaning">Network that processes one token at a time, passing hidden state forward.</td><td class="use">Sequential inputs: text, time series, audio.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Hidden state h_t</td><td class="meaning">Vector summarizing all past inputs up to time t.</td><td class="use">The RNN's "memory". Updated at every step.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Weight sharing (time)</td><td class="meaning">Same W_hx, W_hh, W_yh at every timestep.</td><td class="use">Why param count is independent of sequence length.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">W_hx, W_hh, W_yh</td><td class="meaning">Input→hidden, hidden→hidden, hidden→output weight matrices.</td><td class="use">Three matrices define a basic RNN.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Unrolling</td><td class="meaning">Drawing the RNN expanded across time. Same network repeated.</td><td class="use">Visualize BPTT path. Identify which connections carry gradient.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">BPTT</td><td class="meaning">Backprop applied to the unrolled RNN. Sum gradients across time.</td><td class="use">RNN training.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Vanishing gradient (RNN)</td><td class="meaning">Gradient shrinks at each step back → early steps don't learn.</td><td class="use">Why plain RNNs fail on long sequences. Fix: LSTM.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Exploding gradient</td><td class="meaning">Gradient grows huge during BPTT → unstable training.</td><td class="use">Fix: gradient clipping (cap norm).</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">LSTM</td><td class="meaning">RNN variant with cell state + 3 gates (forget, input, output).</td><td class="use">Long-range dependencies. Solves vanishing gradient.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Cell state C_t</td><td class="meaning">Long-term memory conveyor belt that flows through LSTM unchanged unless gates modify it.</td><td class="use">Why LSTM remembers long-range info.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Forget gate</td><td class="meaning">Sigmoid that decides what to erase from cell state.</td><td class="use">Drop irrelevant past info.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Input gate</td><td class="meaning">Sigmoid that decides what new info to write into cell state.</td><td class="use">Add new memory.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Output gate</td><td class="meaning">Sigmoid that decides what part of cell state to expose as hidden state.</td><td class="use">Control what passes forward.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">GRU</td><td class="meaning">Simpler LSTM variant with 2 gates instead of 3.</td><td class="use">Faster, similar performance.</td><td><span class="lk lk-l">LOW</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      Unrolled RNN diagram: identify W_hx, W_hh, W_yh on each connection. Backprop path for Y_t (which connections carry gradient). Why vanishing gradient happens. LSTM mitigation.
+    </div>
+  </section>
+
+  <!-- ══════════ ATTENTION ══════════ -->
+  <section class="topic-block" id="attn">
+    <div class="topic-head" style="background:rgba(168,85,247,0.07);border-color:rgba(168,85,247,0.3);">
+      <div class="emoji">🎯</div>
+      <div>
+        <h2 style="color:#a855f7">Attention &amp; Transformers</h2>
+        <div class="tldr">Each token looks at every other token. Foundation of all modern LLMs.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> Each input token emits Query (asks question), Key (advertises), Value (provides info). Query·Key gives attention weight (softmaxed). Output is weighted sum of values. Multi-head runs many in parallel. Replaces RNNs because fully parallel + handles long-range.
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">Query (Q)</td><td class="meaning">"What am I looking for?" — projection of current token.</td><td class="use">Compared against all keys to get attention weights.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Key (K)</td><td class="meaning">"What do I contain?" — projection of each token (what each advertises).</td><td class="use">Match against query via dot product.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Value (V)</td><td class="meaning">"What I pass forward" — actual content returned if selected.</td><td class="use">Weighted sum gives output for the query.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Attention formula</td><td class="meaning">softmax(QKᵀ / √d_k) · V.</td><td class="use">Core mechanism. Memorize.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">d_k scaling (√d_k)</td><td class="meaning">Divide QKᵀ by √d_k before softmax. Prevents huge scores from saturating softmax.</td><td class="use">Numerical stability of softmax gradients.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Self-attention</td><td class="meaning">Q, K, V all come from same sequence. Each token attends to every other in the same input.</td><td class="use">Encoder layers. Context-dependent word embeddings.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Encoder-decoder attention</td><td class="meaning">Q from decoder, K and V from encoder.</td><td class="use">Lets decoder look at encoded input while generating output. Translation.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Masked self-attention</td><td class="meaning">Causal mask blocks each token from attending to future tokens.</td><td class="use">Decoder. GPT-style generation (predict next token).</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Multi-head attention</td><td class="meaning">Run h attention heads in parallel, each in a d_k = d_model/h subspace.</td><td class="use">Different heads learn different relationships (syntax, semantics, position).</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Positional encoding</td><td class="meaning">Vector added to input embeddings to inject word order info.</td><td class="use">Attention has no built-in order awareness. PE fixes that.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Transformer</td><td class="meaning">Architecture using only attention + feed-forward layers (no recurrence).</td><td class="use">All modern NLP. Foundation of BERT, GPT.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Word embedding</td><td class="meaning">Dense vector representation of a word (100–300 dims).</td><td class="use">Replace one-hot. Captures semantic similarity.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">BERT</td><td class="meaning">Encoder-only transformer pretrained with masked language modeling.</td><td class="use">Understanding tasks: classification, QA.</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">GPT</td><td class="meaning">Decoder-only transformer trained on next-token prediction.</td><td class="use">Generation tasks: chat, completion.</td><td><span class="lk lk-l">LOW</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      Identify Q/K/V from a given equation (e.g., "ate' = f(I)·g(h(ate),i(I)) + ..."). Encoder-decoder attention: where do Q vs K/V come from. Why attention beats RNN: parallelism + long-range.
+    </div>
+  </section>
+
+  <!-- ══════════ GENERATIVE ══════════ -->
+  <section class="topic-block" id="gen">
+    <div class="topic-head" style="background:rgba(16,185,129,0.07);border-color:rgba(16,185,129,0.3);">
+      <div class="emoji">🎨</div>
+      <div>
+        <h2 style="color:#10b981">Generative AI: GAN, VAE, Diffusion, Autoencoder</h2>
+        <div class="tldr">Models that produce new examples instead of classifying.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> Autoencoder = compress-and-reconstruct (representation learning). GAN = generator vs discriminator, adversarial training. VAE = autoencoder with structured latent space. Diffusion = denoise from noise step-by-step, very stable training.
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">Autoencoder</td><td class="meaning">Encoder shrinks input to bottleneck; decoder reconstructs. Trained on itself.</td><td class="use">Representation learning, anomaly detection, denoising.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Bottleneck layer</td><td class="meaning">Narrow middle layer that forces compression.</td><td class="use">Learns compact features. Cannot copy directly through.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Encoder</td><td class="meaning">Network that compresses input to a smaller representation.</td><td class="use">First half of autoencoder/VAE.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Decoder</td><td class="meaning">Network that expands compressed representation back to full input.</td><td class="use">Second half of autoencoder/VAE.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">GAN</td><td class="meaning">Two networks: Generator makes fakes, Discriminator detects them. Trained adversarially.</td><td class="use">Generate realistic novel images.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Generator (G)</td><td class="meaning">Takes random noise vector → outputs fake sample.</td><td class="use">The part you keep after training. Generates new samples.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Discriminator (D)</td><td class="meaning">Classifies images as real (training data) or fake (from G).</td><td class="use">Provides gradient signal to train G. Discarded at inference.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Random vector (z)</td><td class="meaning">Latent noise input to generator. Usually ~N(0, I).</td><td class="use">Different z → different generated image.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Real vs Fake labels</td><td class="meaning">Real images labeled 1, generated images labeled 0 (for D).</td><td class="use">Discriminator's training labels.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Minimax loss</td><td class="meaning">min_G max_D V(D, G). G minimizes; D maximizes.</td><td class="use">Adversarial game.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Mode collapse</td><td class="meaning">Generator outputs only one (or few) type of sample. Loses diversity.</td><td class="use">Common GAN failure mode.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">VAE</td><td class="meaning">Autoencoder where encoder outputs distribution params (μ, σ) instead of point.</td><td class="use">Smooth latent space. Sampleable.</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">Diffusion model</td><td class="meaning">Add noise to image step-by-step (forward), train net to reverse one step.</td><td class="use">Image generation (Stable Diffusion, DALL-E).</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">Conditional GAN</td><td class="meaning">Feed class label as extra input to G and D.</td><td class="use">Control what gets generated (e.g., "generate a cat").</td><td><span class="lk lk-l">LOW</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      GAN component identification (A=random vector, B=Generator, C=Discriminator, D=Training data). Which is trained / kept after training. Autoencoder bottleneck purpose. Why autoencoders for representation learning.
+    </div>
+  </section>
+
+  <!-- ══════════ REINFORCEMENT LEARNING ══════════ -->
+  <section class="topic-block" id="rl">
+    <div class="topic-head" style="background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.3);">
+      <div class="emoji">🎮</div>
+      <div>
+        <h2 style="color:#ef4444">Reinforcement Learning</h2>
+        <div class="tldr">Learn by trial-and-error from rewards. No labeled correct actions.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> Agent observes state, picks action, gets reward, lands in next state. Goal: learn policy that maximizes total reward over time. Q-learning: estimate Q(s, a) = expected future reward. Pick action with highest Q. Bellman update refines estimates iteratively.
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">State (s)</td><td class="meaning">Current situation the agent observes.</td><td class="use">Input to policy and Q function.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Action (a)</td><td class="meaning">Choice the agent makes from available options.</td><td class="use">What the agent does in state s.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Reward (R)</td><td class="meaning">Scalar feedback after taking an action.</td><td class="use">Only learning signal (no labeled correct actions).</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Next state (s')</td><td class="meaning">State agent lands in after taking action a from s.</td><td class="use">Used in Bellman update.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Policy π(a|s)</td><td class="meaning">Strategy: which action to take in each state.</td><td class="use">What the agent learns. Optimal policy = pick argmax Q.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Q-value Q(s, a)</td><td class="meaning">Expected total future reward if you take action a in state s.</td><td class="use">Core estimate in Q-learning.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Discount γ</td><td class="meaning">Weight on future rewards. 0 = myopic, 1 = patient.</td><td class="use">Always between 0 and 1. Typical: 0.9 or 0.99.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Learning rate α</td><td class="meaning">Step size for Q updates. Different from γ.</td><td class="use">Larger α = faster but noisier. Smaller = stable but slow.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Bellman update</td><td class="meaning">Q(s,a) ← (1−α)·Q(s,a) + α·[R + γ·max Q(s', a')].</td><td class="use">Core Q-learning equation.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">TD target</td><td class="meaning">R + γ·max Q(s', a'). The "what Q should be" estimate.</td><td class="use">Drag old Q value toward this.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">TD error</td><td class="meaning">TD target − current Q. How wrong the estimate was.</td><td class="use">Magnitude of update direction.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">ε-greedy</td><td class="meaning">With prob ε pick random action (explore); otherwise pick argmax Q (exploit).</td><td class="use">Balance exploration vs exploitation.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">DQN</td><td class="meaning">Q-learning with deep network approximating Q instead of table.</td><td class="use">Large/continuous state spaces (e.g., Atari from pixels).</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">Q-table</td><td class="meaning">Lookup table storing Q(s, a) for every state-action pair.</td><td class="use">Tabular Q-learning for small discrete problems.</td><td><span class="lk lk-m">MED</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      Define Q-value in one sentence. Identify s, a, s', α, R, Q in Bellman equation. Compute new Q given current Q, R, γ, α. Pick action with highest Q.
+    </div>
+  </section>
+
+  <!-- ══════════ UNSUPERVISED ══════════ -->
+  <section class="topic-block" id="unsup">
+    <div class="topic-head" style="background:rgba(20,184,166,0.07);border-color:rgba(20,184,166,0.3);">
+      <div class="emoji">🔍</div>
+      <div>
+        <h2 style="color:#14b8a6">Unsupervised Learning &amp; Clustering</h2>
+        <div class="tldr">Find structure without labels. Clustering, PCA, autoencoders.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> No labels available. K-Means partitions into K centroid clusters. HAC builds hierarchical tree. DBSCAN groups by density. PCA reduces dimensions by projecting onto max-variance axes.
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">K-Means</td><td class="meaning">Pick K. Iterate: assign each point to nearest centroid, then update centroid to cluster mean.</td><td class="use">Fast partitioning into K spherical clusters.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Centroid (μ)</td><td class="meaning">Mean position of points in a cluster.</td><td class="use">K-Means moves these to minimize within-cluster distance.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">HAC</td><td class="meaning">Hierarchical Agglomerative Clustering. Start with every point alone, merge closest pair repeatedly.</td><td class="use">Build dendrogram. No K required upfront.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Dendrogram</td><td class="meaning">Binary tree showing merge order and merge heights.</td><td class="use">Cut at any height → that many clusters.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Single-link</td><td class="meaning">Distance between clusters = MIN distance between any two members.</td><td class="use">Captures chains and elongated clusters.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Complete-link</td><td class="meaning">Distance between clusters = MAX distance between any two members.</td><td class="use">Compact, spherical clusters.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Average-link</td><td class="meaning">Distance between clusters = mean of all pairwise distances.</td><td class="use">Balanced choice between single and complete.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Ward linkage</td><td class="meaning">Merge pair that minimizes within-cluster variance increase.</td><td class="use">Like K-Means objective but hierarchical.</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">Elbow method</td><td class="meaning">Plot inertia vs K, find bend ("elbow") = good K.</td><td class="use">Choose K visually.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Silhouette score</td><td class="meaning">s = (b − a) / max(a, b). +1 well clustered, 0 ambiguous, −1 wrong cluster.</td><td class="use">Evaluate clustering quality without labels.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">K-Means++</td><td class="meaning">Smart init: spread first centroids far apart.</td><td class="use">Avoids bad random starts.</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">DBSCAN</td><td class="meaning">Density-based clustering. Groups points with enough neighbors within ε.</td><td class="use">Arbitrary cluster shapes. Finds noise points.</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">PCA</td><td class="meaning">Project data onto directions of maximum variance (eigenvectors of covariance).</td><td class="use">Dimensionality reduction, decorrelation.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Eigenvalue (λ)</td><td class="meaning">Variance along principal component direction.</td><td class="use">Sort descending → top components first.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Explained variance ratio</td><td class="meaning">λᵢ / Σλⱼ. Fraction of total variance captured by component i.</td><td class="use">Choose k for 90% or 95% retention.</td><td><span class="lk lk-m">MED</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      HAC iterations on small 1D dataset using single-link. K-Means iteration trace. Why K-Means fails on concentric circles. Pick K via elbow/silhouette.
+    </div>
+  </section>
+
+  <!-- ══════════ THEORY ══════════ -->
+  <section class="topic-block" id="theory">
+    <div class="topic-head" style="background:rgba(234,179,8,0.07);border-color:rgba(234,179,8,0.3);">
+      <div class="emoji">📐</div>
+      <div>
+        <h2 style="color:#eab308">Theory: SVM, Naïve Bayes, Trees, kNN, Bias-Variance</h2>
+        <div class="tldr">Classical methods + fundamental concepts.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> Linear → polynomial → logistic → SVM chain. SVM picks max-margin hyperplane. Naïve Bayes assumes feature independence given target. kNN votes among k closest training points. Decision trees split on information gain. Bias-variance trade-off explains under/overfitting.
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">Linear regression</td><td class="meaning">ŷ = w·x + b. Predict continuous output.</td><td class="use">Regression baseline. Closed-form solution.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Logistic regression</td><td class="meaning">Linear regression squashed through sigmoid → probability.</td><td class="use">Binary classification with linear boundary.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">SVM</td><td class="meaning">Find hyperplane that maximizes margin between classes.</td><td class="use">Strong generalization. Pick "middle" separator.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Margin (SVM)</td><td class="meaning">Distance from hyperplane to nearest training point on either side.</td><td class="use">SVM maximizes this for best generalization.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Support vector</td><td class="meaning">Training point on the margin boundary.</td><td class="use">Only support vectors determine the hyperplane.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Kernel trick</td><td class="meaning">Replace x·x' with K(x, x') to operate in high-dim space implicitly.</td><td class="use">Non-linear boundaries without explicit features.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Naïve Bayes</td><td class="meaning">P(Y|X) ∝ P(Y)·∏ P(Xᵢ|Y). Assumes feature independence given Y.</td><td class="use">Fast text classification. Counts only.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">NB assumption</td><td class="meaning">Features are conditionally independent given the target.</td><td class="use">What makes it "naïve". Often violated but works ok.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Laplace smoothing</td><td class="meaning">Add small count to avoid zero probabilities in NB.</td><td class="use">When P(X|Y) = 0 would kill the whole product.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Bayes theorem</td><td class="meaning">P(A|B) = P(B|A) · P(A) / P(B).</td><td class="use">Flip conditional probabilities. NB foundation.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">kNN</td><td class="meaning">Find k closest training points to query. Predict majority (classification) or mean (regression).</td><td class="use">Non-parametric. No training. Slow at test time.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">k (in kNN)</td><td class="meaning">Number of nearest neighbors to consult.</td><td class="use">k=1 overfits, k=n underfits (predicts majority class).</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Curse of dimensionality</td><td class="meaning">In high dimensions, all points are roughly equidistant. Distance loses meaning.</td><td class="use">Why kNN degrades for d &gt; 20. Use PCA first.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Decision tree</td><td class="meaning">Recursively split data on most informative feature.</td><td class="use">Human-readable rules. Handles mixed features.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Entropy</td><td class="meaning">H = −Σ pᵢ log pᵢ. Measures uncertainty. 0 = pure, max = balanced.</td><td class="use">Decision tree split criterion.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Information gain</td><td class="meaning">Entropy before split − weighted entropy after. Pick max-gain split.</td><td class="use">ID3 / decision tree feature selection.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Pruning</td><td class="meaning">Remove branches that don't improve validation accuracy.</td><td class="use">Prevent decision tree overfitting.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Bias</td><td class="meaning">Systematic error from too-simple model (underfitting).</td><td class="use">Linear model on curved data → high bias.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Variance</td><td class="meaning">Sensitivity to training data noise (overfitting).</td><td class="use">Deep tree, 1-NN → high variance.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Bias-variance tradeoff</td><td class="meaning">Reducing one usually increases the other. Total error = bias² + variance + noise.</td><td class="use">Diagnose under/overfit. Tune model complexity.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Overfitting</td><td class="meaning">Low train error, high test error. Model memorized noise.</td><td class="use">Symptom of high variance.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Underfitting</td><td class="meaning">Both train and test error high. Model too simple.</td><td class="use">Symptom of high bias.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Inductive bias</td><td class="meaning">Assumptions a learner uses to generalize beyond training data.</td><td class="use">Different inductive biases = different generalizations from same data.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">One-hot encoding (features)</td><td class="meaning">Replace nominal feature with binary indicator per value.</td><td class="use">Convert categorical to numeric for algorithms that need it.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">L1 regularization</td><td class="meaning">Add λ·Σ|wⱼ| to loss. Produces sparse weights.</td><td class="use">Feature selection effect.</td><td><span class="lk lk-l">LOW</span></td></tr>
+        <tr><td class="term">L2 regularization</td><td class="meaning">Add λ·Σwⱼ² to loss. Shrinks all weights smoothly.</td><td class="use">General regularization. No sparsity.</td><td><span class="lk lk-l">LOW</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      kNN majority vote calculation (1-NN vs 3-NN vs k=n). NB probability estimation from data table. SVM separator identification (max margin = middle). Information gain calculation. One-hot encoding example. Bias vs variance diagnosis.
+    </div>
+  </section>
+
+  <!-- ══════════ EVALUATION ══════════ -->
+  <section class="topic-block" id="eval">
+    <div class="topic-head" style="background:rgba(100,116,139,0.18);border-color:rgba(100,116,139,0.4);">
+      <div class="emoji">📊</div>
+      <div>
+        <h2 style="color:#cbd5e1">Evaluation Metrics &amp; Validation</h2>
+        <div class="tldr">How to measure model performance correctly.</div>
+      </div>
+    </div>
+
+    <div class="overview-box">
+      <strong>High-level:</strong> Confusion matrix → TP, FN, FP, TN. From these derive sensitivity, specificity, precision, recall, accuracy, F1. ROC curve plots sensitivity vs (1−specificity) at different thresholds. AUC summarizes ROC in one number. Cross-validation gives robust estimates.
+    </div>
+
+    <table class="kg-table">
+      <thead>
+        <tr><th>Term</th><th>Meaning (easy)</th><th>Why / Where Used</th><th>Exam Likelihood</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="term">Confusion matrix</td><td class="meaning">2×2 table: TP, FP, FN, TN counts.</td><td class="use">Source of all classification metrics.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">TP / FN / FP / TN</td><td class="meaning">True positive / False negative / False positive / True negative.</td><td class="use">Building blocks of every metric.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Sensitivity</td><td class="meaning">TP / (TP + FN). Of all real positives, how many caught.</td><td class="use">Same as recall. Critical when missing positives is bad (medical).</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Specificity</td><td class="meaning">TN / (TN + FP). Of all real negatives, how many correctly left alone.</td><td class="use">Critical when false alarms are costly.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Precision</td><td class="meaning">TP / (TP + FP). Of all predicted positives, how many really were.</td><td class="use">When false positives matter (spam, alerts).</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Recall</td><td class="meaning">Same as sensitivity. TP / (TP + FN).</td><td class="use">Memorize: Recall = Sensitivity.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Accuracy</td><td class="meaning">(TP + TN) / Total. Fraction of all predictions correct.</td><td class="use">Misleading on imbalanced data.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">F1 score</td><td class="meaning">Harmonic mean of precision and recall = 2PR/(P+R).</td><td class="use">Single number balancing both. Use for imbalanced data.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">ROC curve</td><td class="meaning">Plot sensitivity (y) vs 1−specificity (x) at different thresholds.</td><td class="use">Shows full sensitivity-specificity tradeoff.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">AUC</td><td class="meaning">Area Under ROC Curve. 1 = perfect, 0.5 = random.</td><td class="use">Summarize ROC in one number.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Top-left corner (ROC)</td><td class="meaning">(0, 1) point = perfect classifier (100% sensitivity, 100% specificity).</td><td class="use">ROC curve closest to top-left = best.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Training set</td><td class="meaning">Data used to fit model parameters.</td><td class="use">Learn weights here.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Validation set</td><td class="meaning">Data used to tune hyperparameters and pick best model.</td><td class="use">Choose K, learning rate, etc. Never tune on test set.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Test set</td><td class="meaning">Held-out data for final evaluation. Touch only once.</td><td class="use">Estimate generalization. Must stay unseen until done.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">k-fold cross-validation</td><td class="meaning">Split data into k folds. Train on k−1, test on 1. Rotate. Average results.</td><td class="use">Robust performance estimate. Standard practice.</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">LOOCV</td><td class="meaning">Leave-one-out cross-validation. k = n. Train on n−1, test on 1.</td><td class="use">Max training data per fold. Slow.</td><td><span class="lk lk-m">MED</span></td></tr>
+        <tr><td class="term">Learning curve</td><td class="meaning">Plot of accuracy vs training set size.</td><td class="use">Diagnose: more data helping or plateaued?</td><td><span class="lk lk-h">HIGH</span></td></tr>
+        <tr><td class="term">Class imbalance</td><td class="meaning">One class much more frequent than another.</td><td class="use">Accuracy misleading. Use F1, AUC, balanced accuracy.</td><td><span class="lk lk-m">MED</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="extra-tips">
+      <strong>🎯 Exam hot spots</strong>
+      Compute sensitivity, specificity, precision, recall, accuracy from a 60+/40− split. Recall = sensitivity (always trips people up). Cross-validation fold construction. ROC top-left = perfect. Why not tune on test set.
+    </div>
+  </section>
+
+  <!-- ══════════ FINAL TIPS ══════════ -->
+  <section class="topic-block">
+    <div class="topic-head" style="background:rgba(244,114,182,0.07);border-color:rgba(244,114,182,0.3);">
+      <div class="emoji">🎯</div>
+      <div>
+        <h2 style="color:#f472b6">Exam-Day Strategy</h2>
+        <div class="tldr">Scan-and-recall checklist for the last hour.</div>
+      </div>
+    </div>
+
+    <div class="overview-box" style="background:rgba(244,114,182,0.04);border-color:#f472b6">
+      <strong>What to study last:</strong> Anything marked <span class="lk lk-h">HIGH</span>. These are the questions most likely on the exam.<br><br>
+      <strong>Memorize cold:</strong>
+      <ul style="margin:0.5rem 0 0.5rem 1.5rem;line-height:1.7">
+        <li>CNN output size: ⌊(W − F + 2P)/S⌋ + 1.</li>
+        <li>CNN params: (F·F·C_in + 1) × C_out.</li>
+        <li>Perceptron update: w ← w + η(y − ŷ)x.</li>
+        <li>Bellman: Q ← (1−α)Q + α[R + γ·max Q'].</li>
+        <li>Sigmoid derivative: σ'(z) = ŷ(1 − ŷ).</li>
+        <li>Attention: softmax(QKᵀ/√d_k) · V.</li>
+        <li>NB: P(Y|X) ∝ P(Y)·∏ P(Xᵢ|Y). Need P(Y) + each P(Xᵢ|Y).</li>
+        <li>Sensitivity = Recall = TP/(TP+FN).</li>
+        <li>Precision = TP/(TP+FP).</li>
+      </ul>
+      <strong>Recognize-the-method clues:</strong>
+      <ul style="margin:0.5rem 0 0 1.5rem;line-height:1.7">
+        <li>"Reward, action" → Reinforcement Learning.</li>
+        <li>"Image classification, edges anywhere" → CNN.</li>
+        <li>"Generate realistic novel images" → GAN.</li>
+        <li>"Reconstruct input from compressed" → Autoencoder.</li>
+        <li>"Sequence of words" → RNN/LSTM/Transformer.</li>
+        <li>"Context depends on other words" → Attention.</li>
+        <li>"No labels, find groups" → Clustering (K-Means, HAC).</li>
+        <li>"Counts probabilities, fast training" → Naïve Bayes.</li>
+        <li>"Closest training point" → kNN.</li>
+        <li>"Max margin separator" → SVM.</li>
+        <li>"If-then rules, interpretable" → Decision Tree.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>
