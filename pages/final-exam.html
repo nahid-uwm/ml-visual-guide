@@ -86,6 +86,55 @@ canvas { display: block; border-radius: 0.5rem; }
 .calc-result { font-size: 0.9rem; color: var(--green); font-weight: 700; margin-top: 0.5rem; }
 
 .hidden-section { display: none; }
+
+/* ── Verbatim Exam Section ── */
+.verbatim-section { margin: 2rem 0 4rem; }
+.verbatim-banner { background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(0,212,255,0.08));
+  border: 1px solid rgba(168,85,247,0.35); border-radius: 1rem; padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem; }
+.verbatim-banner h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 0.4rem; }
+.verbatim-banner p { color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.55; }
+
+.exam-set-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.2rem;
+  background: rgba(0,212,255,0.05); border-left: 4px solid var(--primary);
+  border-radius: 0.5rem; margin: 1.75rem 0 1.25rem; }
+.exam-set-header h3 { font-size: 1.05rem; font-weight: 800; color: var(--primary); }
+.exam-set-header span { font-size: 0.75rem; color: var(--text-muted); }
+
+.vq-card { background: var(--card); border: 1px solid var(--border); border-radius: 0.85rem;
+  margin-bottom: 1rem; overflow: hidden; transition: border-color 0.2s; }
+.vq-card.open { border-color: var(--secondary); }
+.vq-header { padding: 1rem 1.3rem; cursor: pointer; display: flex; align-items: flex-start; gap: 0.85rem; }
+.vq-tag { min-width: 2.6rem; height: 1.5rem; padding: 0 0.5rem; border-radius: 4px;
+  background: rgba(168,85,247,0.15); color: var(--secondary);
+  font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.vq-question { flex: 1; font-size: 0.92rem; line-height: 1.55; }
+.vq-chevron { font-size: 1.1rem; color: var(--secondary); transition: transform 0.3s; flex-shrink: 0; font-weight: 900; }
+.vq-card.open .vq-chevron { transform: rotate(180deg); }
+.vq-body { display: none; padding: 0 1.3rem 1.3rem; }
+.vq-card.open .vq-body { display: block; }
+
+.vq-block { margin: 1rem 0; padding: 0.85rem 1rem; border-radius: 0.5rem; }
+.vq-block.official { background: rgba(16,185,129,0.07); border-left: 3px solid var(--green); }
+.vq-block.steps { background: rgba(0,212,255,0.05); border-left: 3px solid var(--primary); }
+.vq-block.explain { background: rgba(245,158,11,0.06); border-left: 3px solid var(--accent); }
+.vq-block.related { background: rgba(244,114,182,0.05); border-left: 3px solid #f472b6; }
+.vq-block-label { font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+.vq-block.official .vq-block-label { color: var(--green); }
+.vq-block.steps .vq-block-label { color: var(--primary); }
+.vq-block.explain .vq-block-label { color: var(--accent); }
+.vq-block.related .vq-block-label { color: #f472b6; }
+
+.vq-diagram { background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+  border-radius: 0.6rem; padding: 1rem; margin: 0.85rem 0; text-align: center; }
+.vq-diagram svg { max-width: 100%; height: auto; }
+.vq-diagram-caption { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic; }
+
+.related-q { background: rgba(255,255,255,0.02); border: 1px dashed rgba(244,114,182,0.25);
+  border-radius: 0.5rem; padding: 0.7rem 0.9rem; margin: 0.5rem 0; font-size: 0.85rem; line-height: 1.55; }
+.related-q strong { color: #f472b6; }
+.related-q .ans { display: block; margin-top: 0.3rem; color: rgba(255,255,255,0.7); font-style: italic; font-size: 0.8rem; }
 </style>
 </head>
 <body>
@@ -110,8 +159,1172 @@ canvas { display: block; border-radius: 0.5rem; }
     </div>
   </section>
 
+  <!-- ════════════════════════════════════════════════════════════════
+       VERBATIM SAMPLE EXAM QUESTIONS — from 4 COMPSCI 411/711 PDFs
+  ════════════════════════════════════════════════════════════════ -->
+  <section class="verbatim-section" data-topic="all">
+    <div class="verbatim-banner">
+      <h2>📑 Verbatim Sample Exam Questions</h2>
+      <p>Every question from the 4 sample-exam solution PDFs (COMPSCI 411/711), with original diagrams recreated, the official answer, a step-by-step explanation, and 2–3 related practice questions on adjacent sub-topics that could appear in the exam.</p>
+    </div>
+
+    <!-- ── Neural Network Backprop & Architecture ── -->
+    <div class="exam-set-header"><h3>🧠 Neural Network Architecture &amp; Backprop</h3><span>Q1 from Sample-Questions PDF</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V1</div>
+        <div class="vq-question">The figure shows a neural network that is <strong>not fully-connected</strong>. When training this network, errors from which nodes will be used to compute the error at node <strong>h₂</strong>? Updates on which weights will be influenced by the error at h₂?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 360 240" width="360">
+            <!-- output layer -->
+            <circle cx="120" cy="40" r="14" fill="rgba(0,212,255,0.18)" stroke="#00d4ff" stroke-width="2"/>
+            <text x="120" y="45" text-anchor="middle" fill="#00d4ff" font-size="11" font-weight="700">o₁</text>
+            <circle cx="200" cy="40" r="14" fill="rgba(0,212,255,0.18)" stroke="#00d4ff" stroke-width="2"/>
+            <text x="200" y="45" text-anchor="middle" fill="#00d4ff" font-size="11" font-weight="700">o₂</text>
+            <text x="265" y="45" fill="#888" font-size="11">output</text>
+            <!-- hidden layer -->
+            <circle cx="80" cy="120" r="14" fill="rgba(168,85,247,0.18)" stroke="#a855f7" stroke-width="2"/>
+            <text x="80" y="125" text-anchor="middle" fill="#a855f7" font-size="11" font-weight="700">h₁</text>
+            <circle cx="160" cy="120" r="14" fill="rgba(244,114,182,0.25)" stroke="#f472b6" stroke-width="3"/>
+            <text x="160" y="125" text-anchor="middle" fill="#f472b6" font-size="11" font-weight="700">h₂</text>
+            <circle cx="240" cy="120" r="14" fill="rgba(168,85,247,0.18)" stroke="#a855f7" stroke-width="2"/>
+            <text x="240" y="125" text-anchor="middle" fill="#a855f7" font-size="11" font-weight="700">h₃</text>
+            <text x="265" y="125" fill="#888" font-size="11">hidden</text>
+            <!-- input layer -->
+            <circle cx="40" cy="200" r="12" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="2"/>
+            <text x="40" y="204" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">i₁</text>
+            <circle cx="90" cy="200" r="12" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="2"/>
+            <text x="90" y="204" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">i₂</text>
+            <circle cx="140" cy="200" r="12" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="2"/>
+            <text x="140" y="204" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">i₃</text>
+            <circle cx="190" cy="200" r="12" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="2"/>
+            <text x="190" y="204" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">i₄</text>
+            <circle cx="240" cy="200" r="12" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="2"/>
+            <text x="240" y="204" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">i₅</text>
+            <text x="265" y="204" fill="#888" font-size="11">input</text>
+            <!-- edges: h2 to outputs (only o1 is connected) -->
+            <line x1="160" y1="106" x2="120" y2="54" stroke="#f472b6" stroke-width="2"/>
+            <!-- h1 to o1, o2 -->
+            <line x1="80" y1="106" x2="120" y2="54" stroke="#555" stroke-width="1"/>
+            <line x1="80" y1="106" x2="200" y2="54" stroke="#555" stroke-width="1"/>
+            <!-- h3 to o2 -->
+            <line x1="240" y1="106" x2="200" y2="54" stroke="#555" stroke-width="1"/>
+            <!-- h2 to inputs i1, i3, i5 -->
+            <line x1="160" y1="134" x2="40" y2="188" stroke="#f472b6" stroke-width="2"/>
+            <line x1="160" y1="134" x2="140" y2="188" stroke="#f472b6" stroke-width="2"/>
+            <line x1="160" y1="134" x2="240" y2="188" stroke="#f472b6" stroke-width="2"/>
+            <!-- other connections, lighter -->
+            <line x1="80" y1="134" x2="40" y2="188" stroke="#555" stroke-width="1"/>
+            <line x1="80" y1="134" x2="90" y2="188" stroke="#555" stroke-width="1"/>
+            <line x1="80" y1="134" x2="190" y2="188" stroke="#555" stroke-width="1"/>
+            <line x1="240" y1="134" x2="90" y2="188" stroke="#555" stroke-width="1"/>
+            <line x1="240" y1="134" x2="140" y2="188" stroke="#555" stroke-width="1"/>
+            <line x1="240" y1="134" x2="190" y2="188" stroke="#555" stroke-width="1"/>
+          </svg>
+          <div class="vq-diagram-caption">Pink edges = connections involving h₂ · only o₁ receives from h₂ · h₂ connects down to i₁, i₃, i₅</div>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          Error from <strong>only o₁</strong> will be used to compute the error at h₂. Weights of the edges between <strong>(h₂, i₁), (h₂, i₃), (h₂, i₅)</strong> will be influenced by the error computed at h₂.
+        </div>
+
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Step-by-Step Reasoning</div>
+          <ol class="step-list">
+            <li><strong>Identify outgoing edges of h₂.</strong> h₂ only connects forward to o₁ (no edge to o₂). So only o₁'s error backpropagates to h₂.</li>
+            <li><strong>Compute δ_h₂ = δ_o₁ · w(h₂→o₁) · σ'(z_h₂)</strong>. Standard backprop chain rule — sum only over o₁ since o₂'s gradient cannot reach h₂.</li>
+            <li><strong>Identify incoming edges to h₂.</strong> h₂ receives from i₁, i₃, i₅. These are the weights that need updating.</li>
+            <li><strong>Weight update for incoming edge:</strong> Δw(iⱼ→h₂) = −η · δ_h₂ · iⱼ. Only the 3 incoming weights of h₂ change.</li>
+          </ol>
+        </div>
+
+        <div class="vq-block explain">
+          <div class="vq-block-label">💡 Plain English</div>
+          Backprop is local: a hidden neuron only "hears" gradient from nodes it sends to, and only updates weights coming into it. h₂ never connected to o₂ in the forward pass, so o₂'s error cannot blame h₂. h₂ talks to o₁ and listens from {i₁, i₃, i₅} — those are the only relevant edges.
+        </div>
+
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Q-related-1:</strong> In a fully-connected 3-layer net with 2 hidden neurons and 2 outputs, what gradients reach hidden neuron h₁?
+            <span class="ans">Answer: gradients from BOTH outputs (o₁ and o₂) since h₁ connects to both. Sum: δ_h₁ = σ'(z_h₁)·(δ_o₁·w_{h₁o₁} + δ_o₂·w_{h₁o₂}).</span></div>
+          <div class="related-q"><strong>Q-related-2:</strong> Why does dropout effectively "prune" connections like this non-fully-connected example during training?
+            <span class="ans">Answer: dropout randomly zeros neurons → their outgoing edges effectively don't exist for that pass → backprop ignores them, just like missing edges in this question.</span></div>
+          <div class="related-q"><strong>Q-related-3:</strong> If h₂ had connections to BOTH o₁ and o₂, would the gradient be larger or smaller?
+            <span class="ans">Answer: typically larger in magnitude (sum of two contributions vs one), but sign depends on whether the contributions align. More incoming gradient ≠ better training necessarily.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Output Layer Design ── -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V2</div>
+        <div class="vq-question">A neural network is designed for a classification task with <strong>4 classes</strong> and <strong>7 features</strong>. How many nodes in the output layer? What activation function? How do output values indicate the class?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <strong>4 nodes</strong> in the output layer. Activation: <strong>softmax</strong>. Softmax outputs probabilities for each of the 4 classes — the class with the highest probability is the prediction.
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Reasoning</div>
+          <div class="sol-text">7 features = 7 input nodes (irrelevant to output layer). 4 classes need one output node per class. Softmax: ŷᵢ = e^{zᵢ} / Σⱼ e^{zⱼ}. All outputs sum to 1 → valid probability distribution. Predicted class = argmax over outputs.</div>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — binary classification:</strong> For 2 classes, how many output nodes and what activation?
+            <span class="ans">Answer: 1 node with sigmoid (outputs P(class=1); P(class=0)=1−ŷ). Alternatively 2 nodes with softmax — equivalent.</span></div>
+          <div class="related-q"><strong>Sub-topic — regression:</strong> For predicting a continuous price, how many output nodes and what activation?
+            <span class="ans">Answer: 1 node with NO activation (or linear). MSE loss instead of cross-entropy.</span></div>
+          <div class="related-q"><strong>Sub-topic — multi-label:</strong> A photo can have multiple tags (cat, sunset, beach). What output layer?
+            <span class="ans">Answer: 1 node per tag with sigmoid each (independent). NOT softmax — that forces probabilities to sum to 1.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Method Identification ── -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V3</div>
+        <div class="vq-question">Name the ML method covered in the course: (i) most human-interpretable classification, (ii) no training work, all work at testing, (iii) needs only one pass through training data, (iv) designed specifically for sequential inputs.</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          (i) <strong>Decision Trees</strong> · (ii) <strong>K-Nearest Neighbors (kNN)</strong> · (iii) <strong>Naïve Bayes</strong> · (iv) <strong>Recurrent Neural Networks (RNN)</strong>
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Why Each</div>
+          <ol class="step-list">
+            <li><strong>Decision Tree:</strong> outputs a human-readable if-then-else rule chain. You can literally read off the classification logic.</li>
+            <li><strong>kNN:</strong> "lazy learner" — stores all training data at training time, does all distance computation at test time.</li>
+            <li><strong>Naïve Bayes:</strong> probabilities estimated by counting frequencies in one pass. No gradient descent loop.</li>
+            <li><strong>RNN:</strong> hidden state hₜ carries information from past timesteps — the only architecture in the course explicitly designed for sequential data.</li>
+          </ol>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — most accurate on tabular data:</strong> Which method?
+            <span class="ans">Answer: Random Forest / Gradient Boosting (ensembles of decision trees) — dominates Kaggle.</span></div>
+          <div class="related-q"><strong>Sub-topic — best for image data:</strong> Which method?
+            <span class="ans">Answer: CNN (Convolutional Neural Network) — weight sharing + spatial structure.</span></div>
+          <div class="related-q"><strong>Sub-topic — maximum margin separator:</strong> Which method?
+            <span class="ans">Answer: SVM (Support Vector Machine).</span></div>
+          <div class="related-q"><strong>Sub-topic — uses Bayes' theorem + independence assumption:</strong> Which method?
+            <span class="ans">Answer: Naïve Bayes.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Linear → Binary Classification ── -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V4</div>
+        <div class="vq-question">Linear regression predicts a number between −∞ and +∞. Can linear regression be adapted to predict a binary class? If yes, how? If not, why not? (2–3 sentences)</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <strong>Yes — this is logistic regression.</strong> Linear regression is used to predict the log-odds (log p/(1−p)) which itself ranges over (−∞, +∞). The logistic (sigmoid) function then maps the log-odds back to a probability in (0, 1). Threshold at 0.5 for the binary class.
+        </div>
+        <div class="vq-block explain">
+          <div class="vq-block-label">💡 Key Insight</div>
+          The link function (sigmoid) is what bridges unbounded linear output to bounded probability. This is exactly why logistic regression is in the "generalized linear models" family — linear regression's wᵀx + b is preserved, only the output transformation changes.
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — multi-class:</strong> Can logistic regression handle 4 classes?
+            <span class="ans">Answer: yes, via softmax regression (multinomial logistic regression) — one set of weights per class, softmax over outputs.</span></div>
+          <div class="related-q"><strong>Sub-topic — non-linear regression:</strong> Can linear regression fit a curve?
+            <span class="ans">Answer: yes, by adding higher-order features (x², x³, sin x, x₁x₂) — polynomial/basis-expanded regression. Model stays linear in PARAMETERS w even though non-linear in input x.</span></div>
+          <div class="related-q"><strong>Sub-topic — non-linear classification:</strong> Will logistic regression work on a circular dataset?
+            <span class="ans">Answer: no — logistic regression draws a linear boundary. Solution: add F₁², F₂² as features → linear in expanded space, circular in original.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         CNN
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>🖼️ CNN — Convolution &amp; Layer Identification</h3><span>Q1, Q2, Q5 across sample exams</span></div>
+
+    <!-- 4x4 Image Conv -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V5</div>
+        <div class="vq-question">A 4×4 image with one channel. Using a 3×3 convolution filter with stride (1,1) and <strong>valid padding</strong>: (i) output size? (ii) unique weights in the filter (ignore bias)? (iii) if instead a dense layer with 3 nodes connects to the image, how many weights (ignore bias)? (iv) one advantage of conv over dense.</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 380 180" width="380">
+            <!-- Input grid 4x4 -->
+            <text x="40" y="14" fill="#00d4ff" font-size="11" font-weight="700">Input 4×4</text>
+            <g transform="translate(20,20)">
+              <rect x="0" y="0" width="120" height="120" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+              <g stroke="#00d4ff" stroke-width="0.5" opacity="0.5">
+                <line x1="30" y1="0" x2="30" y2="120"/><line x1="60" y1="0" x2="60" y2="120"/><line x1="90" y1="0" x2="90" y2="120"/>
+                <line x1="0" y1="30" x2="120" y2="30"/><line x1="0" y1="60" x2="120" y2="60"/><line x1="0" y1="90" x2="120" y2="90"/>
+              </g>
+              <!-- 3x3 filter overlay at (0,0) -->
+              <rect x="0" y="0" width="90" height="90" fill="rgba(168,85,247,0.25)" stroke="#a855f7" stroke-width="2.5"/>
+            </g>
+            <text x="40" y="160" fill="#a855f7" font-size="10">Filter 3×3 (9 weights)</text>
+            <!-- Arrow -->
+            <text x="170" y="80" fill="#555" font-size="20">→</text>
+            <!-- Output 2x2 -->
+            <text x="220" y="14" fill="#10b981" font-size="11" font-weight="700">Output 2×2</text>
+            <g transform="translate(220,30)">
+              <rect x="0" y="0" width="80" height="80" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+              <line x1="40" y1="0" x2="40" y2="80" stroke="#10b981" stroke-width="0.5"/>
+              <line x1="0" y1="40" x2="80" y2="40" stroke="#10b981" stroke-width="0.5"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answers</div>
+          <strong>(i) 2×2</strong> · <strong>(ii) 9 weights</strong> · <strong>(iii) 16 × 3 = 48 weights</strong> · <strong>(iv) Translation equivariance</strong> (the same feature detector works at every position)
+        </div>
+
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Step-by-Step</div>
+          <ol class="step-list">
+            <li><strong>Output size formula:</strong> ⌊(W − F + 2P)/S⌋ + 1 = ⌊(4 − 3 + 0)/1⌋ + 1 = ⌊1⌋ + 1 = <strong>2</strong>. Both dimensions → 2×2.</li>
+            <li><strong>Filter weights:</strong> 3 × 3 × 1 (single channel) = <strong>9 unique weights</strong>, reused at every spatial position (weight sharing).</li>
+            <li><strong>Dense layer weights:</strong> input flattened to 16 nodes. Dense layer with 3 nodes → 16 × 3 = <strong>48 weights</strong>. No sharing — every pair gets its own weight.</li>
+            <li><strong>Why conv wins:</strong> 9 weights vs 48 = 5× fewer. AND same filter detects an edge wherever it is — translation equivariance — impossible with dense layer.</li>
+          </ol>
+        </div>
+
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — same padding:</strong> What padding P keeps output size = input size when F=3, S=1?
+            <span class="ans">Answer: P = 1 (one zero on each side). General rule: P = (F−1)/2 for odd F.</span></div>
+          <div class="related-q"><strong>Sub-topic — multi-channel input:</strong> 32×32×3 RGB image, 64 filters of 3×3. Parameters?
+            <span class="ans">Answer: (3·3·3 + 1) × 64 = 28 × 64 = 1,792 (includes bias per filter).</span></div>
+          <div class="related-q"><strong>Sub-topic — output after pooling:</strong> Following the 2×2 conv output, apply 2×2 max-pool stride 2. Result?
+            <span class="ans">Answer: ⌊(2−2)/2⌋ + 1 = 1 → output is 1×1.</span></div>
+          <div class="related-q"><strong>Sub-topic — receptive field:</strong> After two stacked 3×3 conv layers, what's the receptive field of one output unit?
+            <span class="ans">Answer: 5×5 (each layer adds (F−1) to the receptive field).</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer Naming -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V6</div>
+        <div class="vq-question">Name the neural network layer: (i) prevents overfitting, (ii) downsamples to reduce computational load, (iii) outputs classification probabilities, (iv) makes it possible to identify something in one part of the input even though it was trained with examples having it in other parts.</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answers</div>
+          (i) <strong>Dropout layer</strong> · (ii) <strong>Pooling layer</strong> · (iii) <strong>Softmax layer</strong> · (iv) <strong>Convolution layer</strong>
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Why Each</div>
+          <ol class="step-list">
+            <li><strong>Dropout</strong> — randomly zeros neurons during training, breaks co-adaptation → reduces overfitting.</li>
+            <li><strong>Pooling</strong> — max or average over windows. Halves spatial dimensions (no learnable params).</li>
+            <li><strong>Softmax</strong> — turns logits into probabilities summing to 1 → final classification layer.</li>
+            <li><strong>Convolution</strong> — weight sharing means a feature learned in one image region transfers everywhere → translation equivariance.</li>
+          </ol>
+        </div>
+        <div class="vq-block explain">
+          <div class="vq-block-label">⚠️ Common Mistake</div>
+          <span class="sol-text">Don't say "ReLU prevents overfitting" — ReLU is an activation function, not a regularizer. Don't say "pooling adds translation invariance" alone — convolution gives <em>equivariance</em>, pooling adds the <em>invariance</em>.</span>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — batch normalization purpose?</strong>
+            <span class="ans">Answer: stabilizes activations by normalizing per mini-batch → allows higher learning rates, faster training.</span></div>
+          <div class="related-q"><strong>Sub-topic — what does ReLU prevent that sigmoid doesn't?</strong>
+            <span class="ans">Answer: vanishing gradient (ReLU's derivative = 1 for z&gt;0; sigmoid's max derivative = 0.25).</span></div>
+          <div class="related-q"><strong>Sub-topic — average pooling vs max pooling?</strong>
+            <span class="ans">Answer: max keeps strongest activation (sharper features). Average smooths. Global Average Pooling can replace final FC layers entirely.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deep NN raw features -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V7</div>
+        <div class="vq-question">What enables deep neural networks to directly work with raw features (e.g. pixel values) without needing us to manually engineer features? (2–3 sentences)</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          In deep neural networks, <strong>feature engineering is part of the learning process</strong>. Hidden-layer nodes learn higher-order features over the features of the previous layer, starting from the raw features of the input.
+        </div>
+        <div class="vq-block explain">
+          <div class="vq-block-label">💡 Hierarchy of Features (CNN Example)</div>
+          <div class="sol-text">Layer 1: edges/colors → Layer 2: textures/corners → Layer 3: object parts (eyes, wheels) → Layer 4: full objects. The network discovers this hierarchy automatically by minimizing the loss — no SIFT/HOG/manual descriptors needed.</div>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — why was feature engineering needed pre-deep-learning?</strong>
+            <span class="ans">Answer: classical methods (SVM, logistic reg, NB) cannot learn from raw pixels — they need numerical features. Researchers had to hand-design SIFT, HOG, Gabor filters etc.</span></div>
+          <div class="related-q"><strong>Sub-topic — what risks come with auto-feature learning?</strong>
+            <span class="ans">Answer: needs huge data + compute; learned features hard to interpret; can pick up spurious correlations in training data.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ReLU vs Sigmoid plot identification -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V8</div>
+        <div class="vq-question">Two activation function plots are shown: (i) piecewise-linear, zero for x&lt;0, identity for x≥0, range [0,10] over x∈[-10,10]; (ii) S-shaped curve, asymptotes at 0 and 1. Name both. Which is preferred in deep networks and why?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 380 160" width="380">
+            <!-- ReLU plot -->
+            <g transform="translate(20,20)">
+              <line x1="0" y1="100" x2="160" y2="100" stroke="#555" stroke-width="0.5"/>
+              <line x1="80" y1="0" x2="80" y2="120" stroke="#555" stroke-width="0.5"/>
+              <text x="68" y="115" fill="#888" font-size="9">0</text>
+              <text x="0" y="115" fill="#888" font-size="9">−10</text>
+              <text x="150" y="115" fill="#888" font-size="9">10</text>
+              <!-- ReLU line: y=0 for x<0, y=x for x>=0 -->
+              <line x1="0" y1="100" x2="80" y2="100" stroke="#a855f7" stroke-width="2.5"/>
+              <line x1="80" y1="100" x2="160" y2="20" stroke="#a855f7" stroke-width="2.5"/>
+              <text x="60" y="-2" fill="#a855f7" font-size="11" font-weight="700">(i)</text>
+            </g>
+            <!-- Sigmoid plot -->
+            <g transform="translate(210,20)">
+              <line x1="0" y1="100" x2="160" y2="100" stroke="#555" stroke-width="0.5"/>
+              <line x1="80" y1="0" x2="80" y2="120" stroke="#555" stroke-width="0.5"/>
+              <text x="68" y="115" fill="#888" font-size="9">0</text>
+              <text x="0" y="115" fill="#888" font-size="9">−10</text>
+              <text x="150" y="115" fill="#888" font-size="9">10</text>
+              <!-- Sigmoid curve -->
+              <path d="M 0,99 Q 50,99 70,80 Q 80,50 90,20 Q 110,1 160,1" fill="none" stroke="#00d4ff" stroke-width="2.5"/>
+              <text x="60" y="-2" fill="#00d4ff" font-size="11" font-weight="700">(ii)</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          (i) <strong>ReLU</strong> activation function · (ii) <strong>Sigmoid (logistic)</strong> activation function. ReLU is preferred in deep networks because sigmoid suffers from the <strong>vanishing gradient problem</strong> — sigmoid's derivative ≤ 0.25, so over many layers the backpropagated errors shrink toward zero from repeated multiplications.
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Vanishing Gradient Math</div>
+          <ol class="step-list">
+            <li>Sigmoid derivative: σ'(z) = σ(z)(1−σ(z)). Maximum = 0.25 (at z=0).</li>
+            <li>Chain rule: ∂L/∂w_early = product of σ'(z) at every layer between output and early layer.</li>
+            <li>After 10 sigmoid layers: gradient ≤ 0.25¹⁰ ≈ 9.5 × 10⁻⁷ → effectively zero.</li>
+            <li>ReLU: derivative = 1 for z&gt;0 → no shrinkage. Early layers receive proper gradient.</li>
+          </ol>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — dying ReLU:</strong> What's the downside of ReLU and how is it fixed?
+            <span class="ans">Answer: neurons with always-negative pre-activation output 0 forever → 0 gradient → dead. Fix: Leaky ReLU (α·x for x&lt;0) or PReLU (learned α).</span></div>
+          <div class="related-q"><strong>Sub-topic — softmax purpose:</strong> Why is softmax used at the output (not sigmoid) for multi-class?
+            <span class="ans">Answer: softmax gives mutually exclusive probabilities summing to 1. Sigmoid would give independent probabilities each in (0,1) — not normalized.</span></div>
+          <div class="related-q"><strong>Sub-topic — Tanh:</strong> Why tanh sometimes better than sigmoid?
+            <span class="ans">Answer: tanh is zero-centered (range (−1, 1)), so gradients of mean zero rather than always positive — helps optimization. But still saturates → not great for deep nets.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CNN layer purposes -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V9</div>
+        <div class="vq-question">Describe in 1–2 sentences the purpose of each: (i) convolutional layer, (ii) pooling layer, (iii) dropout layer.</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <strong>(i) Convolutional layer</strong> — achieves translation equivariance (same thing detected anywhere in input) and reduces weights via weight sharing.<br>
+          <strong>(ii) Pooling layer</strong> — achieves translation invariance and reduces computational load.<br>
+          <strong>(iii) Dropout layer</strong> — prevents overfitting.
+        </div>
+        <div class="vq-block explain">
+          <div class="vq-block-label">⚠️ Equivariance vs Invariance — Common Confusion</div>
+          <div class="sol-text">Convolution is <em>equivariant</em>: shift input by 1 pixel → output shifts by 1 pixel. Pooling adds <em>invariance</em>: within a window, exact position no longer matters. Together they make CNNs robust to small shifts.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         RNN & SEQUENCE MODELS
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>🔄 RNN — Unrolling &amp; Backprop Through Time</h3><span>Q6 from Sample-Final-Exam2</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V10</div>
+        <div class="vq-question">Figure 1: an RNN with weights W_hx, W_hh, W_yh. Figure 2: unrolled over 3 timesteps with connections A–H. (i) What weights are on A–H? (ii) Error from output Y₁ backpropagates through which connections (A–H)?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 480 220" width="480">
+            <text x="100" y="14" fill="#888" font-size="11">Figure 2: Unrolled over 3 timesteps</text>
+            <!-- Three timesteps -->
+            <!-- t=0 -->
+            <text x="40" y="50" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700">Y₀</text>
+            <rect x="20" y="60" width="60" height="32" rx="4" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="1.5"/>
+            <text x="50" y="80" text-anchor="middle" fill="#00d4ff" font-size="10">Output</text>
+            <rect x="20" y="120" width="60" height="32" rx="4" fill="rgba(168,85,247,0.1)" stroke="#a855f7" stroke-width="1.5"/>
+            <text x="50" y="140" text-anchor="middle" fill="#a855f7" font-size="10">Hidden</text>
+            <text x="50" y="200" text-anchor="middle" fill="#10b981" font-size="11" font-weight="700">X₀</text>
+            <!-- arrows: F (hidden to output), A (input to hidden) -->
+            <line x1="50" y1="120" x2="50" y2="95" stroke="#f59e0b" stroke-width="1.5"/><text x="56" y="112" fill="#f59e0b" font-size="11" font-weight="700">F</text>
+            <line x1="50" y1="190" x2="50" y2="155" stroke="#10b981" stroke-width="1.5"/><text x="56" y="178" fill="#10b981" font-size="11" font-weight="700">A</text>
+
+            <!-- t=1 -->
+            <text x="180" y="50" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700">Y₁</text>
+            <rect x="150" y="60" width="60" height="32" rx="4" fill="rgba(0,212,255,0.18)" stroke="#00d4ff" stroke-width="2.5"/>
+            <text x="180" y="80" text-anchor="middle" fill="#00d4ff" font-size="10">Output</text>
+            <rect x="150" y="120" width="60" height="32" rx="4" fill="rgba(168,85,247,0.18)" stroke="#a855f7" stroke-width="2.5"/>
+            <text x="180" y="140" text-anchor="middle" fill="#a855f7" font-size="10">Hidden</text>
+            <text x="180" y="200" text-anchor="middle" fill="#10b981" font-size="11" font-weight="700">X₁</text>
+            <line x1="180" y1="120" x2="180" y2="95" stroke="#ef4444" stroke-width="2"/><text x="186" y="112" fill="#ef4444" font-size="11" font-weight="700">G</text>
+            <line x1="180" y1="190" x2="180" y2="155" stroke="#ef4444" stroke-width="2"/><text x="186" y="178" fill="#ef4444" font-size="11" font-weight="700">B</text>
+            <!-- D: h0 to h1 -->
+            <line x1="80" y1="136" x2="150" y2="136" stroke="#ef4444" stroke-width="2"/><text x="110" y="130" fill="#ef4444" font-size="11" font-weight="700">D</text>
+
+            <!-- t=2 -->
+            <text x="320" y="50" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="700">Y₂</text>
+            <rect x="290" y="60" width="60" height="32" rx="4" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="1.5"/>
+            <text x="320" y="80" text-anchor="middle" fill="#00d4ff" font-size="10">Output</text>
+            <rect x="290" y="120" width="60" height="32" rx="4" fill="rgba(168,85,247,0.1)" stroke="#a855f7" stroke-width="1.5"/>
+            <text x="320" y="140" text-anchor="middle" fill="#a855f7" font-size="10">Hidden</text>
+            <text x="320" y="200" text-anchor="middle" fill="#10b981" font-size="11" font-weight="700">X₂</text>
+            <line x1="320" y1="120" x2="320" y2="95" stroke="#f59e0b" stroke-width="1.5"/><text x="326" y="112" fill="#f59e0b" font-size="11" font-weight="700">H</text>
+            <line x1="320" y1="190" x2="320" y2="155" stroke="#10b981" stroke-width="1.5"/><text x="326" y="178" fill="#10b981" font-size="11" font-weight="700">C</text>
+            <line x1="210" y1="136" x2="290" y2="136" stroke="#a855f7" stroke-width="1.5"/><text x="245" y="130" fill="#a855f7" font-size="11" font-weight="700">E</text>
+          </svg>
+          <div class="vq-diagram-caption">Red highlighted: edges that backpropagate Y₁'s error (G → B → D → A)</div>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <strong>(i)</strong> Weights for A, B, C = <strong>W_hx</strong> · Weights for D, E = <strong>W_hh</strong> · Weights for F, G, H = <strong>W_yh</strong><br>
+          <strong>(ii)</strong> Error from Y₁ backpropagates through <strong>G, B, D, A</strong>.
+        </div>
+
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Step-by-Step Reasoning</div>
+          <ol class="step-list">
+            <li><strong>Weight assignment:</strong> RNN shares weights across time. Input→hidden uses W_hx everywhere (A, B, C). Hidden→hidden uses W_hh (D, E). Hidden→output uses W_yh (F, G, H).</li>
+            <li><strong>Y₁ backprop path:</strong> Y₁ comes from h₁ via G (hidden→output at t=1).</li>
+            <li>h₁ depends on x₁ via B AND on h₀ via D.</li>
+            <li>h₀ depends on x₀ via A.</li>
+            <li>So gradient flows: <strong>G → B (and through h₁ to D → A)</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="vq-block explain">
+          <div class="vq-block-label">💡 Why "Backprop Through Time" (BPTT)</div>
+          <div class="sol-text">Even though the unrolled network looks deeper, the same shared weight W_hh gets gradient contributions from EVERY timestep that uses it. During SGD update, you sum all contributions: ∂L/∂W_hh = Σₜ (gradient at timestep t).</div>
+        </div>
+
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — Y₂ backprop path:</strong> Through which edges does Y₂'s error propagate?
+            <span class="ans">Answer: H, C, E, B, D, A. Y₂ comes from h₂ via H; h₂ from x₂ (C) and h₁ (E); h₁ from x₁ (B) and h₀ (D); h₀ from x₀ (A).</span></div>
+          <div class="related-q"><strong>Sub-topic — vanishing gradient in RNN:</strong> Why does this BPTT path cause vanishing gradient?
+            <span class="ans">Answer: gradient multiplied by W_hh and tanh' at every backward step. After many timesteps, product → 0.</span></div>
+          <div class="related-q"><strong>Sub-topic — LSTM fix:</strong> How does LSTM mitigate the vanishing gradient?
+            <span class="ans">Answer: cell state Cₜ flows through unchanged (no multiplication by W) — gradient highway. Gates control modification multiplicatively.</span></div>
+          <div class="related-q"><strong>Sub-topic — parameter count:</strong> If hidden dim = 100, input dim = 50, output dim = 10, total RNN parameters (no bias)?
+            <span class="ans">Answer: W_hx (50×100) + W_hh (100×100) + W_yh (100×10) = 5000 + 10000 + 1000 = 16,000.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         ATTENTION / TRANSFORMER
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>🎯 Attention &amp; Self-Attention</h3><span>Q9 from Sample Final Exam (PDF 4)</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V11</div>
+        <div class="vq-question">For "I ate apple", new representation <em>ate'</em> is built by self-attention using four functions f, g, h, i:<br><code style="font-size:0.78rem;background:rgba(0,0,0,0.3);padding:0.4rem;display:block;margin:0.5rem 0;">ate' = f(I)·g(h(ate), i(I)) + f(ate)·g(h(ate), i(ate)) + f(apple)·g(h(ate), i(apple))</code>Which function is: (i) compatibility, (ii) value, (iii) query, (iv) key?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          (i) Compatibility = <strong>g</strong> · (ii) Value = <strong>f</strong> · (iii) Query = <strong>h</strong> · (iv) Key = <strong>i</strong>
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 How to Decode the Formula</div>
+          <ol class="step-list">
+            <li><strong>What gets multiplied by what?</strong> f(word) is being scaled by a scalar weight g(...,...). That weight is the attention coefficient → g is the compatibility (Q·K) function. f is the value (V).</li>
+            <li><strong>g takes two inputs:</strong> h(ate) — the SAME word every time (this is the query, asking the question), and i(other_word) — different each time (the key being matched against). So h = query, i = key.</li>
+            <li><strong>Cross-check:</strong> in standard attention, output_for_ate = Σ_w softmax(Q_ate · K_w) · V_w. Matches: g(h(ate), i(w)) = compatibility(Q_ate, K_w); f(w) = V_w.</li>
+          </ol>
+        </div>
+        <div class="vq-block explain">
+          <div class="vq-block-label">💡 Memory Hook</div>
+          <div class="sol-text">The query is whose representation you're computing (h is applied to "ate" three times — it's the question being asked). Keys are what each word advertises (i is applied to all three different words). Values are what gets returned (f, multiplied by the weights).</div>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — scaled dot-product attention:</strong> What does √dₖ do in Attention(Q,K,V) = softmax(QKᵀ/√dₖ)V?
+            <span class="ans">Answer: prevents the dot product from growing too large with high dₖ, which would saturate softmax (near-zero gradients).</span></div>
+          <div class="related-q"><strong>Sub-topic — multi-head attention purpose:</strong> Why use h parallel heads instead of one big head?
+            <span class="ans">Answer: different heads specialize in different relationship types (syntax, coreference, position). Same param count as single head with d-dim Q/K/V.</span></div>
+          <div class="related-q"><strong>Sub-topic — positional encoding:</strong> Why is it needed?
+            <span class="ans">Answer: attention itself is permutation-invariant — "dog bites man" and "man bites dog" produce same attention weights without position info. PE injects order.</span></div>
+          <div class="related-q"><strong>Sub-topic — masked self-attention:</strong> Used in encoder or decoder, and why?
+            <span class="ans">Answer: decoder (GPT-style). Mask prevents token t from attending to t+1, t+2, … so generation is causal.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         GAN
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>🎨 GAN — Components &amp; Training</h3><span>Q6 from Sample Final Exam (PDFs 2 &amp; 4)</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V12</div>
+        <div class="vq-question">A GAN diagram shows components A, B, C, D. (i) Name them. (ii) Which component is being trained in this figure? (iii) Which component is used after the entire network has been trained? (iv) What is a GAN used for?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 380 220" width="380">
+            <!-- A: random vector at bottom-left -->
+            <rect x="40" y="180" width="80" height="22" rx="3" fill="rgba(168,85,247,0.18)" stroke="#a855f7" stroke-width="1.5"/>
+            <text x="80" y="195" text-anchor="middle" fill="#a855f7" font-size="10" font-weight="700">A: Random z</text>
+            <!-- B: Generator -->
+            <rect x="30" y="115" width="100" height="50" rx="4" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="1.5"/>
+            <text x="80" y="140" text-anchor="middle" fill="#00d4ff" font-size="11" font-weight="700">B: Generator</text>
+            <text x="80" y="155" text-anchor="middle" fill="#00d4ff" font-size="9">G(z)</text>
+            <line x1="80" y1="180" x2="80" y2="170" stroke="#a855f7" stroke-width="1.5" marker-end="url(#arrow)"/>
+            <!-- C: Discriminator -->
+            <rect x="130" y="40" width="120" height="50" rx="4" fill="rgba(239,68,68,0.18)" stroke="#ef4444" stroke-width="2.5"/>
+            <text x="190" y="62" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">C: Discriminator</text>
+            <text x="190" y="78" text-anchor="middle" fill="#ef4444" font-size="9">Real or Fake?</text>
+            <!-- D: training data, cylinder -->
+            <ellipse cx="320" cy="130" rx="30" ry="8" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="1.5"/>
+            <rect x="290" y="130" width="60" height="40" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.5"/>
+            <ellipse cx="320" cy="170" rx="30" ry="8" fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="1.5"/>
+            <text x="320" y="195" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">D: Training data</text>
+            <!-- arrows from B and D to C -->
+            <line x1="100" y1="115" x2="160" y2="92" stroke="#00d4ff" stroke-width="1.5"/>
+            <text x="110" y="105" fill="#00d4ff" font-size="9">Fake</text>
+            <line x1="290" y1="130" x2="240" y2="92" stroke="#10b981" stroke-width="1.5"/>
+            <text x="255" y="110" fill="#10b981" font-size="9">Real</text>
+            <!-- output arrow up from C -->
+            <line x1="190" y1="40" x2="190" y2="20" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arr2)"/>
+            <defs>
+              <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#a855f7"/></marker>
+              <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#ef4444"/></marker>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answers</div>
+          <strong>(i)</strong> A = Random vector · B = Generator · C = Discriminator · D = Training data<br>
+          <strong>(ii)</strong> The <strong>Discriminator</strong> is being trained (the figure shows it receiving both fake and real samples to classify).<br>
+          <strong>(iii)</strong> After training, only the <strong>Generator</strong> is used (to produce new samples from random z).<br>
+          <strong>(iv)</strong> To generate realistic novel examples (e.g. images).
+        </div>
+
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 GAN Training Cycle</div>
+          <ol class="step-list">
+            <li><strong>Discriminator phase (this figure):</strong> sample real x from D, fake G(z) from B. Train C to output 1 for real, 0 for fake.</li>
+            <li><strong>Generator phase:</strong> freeze C. Sample z, generate G(z). Train B to make C output 1 on G(z) (fool the discriminator).</li>
+            <li><strong>Alternate</strong> until equilibrium — both phases happen many times per epoch.</li>
+            <li><strong>At inference:</strong> discard C. Sample z ~ N(0,I), output G(z). That's the new image.</li>
+          </ol>
+        </div>
+
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — mode collapse:</strong> What is it?
+            <span class="ans">Answer: G finds one output (or a few) that fools D and produces only those — diversity is lost.</span></div>
+          <div class="related-q"><strong>Sub-topic — Conditional GAN:</strong> How does cGAN let you say "generate a cat"?
+            <span class="ans">Answer: pass class label y as additional input to BOTH G and D. G learns to produce class-y samples; D learns "real/fake given y".</span></div>
+          <div class="related-q"><strong>Sub-topic — Diffusion vs GAN:</strong> Why are diffusion models more stable?
+            <span class="ans">Answer: each step is supervised regression (predict noise). No adversarial game → no mode collapse, no oscillation. Trade-off: slow sampling.</span></div>
+          <div class="related-q"><strong>Sub-topic — VAE vs GAN output quality:</strong>
+            <span class="ans">Answer: VAE outputs are blurrier (MSE averages plausible reconstructions). GAN outputs are sharper (adversarial signal prevents blur).</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         AUTOENCODER
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>🔁 Autoencoder Identification</h3><span>Q6 from Sample-Questions PDF</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V13</div>
+        <div class="vq-question">A neural network has hourglass shape: 5 input nodes (values 1.2, 2.3, 1.9, 0.5, 1.6) at the bottom, narrowing through hidden layers to a single bottleneck, then widening to 5 output nodes (same values). Identify the type and purpose.</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 300 220" width="300">
+            <!-- Outputs at top -->
+            <text x="15" y="14" fill="#888" font-size="10">Outputs (=inputs)</text>
+            <g fill="rgba(0,212,255,0.2)" stroke="#00d4ff" stroke-width="1.5">
+              <circle cx="50" cy="30" r="8"/><circle cx="100" cy="30" r="8"/><circle cx="150" cy="30" r="8"/><circle cx="200" cy="30" r="8"/><circle cx="250" cy="30" r="8"/>
+            </g>
+            <text x="50" y="14" text-anchor="middle" fill="#00d4ff" font-size="9">1.2</text>
+            <text x="100" y="14" text-anchor="middle" fill="#00d4ff" font-size="9">2.3</text>
+            <text x="150" y="14" text-anchor="middle" fill="#00d4ff" font-size="9">1.9</text>
+            <text x="200" y="14" text-anchor="middle" fill="#00d4ff" font-size="9">0.5</text>
+            <text x="250" y="14" text-anchor="middle" fill="#00d4ff" font-size="9">1.6</text>
+
+            <!-- Decoder layers -->
+            <g fill="rgba(168,85,247,0.18)" stroke="#a855f7" stroke-width="1.2">
+              <circle cx="100" cy="65" r="7"/><circle cx="150" cy="65" r="7"/><circle cx="200" cy="65" r="7"/>
+            </g>
+            <!-- bottleneck -->
+            <text x="240" y="105" fill="#f472b6" font-size="9">bottleneck</text>
+            <circle cx="150" cy="105" r="9" fill="rgba(244,114,182,0.3)" stroke="#f472b6" stroke-width="2.5"/>
+            <!-- Encoder layers -->
+            <g fill="rgba(168,85,247,0.18)" stroke="#a855f7" stroke-width="1.2">
+              <circle cx="100" cy="145" r="7"/><circle cx="150" cy="145" r="7"/><circle cx="200" cy="145" r="7"/>
+            </g>
+            <!-- Inputs at bottom -->
+            <g fill="rgba(16,185,129,0.18)" stroke="#10b981" stroke-width="1.5">
+              <circle cx="50" cy="185" r="8"/><circle cx="100" cy="185" r="8"/><circle cx="150" cy="185" r="8"/><circle cx="200" cy="185" r="8"/><circle cx="250" cy="185" r="8"/>
+            </g>
+            <text x="50" y="208" text-anchor="middle" fill="#10b981" font-size="9">1.2</text>
+            <text x="100" y="208" text-anchor="middle" fill="#10b981" font-size="9">2.3</text>
+            <text x="150" y="208" text-anchor="middle" fill="#10b981" font-size="9">1.9</text>
+            <text x="200" y="208" text-anchor="middle" fill="#10b981" font-size="9">0.5</text>
+            <text x="250" y="208" text-anchor="middle" fill="#10b981" font-size="9">1.6</text>
+            <text x="15" y="196" fill="#888" font-size="10">Inputs</text>
+          </svg>
+          <div class="vq-diagram-caption">Same values at input and output · narrow bottleneck in middle</div>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          This is an <strong>Autoencoder</strong>. It is used for <strong>representation learning</strong> — deriving new compact features from the given features by forcing reconstruction through a narrow bottleneck.
+        </div>
+
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Why It Works</div>
+          <div class="sol-text">The bottleneck (1 node here) cannot pass all 5 input values through unchanged. The encoder must learn to compress the input into the most informative single number; the decoder must learn to reconstruct from it. The bottleneck representation is the learned feature.</div>
+        </div>
+
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — denoising autoencoder:</strong> How does it differ?
+            <span class="ans">Answer: input has noise added during training, but target is the clean version. Network learns robust features that ignore noise.</span></div>
+          <div class="related-q"><strong>Sub-topic — VAE vs AE:</strong> What's the key difference?
+            <span class="ans">Answer: VAE encoder outputs (μ, σ) defining a distribution, plus KL regularizer pulls latent toward N(0,I). AE encodes to a point. Only VAE can SAMPLE new examples.</span></div>
+          <div class="related-q"><strong>Sub-topic — anomaly detection:</strong> How can AE be used?
+            <span class="ans">Answer: train on normal data only. At test, large reconstruction error = anomaly (input doesn't match learned distribution).</span></div>
+          <div class="related-q"><strong>Sub-topic — why blurry outputs?</strong>
+            <span class="ans">Answer: MSE loss penalizes pixel-by-pixel error → averages over plausible reconstructions → smooth/blurry output. GAN avoids this via adversarial signal.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         REINFORCEMENT LEARNING
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>🎮 Reinforcement Learning &amp; Q-Learning</h3><span>Q7 (Sample-Questions) &amp; Q5 (Final-Exam PDFs)</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V14</div>
+        <div class="vq-question">The Q-learning update equation is:<br><code style="display:block;font-size:0.82rem;background:rgba(0,0,0,0.3);padding:0.5rem;margin:0.5rem 0;text-align:center;">Q_{k+1}(s,a) = (1−α)·Q_k(s,a) + α·(R(s,a,s′) + γ·max_{a′} Q_k(s′,a′))</code>What are s, a, s′, α, R(s,a,s′), and Q_{k+1}(s,a)?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <table class="symbol-table">
+            <tr><td>s</td><td>Current state</td></tr>
+            <tr><td>a</td><td>Action taken from the current state</td></tr>
+            <tr><td>s′</td><td>Next state obtained by taking action a from s</td></tr>
+            <tr><td>α</td><td>Learning rate</td></tr>
+            <tr><td>R(s,a,s′)</td><td>Reward received when going from state s to s′ after taking action a</td></tr>
+            <tr><td>Q_{k+1}(s,a)</td><td>Estimate in the (k+1)-th iteration of all future rewards obtained by taking action a from state s</td></tr>
+            <tr><td>γ</td><td>Discount factor (not asked but key) — weight on future rewards</td></tr>
+          </table>
+        </div>
+        <div class="vq-block explain">
+          <div class="vq-block-label">💡 Q-Value Definition (Q5 in multiple PDFs)</div>
+          <div class="sol-text">Q-value Q(S, A) for a state S and action A is the <strong>expected total future reward if action A is taken from state S</strong>. Once Q is learned, the optimal policy is π*(s) = argmax_a Q(s, a).</div>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — numerical computation:</strong> Q(s,a)=3, R=5, max Q(s′,a′)=10, α=0.1, γ=0.9. New Q(s,a)?
+            <span class="ans">Answer: (1−0.1)·3 + 0.1·(5 + 0.9·10) = 2.7 + 0.1·14 = 2.7 + 1.4 = 4.1.</span></div>
+          <div class="related-q"><strong>Sub-topic — γ = 0:</strong> What does the agent care about?
+            <span class="ans">Answer: only the immediate reward R. Future rewards are ignored — shortsighted policy.</span></div>
+          <div class="related-q"><strong>Sub-topic — ε-greedy:</strong> Why is it used?
+            <span class="ans">Answer: balances exploration vs exploitation. With probability ε pick random action (explore); else argmax_a Q(s,a) (exploit).</span></div>
+          <div class="related-q"><strong>Sub-topic — DQN:</strong> Why use a neural network for Q instead of a table?
+            <span class="ans">Answer: state space too large to enumerate (e.g., Atari pixels). NN generalizes Q to unseen states.</span></div>
+          <div class="related-q"><strong>Sub-topic — off-policy vs on-policy:</strong> Q-learning is which, and what's the difference from SARSA?
+            <span class="ans">Answer: Q-learning is off-policy — uses max over next actions (best possible). SARSA is on-policy — uses Q(s′, a′ actually taken by ε-greedy).</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         PERCEPTRON / NN BASICS
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>🧮 Perceptron Training Rule</h3><span>Q7 from all 3 main exam PDFs</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V15</div>
+        <div class="vq-question">The perceptron weight update rule is wᵢ = wᵢ + η(y − y′)xᵢ. (i) What are η, y, y′, xᵢ? (ii) Under what circumstance does the perceptron training algorithm converge?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answers</div>
+          <strong>(i)</strong> η = learning rate · y = correct output · y′ = predicted output · xᵢ = i-th input.<br>
+          <strong>(ii)</strong> The perceptron training algorithm converges when the data is <strong>linearly separable</strong> (perceptron convergence theorem).
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Why The Rule Works</div>
+          <ol class="step-list">
+            <li>If prediction is correct: y − y′ = 0 → no update.</li>
+            <li>If wrong: y − y′ ≠ 0 → weight changes proportional to xᵢ.</li>
+            <li>For active inputs (xᵢ ≠ 0), weights move toward the correct decision.</li>
+            <li>Guaranteed to find separating hyperplane in finite steps IF one exists (Rosenblatt 1958).</li>
+          </ol>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — non-separable data:</strong> What happens if data isn't linearly separable?
+            <span class="ans">Answer: perceptron oscillates forever, never converges. Need MLP, kernel SVM, or any non-linear method.</span></div>
+          <div class="related-q"><strong>Sub-topic — XOR:</strong> Why can't perceptron solve XOR?
+            <span class="ans">Answer: XOR isn't linearly separable — no straight line separates (0,1)+(1,0) from (0,0)+(1,1).</span></div>
+          <div class="related-q"><strong>Sub-topic — bias term:</strong> How is the bias updated?
+            <span class="ans">Answer: b = b + η(y − y′). Same rule with x₀ = 1 (bias as 0-th input).</span></div>
+          <div class="related-q"><strong>Sub-topic — MLP advantage:</strong> What makes MLP solve XOR?
+            <span class="ans">Answer: hidden layer + non-linear activation. Two layers of linear-then-sigmoid can carve out non-linear regions.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         CLASSICAL ML — SVM, LOGISTIC, OVERFITTING
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>📐 Classical ML — SVM, Logistic Regression, Overfitting</h3><span>Q8, Q9 across sample exams</span></div>
+
+    <!-- SVM Separator selection -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V16</div>
+        <div class="vq-question">Positive (red empty circles) and negative (blue filled circles) examples are shown with 2 features. Three separators A, B, C are drawn. Which is most likely to be learned by SVM and why?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 320 220" width="320">
+            <!-- axes -->
+            <line x1="20" y1="200" x2="300" y2="200" stroke="#666"/>
+            <line x1="20" y1="200" x2="20" y2="20" stroke="#666"/>
+            <!-- separator A (almost vertical, far left, very steep) -->
+            <line x1="105" y1="200" x2="80" y2="20" stroke="#888" stroke-width="2"/>
+            <text x="68" y="20" fill="#888" font-size="11" font-weight="700">A</text>
+            <!-- separator B (middle, optimal margin) -->
+            <line x1="160" y1="200" x2="125" y2="20" stroke="#00d4ff" stroke-width="2.5"/>
+            <text x="115" y="20" fill="#00d4ff" font-size="11" font-weight="700">B</text>
+            <!-- separator C (curved, going right) -->
+            <path d="M 150,200 Q 200,150 280,40" fill="none" stroke="#888" stroke-width="2"/>
+            <text x="280" y="40" fill="#888" font-size="11" font-weight="700">C</text>
+            <!-- positive circles (left of B) - red empty -->
+            <g fill="none" stroke="#ef4444" stroke-width="1.5">
+              <circle cx="40" cy="60" r="5"/><circle cx="70" cy="80" r="5"/><circle cx="50" cy="100" r="5"/>
+              <circle cx="35" cy="130" r="5"/><circle cx="60" cy="150" r="5"/><circle cx="75" cy="160" r="5"/>
+              <circle cx="100" cy="90" r="5"/><circle cx="95" cy="55" r="5"/>
+            </g>
+            <!-- negative circles (right of B) - blue filled -->
+            <g fill="#00d4ff">
+              <circle cx="180" cy="80" r="5"/><circle cx="210" cy="100" r="5"/><circle cx="195" cy="130" r="5"/>
+              <circle cx="220" cy="150" r="5"/><circle cx="240" cy="100" r="5"/><circle cx="250" cy="135" r="5"/>
+              <circle cx="180" cy="170" r="5"/><circle cx="225" cy="180" r="5"/>
+            </g>
+          </svg>
+          <div class="vq-diagram-caption">Three candidate separators · cyan (B) is the maximum-margin choice</div>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <strong>Separator B</strong> is most likely to be learned by SVM. SVM learns the separator that <strong>maximizes the margin</strong> between training examples on either side — hence the middle-most line.
+        </div>
+
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Why Not A or C?</div>
+          <ol class="step-list">
+            <li><strong>A</strong> hugs the positive class too closely — tiny margin → poor generalization to new points slightly to the left.</li>
+            <li><strong>C</strong> is a curve. SVM (linear kernel) only learns hyperplanes (straight lines in 2D). A curve would require a non-linear kernel (RBF/polynomial).</li>
+            <li><strong>B</strong> is roughly equidistant from both classes' nearest points — maximum margin. The support vectors are the closest points from each side.</li>
+          </ol>
+        </div>
+
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — support vectors:</strong> What are they?
+            <span class="ans">Answer: training points exactly on the margin boundary. They alone determine w — other points could be removed without changing the model.</span></div>
+          <div class="related-q"><strong>Sub-topic — soft margin C parameter:</strong> What does it control?
+            <span class="ans">Answer: penalty for misclassifications. High C = strict (small margin, no errors). Low C = lenient (wider margin, tolerates errors).</span></div>
+          <div class="related-q"><strong>Sub-topic — kernel for curved boundary:</strong> If the true boundary IS curved, what to use?
+            <span class="ans">Answer: RBF kernel K(x,x′)=exp(−γ‖x−x′‖²) or polynomial kernel. Maps to higher-dim space where curve becomes linear.</span></div>
+          <div class="related-q"><strong>Sub-topic — why max margin generalizes:</strong>
+            <span class="ans">Answer: VC theory — larger margin = lower bound on test error. Intuitively: more room before a new point gets misclassified.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Circular dataset / logistic regression -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V17</div>
+        <div class="vq-question">A 2D dataset has positives (+) in the center forming a small cluster, negatives (−) around them in a ring. Will logistic regression do well? If yes, why? If no, what adaptation will make it work?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 280 220" width="280">
+            <line x1="20" y1="200" x2="260" y2="200" stroke="#666"/>
+            <line x1="20" y1="200" x2="20" y2="20" stroke="#666"/>
+            <text x="6" y="100" fill="#888" font-size="11">F1</text>
+            <text x="240" y="215" fill="#888" font-size="11">F2</text>
+            <!-- inner cluster of + -->
+            <g fill="#10b981" font-size="11" text-anchor="middle">
+              <text x="140" y="105">+</text><text x="150" y="115">+</text><text x="130" y="120">+</text>
+              <text x="160" y="125">+</text><text x="135" y="135">+</text><text x="150" y="140">+</text>
+              <text x="125" y="105">+</text><text x="145" y="100">+</text>
+            </g>
+            <!-- outer ring of - -->
+            <g fill="#ef4444" font-size="14" text-anchor="middle">
+              <text x="100" y="80">−</text><text x="180" y="80">−</text>
+              <text x="80" y="120">−</text><text x="200" y="120">−</text>
+              <text x="90" y="160">−</text><text x="190" y="160">−</text>
+              <text x="120" y="60">−</text><text x="160" y="60">−</text>
+              <text x="120" y="180">−</text><text x="160" y="180">−</text>
+              <text x="70" y="100">−</text><text x="220" y="100">−</text>
+              <text x="65" y="140">−</text><text x="215" y="140">−</text>
+            </g>
+          </svg>
+          <div class="vq-diagram-caption">Inner +, outer ring of − · cannot be separated by any straight line</div>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          Logistic regression will <strong>NOT</strong> do well — it is a linear method, and this dataset requires a circular separator. It can be adapted by using <strong>squares of the features (F₁² and F₂²)</strong> as additional features. In the expanded space, the boundary becomes linear (a hyperplane in 4D).
+        </div>
+
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 The Math Behind The Fix</div>
+          <ol class="step-list">
+            <li>A circle: F₁² + F₂² = r². Rearranged: F₁² + F₂² − r² = 0.</li>
+            <li>Define new features: z₁ = F₁², z₂ = F₂². The boundary becomes: z₁ + z₂ = r². Linear in z!</li>
+            <li>Logistic regression on (z₁, z₂) finds this linear boundary easily.</li>
+            <li>This is the kernel trick's intuition without using kernels explicitly — basis expansion.</li>
+          </ol>
+        </div>
+
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — alternative method:</strong> What other method handles this naturally?
+            <span class="ans">Answer: kernel SVM with RBF kernel, or any neural network with hidden layers, or decision tree (axis-aligned splits form a box approximation), or kNN.</span></div>
+          <div class="related-q"><strong>Sub-topic — DBSCAN:</strong> Would K-Means cluster these correctly?
+            <span class="ans">Answer: No — K-Means makes spherical clusters by centroid distance, would split the ring in half. DBSCAN (density-based) handles arbitrary shapes.</span></div>
+          <div class="related-q"><strong>Sub-topic — XOR dataset:</strong> What's the basis expansion that linearizes XOR?
+            <span class="ans">Answer: add x₁·x₂ as feature. XOR(x₁,x₂) = x₁ + x₂ − 2·x₁·x₂ is linear in {x₁, x₂, x₁x₂}.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overfitting / Universal representation -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V18</div>
+        <div class="vq-question">A method uses a representation that can represent ANY function from features to target. Will it be prone to underfitting, overfitting, or neither? Explain in one sentence.</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <strong>Overfitting.</strong> Its representation is very expressive and could easily fit any training data — including noise — leading to poor generalization on test data.
+        </div>
+        <div class="vq-block explain">
+          <div class="vq-block-label">💡 Capacity vs Generalization Trade-off</div>
+          <div class="sol-text">High-capacity models (deep nets, full-depth decision trees, kNN with k=1, kernel SVM with high γ) can fit anything → high variance → overfit easily. Low-capacity (linear regression on raw features) → high bias → underfit. The sweet spot needs regularization OR more data.</div>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — silly always-predict-first-example method:</strong> Will it have high bias or high variance?
+            <span class="ans">Answer: high variance — its prediction depends entirely on which example happened to be first in training data; would change drastically with different training data.</span></div>
+          <div class="related-q"><strong>Sub-topic — predict-the-majority:</strong> High bias or variance?
+            <span class="ans">Answer: high bias — same prediction regardless of input. Underfits hopelessly.</span></div>
+          <div class="related-q"><strong>Sub-topic — preventing overfitting:</strong> How in decision trees? In kNN?
+            <span class="ans">Answer: Decision trees → pruning (or limit max_depth, min_samples_leaf). kNN → increase k (averages out noise).</span></div>
+          <div class="related-q"><strong>Sub-topic — preventing overfitting in neural nets:</strong>
+            <span class="ans">Answer: dropout, L1/L2 weight decay, early stopping, data augmentation, batch normalization (slight regularization side-effect).</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         UNSUPERVISED — HAC
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>🔍 Hierarchical Clustering (HAC)</h3><span>Q1 from Sample-Final-Exam2</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V19</div>
+        <div class="vq-question">2D examples A, B, C, D positioned roughly: A far left, B middle, C and D close together on the right. Show HAC iterations using <strong>single-link</strong> and Euclidean distance.</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+
+        <div class="vq-diagram">
+          <svg viewBox="0 0 360 120" width="360">
+            <line x1="20" y1="80" x2="340" y2="80" stroke="#666"/>
+            <circle cx="60" cy="60" r="5" fill="#00d4ff"/><text x="60" y="100" text-anchor="middle" fill="#00d4ff" font-size="12" font-weight="700">A</text>
+            <circle cx="180" cy="60" r="5" fill="#a855f7"/><text x="180" y="100" text-anchor="middle" fill="#a855f7" font-size="12" font-weight="700">B</text>
+            <circle cx="270" cy="60" r="5" fill="#f59e0b"/><text x="270" y="100" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="700">C</text>
+            <circle cx="290" cy="60" r="5" fill="#f59e0b"/><text x="295" y="100" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="700">D</text>
+          </svg>
+          <div class="vq-diagram-caption">A, B, C, D on a horizontal line · C and D are closest (smallest gap)</div>
+        </div>
+
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <ul style="list-style:none;padding:0;margin:0">
+            <li><strong>Iteration 1 (start):</strong> (A), (B), (C), (D) — every point its own cluster</li>
+            <li><strong>Iteration 2:</strong> (A), (B), (C, D) — C and D are closest, merge first</li>
+            <li><strong>Iteration 3:</strong> (A), (B, C, D) — single-link distance from {C,D} to B is min(d(B,C), d(B,D)) which is smaller than d(A, B)</li>
+            <li><strong>Iteration 4:</strong> (A, B, C, D) — final merge</li>
+          </ul>
+        </div>
+
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Single-Link Distance Recap</div>
+          <ol class="step-list">
+            <li><strong>Single-link:</strong> d(cluster1, cluster2) = min over all pairs (xᵢ ∈ cluster1, xⱼ ∈ cluster2) of d(xᵢ, xⱼ).</li>
+            <li>Iteration 2: smallest pairwise distance is d(C, D). Merge.</li>
+            <li>Iteration 3: now compare (A, B), (A, {C,D}), (B, {C,D}). Single-link of (B, {C,D}) = min(d(B,C), d(B,D)) = d(B,C). Compared to d(A,B), d(B,C) is smaller. Merge B with {C,D}.</li>
+            <li>Iteration 4: only A and {B,C,D} remain. Merge.</li>
+          </ol>
+        </div>
+
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — complete-link:</strong> Would the iterations change?
+            <span class="ans">Answer: possibly yes — complete-link uses MAX distance. d({C,D}, B) = max(d(C,B), d(D,B)) = d(D,B), still smaller than d(A,B). Same result here but could differ for other layouts.</span></div>
+          <div class="related-q"><strong>Sub-topic — dendrogram:</strong> What is it?
+            <span class="ans">Answer: tree showing the merge sequence with heights = merge distances. Cut horizontally at any level to get any number of clusters.</span></div>
+          <div class="related-q"><strong>Sub-topic — K-Means vs HAC:</strong> Why use HAC instead?
+            <span class="ans">Answer: don't need to pick K up front; dendrogram exposes structure at every scale. Trade-off: O(n³) vs K-Means's O(nKd).</span></div>
+          <div class="related-q"><strong>Sub-topic — Ward linkage:</strong> What does it minimize?
+            <span class="ans">Answer: variance increase when merging — favors compact, spherical clusters (like K-Means but hierarchical).</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         EVALUATION — Q11 in PDFs
+    ════════════════════════════════════════════════════════════════ -->
+    <div class="exam-set-header"><h3>📊 Evaluation Metrics &amp; Cross-Validation</h3><span>Q11 across all sample exams</span></div>
+
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V20</div>
+        <div class="vq-question">Multi-part: (i) Naive Bayes with target Y and features F1, F2, F3 — what probabilities are estimated? (ii) Can one trivially get 100% sensitivity? (iii) kNN with k = n on n training examples — what does it predict? (iv) 90% sensitivity + 80% specificity → what is recall? (v) Show one full 3-fold CV split of {A,B,C,D,E,F}. (vi) How show the sensitivity-specificity trade-off? What single number summarizes it?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answers</div>
+          <ol style="padding-left:1.5rem;line-height:1.8;margin:0">
+            <li><strong>P(Y), P(F1|Y), P(F2|Y), P(F3|Y)</strong> — class prior plus per-feature class-conditional probabilities.</li>
+            <li><strong>Yes</strong> — predict all examples to be positive. Captures all real positives → sensitivity = 100% (but specificity tanks).</li>
+            <li><strong>Predicts the majority class</strong> for every test point. With k=n, all training points vote → majority always wins.</li>
+            <li><strong>90% (same as sensitivity)</strong>. Recall = Sensitivity = TP/(TP+FN). Specificity is the negative-class analog and is NOT recall.</li>
+            <li>One valid split: Fold 1 train={A,B,C,D} test={E,F} · Fold 2 train={A,B,E,F} test={C,D} · Fold 3 train={C,D,E,F} test={A,B}.</li>
+            <li>Plot the <strong>ROC curve</strong>. Single number = <strong>AUC</strong> (Area Under the Curve).</li>
+          </ol>
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Key Definitions</div>
+          <table class="symbol-table">
+            <tr><th>Metric</th><th>Formula</th><th>What it measures</th></tr>
+            <tr><td>Sensitivity (Recall, TPR)</td><td>TP / (TP + FN)</td><td>Of real positives, how many caught</td></tr>
+            <tr><td>Specificity (TNR)</td><td>TN / (TN + FP)</td><td>Of real negatives, how many correctly negative</td></tr>
+            <tr><td>Precision (PPV)</td><td>TP / (TP + FP)</td><td>Of predicted positives, how many real</td></tr>
+            <tr><td>F1</td><td>2·P·R / (P + R)</td><td>Harmonic mean of precision and recall</td></tr>
+            <tr><td>AUC</td><td>Area under ROC</td><td>Probability ranker scores random + above random −</td></tr>
+          </table>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — 100% precision trick:</strong> Can you trivially get 100% precision?
+            <span class="ans">Answer: yes — predict positive only on the single example you are most confident about. If correct, precision = 100%. But recall collapses.</span></div>
+          <div class="related-q"><strong>Sub-topic — Naive Bayes prediction formula:</strong>
+            <span class="ans">Answer: ŷ = argmax_y P(Y=y) · ∏ᵢ P(Fᵢ|Y=y). The "naive" part is treating features as conditionally independent given Y.</span></div>
+          <div class="related-q"><strong>Sub-topic — kNN with k=1:</strong> What happens?
+            <span class="ans">Answer: each test point predicted as the label of its single nearest neighbor — high variance, overfits noise.</span></div>
+          <div class="related-q"><strong>Sub-topic — why not just use accuracy?</strong>
+            <span class="ans">Answer: imbalanced classes — 99% accuracy on 99/1 split is meaningless (predict majority always). Use F1, AUC, or balanced metrics.</span></div>
+          <div class="related-q"><strong>Sub-topic — k-fold purpose:</strong> Why do cross-validation instead of a single train/test split?
+            <span class="ans">Answer: reduces variance in performance estimate. Every example serves as test exactly once. Better use of small datasets.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- One-hot encoding -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V21</div>
+        <div class="vq-question">Features: color ∈ {red, blue, green}, size (numeric), shape ∈ {circle, triangle}. A method only takes numeric features. Describe how to transform; apply to (color=blue, size=2.4, shape=circle).</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          Use <strong>one-hot encoding</strong> for nominal features. Replace <em>color</em> with 3 binary features (color_red, color_blue, color_green) and <em>shape</em> with 2 (shape_circle, shape_triangle). For (color=blue, size=2.4, shape=circle):<br>
+          color_red = 0, color_blue = 1, color_green = 0, size = 2.4, shape_circle = 1, shape_triangle = 0.
+        </div>
+        <div class="vq-block explain">
+          <div class="vq-block-label">⚠️ Why NOT just map to integers (red=1, blue=2, green=3)?</div>
+          <div class="sol-text">Integer encoding creates a false ordering — implies green &gt; blue &gt; red, and that distance(red, green) &gt; distance(red, blue). This corrupts distance-based methods (kNN, K-Means, SVM) and regression weights.</div>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — high-cardinality nominal (1000 categories):</strong> Why is one-hot bad?
+            <span class="ans">Answer: creates 1000 sparse columns. Use embedding layer (neural nets) or target encoding / frequency encoding instead.</span></div>
+          <div class="related-q"><strong>Sub-topic — ordinal feature (small/medium/large):</strong>
+            <span class="ans">Answer: keep order — integer encoding 1/2/3 is fine, OR ordinal encoding. Use one-hot if you don't want to bake in linear spacing assumption.</span></div>
+          <div class="related-q"><strong>Sub-topic — when is one-hot not needed?</strong>
+            <span class="ans">Answer: tree-based methods (decision trees, random forests) handle categorical features natively in some implementations — they split on category membership.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decision tree on 100 features one relevant -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V22</div>
+        <div class="vq-question">A task has 100 features but the target depends entirely on just 1 of them. Of Naive Bayes, 1-NN, and Decision Tree — which works best, and why?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          <strong>Decision Tree</strong>. It will pick up the relevant feature in the first split (highest information gain) and ignore the 99 irrelevant ones.
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Why The Others Fail</div>
+          <ol class="step-list">
+            <li><strong>Naive Bayes:</strong> multiplies P(Fᵢ|Y) over all 100 features. Irrelevant ones contribute noise — could flip the prediction.</li>
+            <li><strong>1-NN:</strong> Euclidean distance includes all 100 features equally. The 99 irrelevant features dominate the distance — true neighbors get lost.</li>
+            <li><strong>Decision Tree:</strong> information gain explicitly evaluates each feature. Irrelevant ones have low gain → never picked. The relevant one is chosen at root.</li>
+          </ol>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — feature selection:</strong> What if all 100 features are slightly relevant?
+            <span class="ans">Answer: random forest or L1-regularized logistic regression — both select important subsets automatically.</span></div>
+          <div class="related-q"><strong>Sub-topic — curse of dimensionality in kNN:</strong>
+            <span class="ans">Answer: in high dimensions, all points become roughly equidistant — neighborhood concept breaks. Normalize features and/or use PCA first.</span></div>
+          <div class="related-q"><strong>Sub-topic — when does Naive Bayes thrive?</strong>
+            <span class="ans">Answer: when features really are mostly independent given Y (text classification with word counts) and training data is tiny.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vanishing gradient practical problem -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V23</div>
+        <div class="vq-question">A 100-layer deep neural network with logistic activation barely changes weights during training. Increasing the learning rate doesn't help. What's the problem? What fixes it?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          The <strong>vanishing gradient problem</strong> — logistic (sigmoid) derivatives ≤ 0.25, multiplied through 100 layers during backprop, drive gradients to ~0 in early layers. Fix: <strong>use ReLU instead of sigmoid</strong>.
+        </div>
+        <div class="vq-block steps">
+          <div class="vq-block-label">📐 Why Learning Rate Doesn't Help</div>
+          <div class="sol-text">The gradient is essentially zero, not just small. η · 0 = 0 for any η. You need to remove the source of the vanishing, not amplify zeros. Other fixes: residual connections (ResNet), batch normalization, careful Xavier/He initialization, gradient clipping (for explosion).</div>
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — exploding gradient:</strong> What is it and how to fix?
+            <span class="ans">Answer: gradients grow exponentially (large W or unbounded activations) → NaN losses. Fix: gradient clipping, lower learning rate, careful init.</span></div>
+          <div class="related-q"><strong>Sub-topic — ResNet skip connections:</strong> How do they help?
+            <span class="ans">Answer: identity shortcut: y = F(x) + x. Gradient flows through identity path unchanged regardless of depth — bypasses vanishing.</span></div>
+          <div class="related-q"><strong>Sub-topic — why not just use linear activation everywhere?</strong>
+            <span class="ans">Answer: stacked linear layers collapse into one linear layer (W₁W₂x = Wx). No non-linearity → no expressiveness gain from depth.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unsupervised evaluation -->
+    <div class="vq-card">
+      <div class="vq-header" onclick="toggleVQ(this)">
+        <div class="vq-tag">V24</div>
+        <div class="vq-question">Why can't we use the evaluation measures of supervised learning for unsupervised learning?</div>
+        <div class="vq-chevron">⌄</div>
+      </div>
+      <div class="vq-body">
+        <div class="vq-block official">
+          <div class="vq-block-label">✅ Official Answer</div>
+          Because <strong>correct targets (labels) are not known in unsupervised learning</strong>. Accuracy, precision, recall etc. all require ground truth labels to compare against.
+        </div>
+        <div class="vq-block related">
+          <div class="vq-block-label">🔗 Related Practice Questions</div>
+          <div class="related-q"><strong>Sub-topic — internal cluster metric:</strong>
+            <span class="ans">Answer: silhouette score: s = (b−a)/max(a,b) where a = mean within-cluster distance, b = mean nearest-other-cluster distance. Range [−1, 1].</span></div>
+          <div class="related-q"><strong>Sub-topic — elbow method:</strong> What does it evaluate?
+            <span class="ans">Answer: within-cluster sum-of-squares (inertia) vs K. Pick K at the elbow — where adding more clusters stops helping.</span></div>
+          <div class="related-q"><strong>Sub-topic — autoencoder evaluation:</strong> How without labels?
+            <span class="ans">Answer: reconstruction error on held-out data (MSE between input and reconstructed input). Doesn't need labels.</span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
   <!-- ══════════════════════════════════════════════
-       SECTION 1 — NEURAL NETWORKS
+       SECTION 1 — NEURAL NETWORKS (original section continues)
   ══════════════════════════════════════════════ -->
   <section class="q-section" data-topic="nn">
     <div class="q-section-title">🧠 Neural Networks &amp; Perceptron <span>Backprop · Activation · Loss</span></div>
@@ -1053,6 +2266,9 @@ document.getElementById('navToggle').addEventListener('click', function() {
 
 // ── Card toggle ──
 function toggleCard(header) {
+  header.parentElement.classList.toggle('open');
+}
+function toggleVQ(header) {
   header.parentElement.classList.toggle('open');
 }
 
