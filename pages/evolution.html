@@ -20,6 +20,24 @@
 
 .chains-wrap { max-width:900px; margin:0 auto; padding:2rem 1rem 6rem; }
 
+/* Quick Map of the Journey */
+.quick-map { max-width:1100px; margin:0 auto; padding:2rem 1rem 1rem; }
+.qm-title { font-size:0.8rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-muted); text-align:center; margin-bottom:1rem; }
+.qm-track { display:grid; grid-template-columns:160px 1fr; gap:0.75rem; align-items:center; padding:0.5rem 0.6rem; border-radius:0.5rem; transition:background 0.15s; }
+.qm-track:hover { background:rgba(255,255,255,0.02); }
+.qm-label { font-size:0.72rem; font-weight:700; text-align:right; padding-right:0.5rem; line-height:1.3; }
+.qm-flow { display:flex; align-items:center; flex-wrap:wrap; gap:0; overflow-x:auto; }
+.qm-node { padding:0.3rem 0.65rem; border-radius:1rem; font-size:0.7rem; font-weight:600; white-space:nowrap; flex-shrink:0; cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; }
+.qm-node:hover { transform:translateY(-1px); box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+.qm-arrow { color:var(--text-muted); font-size:0.85rem; padding:0 0.15rem; flex-shrink:0; opacity:0.5; }
+.qm-toggle { display:block; margin:0 auto 1rem; padding:0.4rem 1rem; background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:2rem; cursor:pointer; font-size:0.75rem; font-weight:600; transition:all 0.2s; }
+.qm-toggle:hover { border-color:var(--primary); color:var(--primary); }
+.quick-map.collapsed .qm-tracks { display:none; }
+@media(max-width:700px){
+  .qm-track { grid-template-columns:1fr; gap:0.3rem; }
+  .qm-label { text-align:left; padding-right:0; }
+}
+
 .chain-block { margin-bottom:4rem; }
 .chain-header { display:flex; align-items:center; gap:1rem; padding:1rem 1.5rem; border-radius:1rem; margin-bottom:1.5rem; border:1px solid; }
 .chain-header .ch-num { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.12em; opacity:0.8; }
@@ -113,8 +131,14 @@
 <div class="evo-hero">
   <h1>ML Evolution Flow</h1>
   <p>Every method exists because the previous one had a specific failure. Follow the chains to see how each breakthrough solves a named problem — and introduces the next one.</p>
-  <p style="font-size:0.82rem;color:var(--text-muted);">Click any node to expand architecture · pros · cons · and why it was invented</p>
+  <p style="font-size:0.82rem;color:var(--text-muted);">Click any node in the map below to jump to its full details</p>
 </div>
+
+<section class="quick-map" id="quickMap">
+  <div class="qm-title">🗺️ Quick Map of the Journey — All 8 Chains at a Glance</div>
+  <div class="qm-tracks" id="qmTracks"></div>
+  <button class="qm-toggle" id="qmToggle">Collapse map ▴</button>
+</section>
 
 <div class="chain-nav" id="chainNav"></div>
 
@@ -458,17 +482,27 @@ const CHAINS = [
         avoid:'Non-linear relationships without feature engineering · classification tasks (use logistic regression) · when outliers dominate (use Huber loss or robust regression)',
         pros:['Exact closed-form solution (XᵀX)⁻¹Xᵀy', 'Coefficients directly interpretable (weight per feature)', 'Fast training and inference', 'Well-understood theoretically'],
         cons:['Only linear relationships (without basis expansion)', 'Outputs unbounded reals — not valid probabilities', 'Sensitive to outliers (MSE squares errors)'],
-        limit:'output a probability or class label — produces unbounded real values including negatives' },
+        limit:'fit non-linear relationships — straight line cannot bend through curved data' },
+
+      { name:'Polynomial / Basis-Expanded Regression', arch:'Augment features: φ(x) = [1, x, x², x³, …, xⁿ] or [x₁, x₂, x₁x₂, x₁², x₂², sin(x), …] · Fit ŷ = wᵀφ(x) with same least squares · Closed-form still applies in expanded space',
+        fixed:'Plain linear regression can only fit straight-line relationships — quadratic, exponential, or interaction patterns are out of reach',
+        how:'Model stays linear in the parameters w, even though it becomes non-linear in original input x. All closed-form least-squares theory still applies — just on the enlarged feature matrix φ(X).',
+        diff:'Linear regression: ŷ = w·x. Polynomial: ŷ = w·φ(x). Only the feature transform changes — solver is identical. Trade-off: more basis functions = more flexibility but easier overfit.',
+        use:'When relationship is clearly non-linear but smooth · physics/economics curves · pre-deep-learning era non-linear regression · feature engineering for SVM-with-linear-kernel',
+        avoid:'High-degree polynomials (degree > 4 oscillates wildly outside training range) · when feature interactions are unknown (combinatorial explosion) · use trees or NN instead for complex non-linearity',
+        pros:['Closed-form solution preserved', 'Captures non-linear patterns in input space', 'Interpretable basis functions', 'Foundation of kernel methods'],
+        cons:['Manual basis design required', 'High-degree polynomials oscillate (Runge phenomenon)', 'Combinatorial blow-up for many features'],
+        limit:'output class labels or probabilities — produces unbounded real values, not categorical predictions' },
 
       { name:'Logistic Regression', arch:'Log-odds: log(p/(1−p)) = wᵀx + b · Probability: p = σ(wᵀx+b) = 1/(1+e^{−wᵀx−b}) · Loss: cross-entropy H = −Σ[y log p + (1−y) log(1−p)] · Multi-class: softmax extension',
-        fixed:'Linear regression on classification outputs wrong class probabilities — can predict 1.7 or −0.3, which are not valid probabilities',
+        fixed:'Linear/polynomial regression outputs any real number — no notion of probability or class label. Predicting 1.7 or −0.3 is meaningless for binary classification.',
         how:'Sigmoid squashes any real-valued linear score to (0,1). Log-likelihood of Bernoulli distribution is convex in w — one global minimum, gradient descent always converges.',
         diff:'Linear regression: ŷ = wᵀx (unbounded). Logistic regression: p = σ(wᵀx) ∈ (0,1). Only the output layer differs — same linear combination, different activation. Decision boundary is still linear in feature space.',
         use:'Binary classification with interpretable odds ratios · baseline for any binary task · when you need calibrated probabilities · medical risk scores',
         avoid:'Non-linear class boundaries (use SVM with kernel, or neural net) · multi-class with complex interactions (use softmax + NN)',
         pros:['Valid probabilities in (0,1)', 'Convex loss — guaranteed global minimum', 'Log-odds interpretation of coefficients', 'Fast training with gradient descent or Newton'],
         cons:['Linear decision boundary only', 'Cannot solve XOR or concentric circles without manual feature engineering', 'Needs feature scaling'],
-        limit:'handle non-linear decision boundaries without manually engineering polynomial or interaction features' },
+        limit:'pick the BEST separating hyperplane when many exist — gradient descent picks whichever it converges to first, not the one with best generalisation margin' },
 
       { name:'Support Vector Machine (SVM)', arch:'Hard-margin: min ½‖w‖² s.t. yᵢ(wᵀxᵢ+b) ≥ 1 · Soft-margin: add slack ξᵢ, penalty C · Kernel trick: K(xᵢ,xⱼ) = φ(xᵢ)·φ(xⱼ) — RBF: exp(−γ‖xᵢ−xⱼ‖²) · Support vectors: points where yᵢ(wᵀxᵢ+b) = 1',
         fixed:'Logistic regression and perceptron pick any separating hyperplane — many exist, and different choices generalise differently. No principled criterion for which hyperplane to prefer.',
@@ -478,7 +512,7 @@ const CHAINS = [
         avoid:'Large datasets n > 100K (O(n²)–O(n³) training) · multi-class without one-vs-rest wrapper · when probability outputs are needed',
         pros:['Maximum margin = strong generalisation guarantee', 'Effective in high dimensions', 'Kernel trick enables non-linear boundaries implicitly', 'Sparse solution (only support vectors)'],
         cons:['O(n²)–O(n³) training — slow on large n', 'C and kernel hyperparameters require careful tuning', 'Kernel SVM is a black box', 'No natural probability output'],
-        limit:null },
+        limit:'be cheap on huge datasets — iterative gradient-based training is wasteful when the problem is simple and speed matters more than the optimal margin' },
 
       { name:'Naïve Bayes', arch:'P(y|x) ∝ P(y)·Πᵢ P(xᵢ|y) · Gaussian NB: P(xᵢ|y) = N(μₖᵢ, σ²ₖᵢ) · Multinomial NB: P(xᵢ|y) ∝ count(xᵢ,y) · Training = counting, no gradient descent',
         fixed:'SVM and logistic regression require iterative gradient-based training — wasteful when data is simple and speed is critical (e.g., spam filter serving millions of requests)',
@@ -488,10 +522,88 @@ const CHAINS = [
         avoid:'When feature interactions are critical · when probability calibration matters · with highly correlated features',
         pros:['Single pass — O(n) training', 'Works with tiny training sets', 'Strong text classification baseline', 'Handles missing features by ignoring them', 'Interpretable class-conditional distributions'],
         cons:['Feature independence almost always violated', 'Cannot model feature interactions', 'Probabilities poorly calibrated (use Platt scaling to fix)'],
+        limit:'capture feature interactions — the "naïve" independence assumption explicitly rules them out' },
+
+      { name:'k-Nearest Neighbour (kNN)', arch:'No training phase · At test time: compute distance from query x to every training point · Pick k closest neighbours · Classification: majority vote · Regression: mean of neighbour targets · Distance: Euclidean (normalised), Manhattan, cosine',
+        fixed:'Parametric models (linear/logistic/NB) fix a hypothesis class up front — patterns outside that class are unreachable regardless of data',
+        how:'Non-parametric: model complexity grows with data. No assumption about function form — let local neighbourhoods speak. With enough data, kNN approximates any continuous function (universal in the limit).',
+        diff:'Parametric methods compress training data into a few weights, then discard data. kNN keeps ALL training data and computes at test time. Training: O(1). Test: O(n·d). Reverse of every parametric method.',
+        use:'Small-to-medium datasets · low-dimensional data · when decision boundary is highly irregular · recommendation systems · quick baselines',
+        avoid:'High-dimensional data (curse of dimensionality — all points roughly equidistant) · large n (O(n) per query) · when test latency matters · when features have very different scales (must normalise)',
+        pros:['Zero training time', 'No model assumptions — fits any function shape', 'Naturally multi-class', 'Easy to explain'],
+        cons:['Slow test-time — must scan all training points', 'Curse of dimensionality kills it above d ≈ 20', 'Irrelevant features dominate Euclidean distance', 'Memory-hungry'],
+        limit:'handle irrelevant features — every feature contributes equally to Euclidean distance, drowning out the signal' },
+
+      { name:'Decision Tree', arch:'Recursively split data: at each node, pick feature + threshold that maximises information gain (entropy reduction) or Gini reduction · Stop when leaves are pure or depth/min-samples limit hit · Predict: traverse from root to leaf, return leaf class/mean',
+        fixed:'kNN and Naïve Bayes treat all features equally — irrelevant features drown signal in Euclidean distance or multiply through likelihood. No automatic feature selection.',
+        how:'Information gain at each split picks the most discriminative feature. Irrelevant features simply never get chosen — automatic feature selection during construction. Final model = chain of if-then-else rules humans can read.',
+        diff:'Linear/SVM: single global hyperplane. kNN: local lookup. Tree: hierarchical axis-aligned splits → piecewise constant regions. Tree adapts complexity per region — simple where data is simple, complex where it isn\'t.',
+        use:'Mixed feature types (categorical + numerical) · when interpretability is required (medical, legal) · feature importance analysis · tabular data with non-linear interactions',
+        avoid:'Smooth/continuous decision boundaries (axis-aligned splits look staircased) · highly correlated features (instability) · single trees on noisy data (overfit easily — use Random Forest)',
+        pros:['Interpretable: human-readable rules', 'Handles mixed feature types natively', 'No feature scaling needed', 'Automatic feature selection via information gain', 'Captures non-linear interactions'],
+        cons:['Single trees overfit easily (high variance)', 'Axis-aligned splits — bad for diagonal boundaries', 'Greedy construction — not globally optimal', 'Unstable: small data change → very different tree'],
+        limit:'generalise well from a single tree — deep trees memorise training data, shallow trees underfit. The fix is ensembling.' },
+
+      { name:'Random Forest / Gradient Boosting (Ensembles)', arch:'Random Forest: train N trees on bootstrap samples + random feature subsets at each split · predict by majority vote · Gradient Boosting (XGBoost/LightGBM): sequentially fit each tree to residuals of previous trees, weighted sum · typical N: 100–1000 trees',
+        fixed:'Single decision trees overfit aggressively — deep trees memorise, shallow trees underfit. No single tree generalises well on real data.',
+        how:'Bagging (Random Forest): variance reduction by averaging many decorrelated trees. Boosting: bias reduction by sequentially correcting errors. Both turn high-variance/high-bias trees into ensemble predictors that beat single trees on virtually every tabular benchmark.',
+        diff:'Decision Tree: one greedy tree, high variance. Random Forest: many independent trees averaged → low variance. Boosting: many weak trees added sequentially → low bias AND low variance. RF parallelises; boosting is sequential.',
+        use:'Tabular data competitions (XGBoost dominates Kaggle) · medium-sized datasets · feature importance ranking · production systems where accuracy matters more than interpretability',
+        avoid:'Image/text/audio (use deep learning) · when single-tree interpretability matters · streaming data with concept drift',
+        pros:['State-of-the-art on tabular data', 'Built-in feature importance', 'Handles missing values', 'Robust to outliers', 'Less hyperparameter tuning than NNs'],
+        cons:['Less interpretable than single tree', 'Slow inference for large ensembles', 'Memory-heavy (all trees stored)', 'Boosting sensitive to learning rate + n_estimators'],
         limit:null },
     ]
   },
 ];
+
+// Build Quick Map — overview of all chains
+const qmTracks = document.getElementById('qmTracks');
+CHAINS.forEach((chain, ci) => {
+  const track = document.createElement('div');
+  track.className = 'qm-track';
+  const label = document.createElement('div');
+  label.className = 'qm-label';
+  label.style.color = chain.color;
+  label.textContent = `Chain ${ci+1}`;
+  const flow = document.createElement('div');
+  flow.className = 'qm-flow';
+  chain.nodes.forEach((n, ni) => {
+    const node = document.createElement('span');
+    node.className = 'qm-node';
+    node.style.cssText = `background:${chain.color}1a;color:${chain.color};border:1px solid ${chain.color}44;`;
+    node.textContent = n.name.replace(/\s*\([^)]*\)/g, '');  // strip parens for compactness
+    node.title = n.limit ? `❌ Still can't: ${n.limit}` : 'End of chain';
+    node.onclick = () => {
+      const target = document.getElementById(`${chain.id}-n${ni}`);
+      if (target) {
+        target.classList.add('open');
+        target.scrollIntoView({behavior:'smooth', block:'center'});
+        target.style.transition = 'box-shadow 0.5s';
+        target.style.boxShadow = `0 0 0 3px ${chain.color}`;
+        setTimeout(() => target.style.boxShadow = '', 1800);
+      }
+    };
+    flow.appendChild(node);
+    if (ni < chain.nodes.length - 1) {
+      const arr = document.createElement('span');
+      arr.className = 'qm-arrow';
+      arr.textContent = '→';
+      flow.appendChild(arr);
+    }
+  });
+  track.appendChild(label);
+  track.appendChild(flow);
+  qmTracks.appendChild(track);
+});
+
+// Quick Map toggle
+const qmBtn = document.getElementById('qmToggle');
+const qmSec = document.getElementById('quickMap');
+qmBtn.addEventListener('click', () => {
+  qmSec.classList.toggle('collapsed');
+  qmBtn.textContent = qmSec.classList.contains('collapsed') ? 'Expand map ▾' : 'Collapse map ▴';
+});
 
 // Build chain nav
 const nav = document.getElementById('chainNav');
@@ -540,6 +652,7 @@ CHAINS.forEach((chain, ci) => {
     // method node
     const mNode = document.createElement('div');
     mNode.className = 'method-node';
+    mNode.id = `${chain.id}-n${ni}`;
     mNode.style.setProperty('--nc', chain.color);
     mNode.style.borderColor = chain.color + '30';
 
