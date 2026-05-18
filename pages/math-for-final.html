@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math for Final — ML Visual Guide</title>
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+<style>
+.mf-hero { padding: 6rem 0 2rem; text-align: center; }
+.mf-hero h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 900; margin-bottom: 0.5rem; }
+.mf-hero p { color: var(--text-muted); max-width: 660px; margin: 0 auto 1.5rem; font-size: 0.92rem; line-height: 1.55; }
+
+.mf-tabs { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; margin-bottom: 1.5rem; }
+.mf-tab { padding: 0.4rem 1rem; border: 2px solid var(--border); background: transparent;
+  color: var(--text-muted); border-radius: 2rem; cursor: pointer; font-size: 0.78rem; font-weight: 600; transition: all 0.2s; }
+.mf-tab:hover { border-color: var(--primary); color: var(--primary); }
+.mf-tab.active { background: var(--primary); border-color: var(--primary); color: #000; }
+
+.toolbar { display:flex; gap:0.5rem; justify-content:center; margin-bottom: 1.5rem; flex-wrap:wrap; }
+.tool-btn { padding: 0.4rem 1rem; border: 1px solid var(--border); background: transparent;
+  color: var(--text-muted); border-radius: 2rem; cursor: pointer; font-size: 0.78rem; font-weight: 600; transition: all 0.2s; }
+.tool-btn:hover { border-color: var(--secondary); color: var(--secondary); }
+
+.mf-card { background: var(--card); border: 1px solid var(--border); border-radius: 0.9rem;
+  margin-bottom: 1rem; overflow: hidden; transition: border-color 0.2s; }
+.mf-card.open { border-color: var(--primary); }
+.mf-header { padding: 1.1rem 1.4rem; cursor: pointer; display: flex; align-items: flex-start; gap: 0.85rem; }
+.mf-num { min-width: 2.8rem; height: 1.7rem; padding: 0 0.55rem; border-radius: 4px;
+  background: rgba(0,212,255,0.18); color: var(--primary);
+  font-size: 0.74rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.mf-topic { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 0.2rem 0.5rem; border-radius: 3px; background: rgba(255,255,255,0.04); flex-shrink: 0; }
+.mf-q { flex: 1; font-size: 0.93rem; line-height: 1.55; }
+.mf-chev { font-size: 1.2rem; color: var(--primary); transition: transform 0.3s; flex-shrink: 0; font-weight: 900; }
+.mf-card.open .mf-chev { transform: rotate(180deg); }
+
+.mf-body { display: none; border-top: 1px solid var(--border); padding: 1.3rem; }
+.mf-card.open .mf-body { display: block; }
+
+.mf-given { background: rgba(245,158,11,0.06); border-left: 3px solid var(--accent);
+  border-radius: 0.5rem; padding: 0.8rem 1rem; margin-bottom: 1rem; font-size: 0.88rem; line-height: 1.6; }
+.mf-given strong { color: var(--accent); display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+
+.mf-section { margin-bottom: 1.1rem; padding: 0.85rem 1rem; border-radius: 0.5rem; border-left: 3px solid; }
+.mf-section.steps { border-color: var(--primary); background: rgba(0,212,255,0.04); }
+.mf-section.answer { border-color: var(--green); background: rgba(16,185,129,0.06); }
+.mf-section.plain { border-color: var(--secondary); background: rgba(168,85,247,0.04); }
+.mf-section.related { border-color: #f472b6; background: rgba(244,114,182,0.04); }
+.mf-section-head { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.mf-section.steps .mf-section-head { color: var(--primary); }
+.mf-section.answer .mf-section-head { color: var(--green); }
+.mf-section.plain .mf-section-head { color: var(--secondary); }
+.mf-section.related .mf-section-head { color: #f472b6; }
+
+.mf-text { font-size: 0.88rem; line-height: 1.7; }
+.mf-text ol, .mf-text ul { padding-left: 1.4rem; }
+.mf-text li { margin-bottom: 0.45rem; }
+.mf-text strong { color: var(--text); }
+
+.calc { background: rgba(0,0,0,0.35); padding: 0.5rem 0.8rem; border-radius: 0.4rem;
+  font-family: monospace; font-size: 0.85rem; margin: 0.4rem 0; overflow-x: auto; display: block; }
+.final-box { background: rgba(16,185,129,0.12); border: 2px solid rgba(16,185,129,0.4); border-radius: 0.5rem;
+  padding: 0.7rem 1rem; margin-top: 0.5rem; font-family: monospace; font-size: 0.95rem; color: #6ee7b7; font-weight: 700; }
+
+.related-chip { display: inline-block; padding: 0.3rem 0.75rem; margin: 0.2rem 0.3rem 0.2rem 0;
+  background: rgba(244,114,182,0.08); border: 1px solid rgba(244,114,182,0.3); border-radius: 1rem;
+  font-size: 0.78rem; color: #f472b6; text-decoration: none; }
+.related-chip:hover { background: rgba(244,114,182,0.18); }
+
+.mtable { width: 100%; border-collapse: collapse; font-size: 0.83rem; margin: 0.4rem 0; }
+.mtable th, .mtable td { padding: 0.35rem 0.6rem; border: 1px solid rgba(255,255,255,0.1); }
+.mtable th { background: rgba(0,212,255,0.1); color: var(--primary); font-weight: 700; font-size: 0.72rem; text-align: left; }
+
+/* ── Exam-style banner ── */
+.exam-rule-banner {
+  background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(244,114,182,0.08));
+  border: 1px solid rgba(245,158,11,0.35);
+  border-left: 5px solid var(--accent);
+  border-radius: 0.85rem;
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 2rem;
+}
+.exam-rule-banner h3 { color: var(--accent); font-size: 1rem; font-weight: 800;
+  margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.exam-rule-banner p { font-size: 0.88rem; line-height: 1.6; color: rgba(255,255,255,0.85); margin: 0.35rem 0; }
+.exam-rule-banner strong { color: var(--accent); }
+
+/* ── Section divider headers ── */
+.mf-divider {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 1rem 1.3rem; margin: 2rem 0 1.25rem;
+  background: rgba(168,85,247,0.06);
+  border-left: 4px solid var(--secondary);
+  border-radius: 0.65rem;
+}
+.mf-divider h2 { font-size: 1.15rem; font-weight: 800; color: var(--secondary); }
+.mf-divider span { font-size: 0.78rem; color: var(--text-muted); }
+
+/* Concept cards use slightly different color */
+.mf-card.concept .mf-num { background: rgba(168,85,247,0.18); color: var(--secondary); }
+.mf-card.concept.open { border-color: var(--secondary); }
+.mf-card.concept .mf-chev { color: var(--secondary); }
+
+/* Slide-quote box */
+.slide-quote {
+  background: rgba(255,255,255,0.03);
+  border-left: 3px solid var(--text-muted);
+  padding: 0.55rem 0.85rem;
+  margin-top: 0.7rem;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.65);
+  border-radius: 0.3rem;
+}
+.slide-quote strong { color: rgba(255,255,255,0.85); font-style: normal; }
+</style>
+</head>
+<body>
+
+<div id="site-nav"></div>
+<script src="../js/nav.js"></script>
+
+<main class="container">
+
+  <section class="mf-hero">
+    <h1>Math for <span class="gradient-text">Final Exam</span></h1>
+    <p>15 computational problems covering the final-exam syllabus. Each one requires real calculation and step-by-step reasoning — like the midterm's kNN, Naïve Bayes, and confusion-matrix problems, but for deep learning, attention, RL, and unsupervised topics.</p>
+  </section>
+
+  <div class="toolbar">
+    <button class="tool-btn" onclick="mfOpenAll()">Open All</button>
+    <button class="tool-btn" onclick="mfCloseAll()">Close All</button>
+  </div>
+
+  <div class="mf-tabs" id="mfTabs">
+    <button class="mf-tab active" data-filter="all">All 15</button>
+    <button class="mf-tab" data-filter="nn">Neural Nets</button>
+    <button class="mf-tab" data-filter="cnn">CNN</button>
+    <button class="mf-tab" data-filter="seq">RNN / Attention</button>
+    <button class="mf-tab" data-filter="rl">Reinforcement</button>
+    <button class="mf-tab" data-filter="unsup">Unsupervised</button>
+    <button class="mf-tab" data-filter="gen">Generative</button>
+  </div>
+
+  <!-- ════════════════════════ Q1 ════════════════════════ -->
+  <div class="mf-card" data-topic="nn">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q1</div>
+      <span class="mf-topic">Perceptron</span>
+      <div class="mf-q"><strong>Perceptron update.</strong> Given w = [0.5, −0.3], bias b = 0.1, input x = [1, 2], true label y = 1, learning rate η = 0.2. Compute the predicted output, decide whether an update is needed, and find the new weights and bias.</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+
+      <div class="mf-given"><strong>Given</strong>
+        w = [0.5, −0.3], b = 0.1, x = [1, 2], y = 1, η = 0.2. Step activation: ŷ = 1 if z &gt; 0, else 0.
+      </div>
+
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Compute net input z = w·x + b:
+              <span class="calc">z = (0.5)(1) + (−0.3)(2) + 0.1 = 0.5 − 0.6 + 0.1 = 0</span>
+            </li>
+            <li>Apply step activation: z = 0 is not strictly &gt; 0, so <strong>ŷ = 0</strong>.</li>
+            <li>Compute error: <strong>error = y − ŷ = 1 − 0 = 1</strong>. Non-zero → update is needed.</li>
+            <li>Update each weight using w[j] ← w[j] + η · (y − ŷ) · x[j]:
+              <span class="calc">w[0] = 0.5 + 0.2 · 1 · 1 = 0.7
+w[1] = −0.3 + 0.2 · 1 · 2 = 0.1
+b    = 0.1 + 0.2 · 1     = 0.3</span>
+            </li>
+          </ol>
+        </div>
+        <div class="final-box">Final: w = [0.7, 0.1], b = 0.3</div>
+      </div>
+
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">The error (y − ŷ) drives the update direction. Inputs that were "on" (positive xⱼ) get their weights pushed in the error's direction so the prediction will be more positive next time. Bias updates the same way without the xⱼ multiplier.</div>
+      </div>
+
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet · NN</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q1</a>
+        <a class="related-chip" href="midterm-exam.html">Midterm exam · Perceptron</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q2 ════════════════════════ -->
+  <div class="mf-card" data-topic="cnn">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q2</div>
+      <span class="mf-topic">CNN</span>
+      <div class="mf-q"><strong>CNN output size + parameter count.</strong> Input image: 32 × 32 × 3 (RGB). A convolutional layer applies 16 filters of size 5 × 5, with stride 1 and zero padding. Then a 2 × 2 max-pool layer with stride 2 follows. (i) Find the output spatial size after each layer. (ii) Count the parameters in the conv layer (include bias).</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+
+      <div class="mf-given"><strong>Formulas</strong>
+        Conv output = ⌊(W − F + 2P) / S⌋ + 1. Parameters = (F · F · Cᵢₙ + 1) × Cₒᵤₜ.
+      </div>
+
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Conv output size: W=32, F=5, P=0, S=1.
+              <span class="calc">⌊(32 − 5 + 0) / 1⌋ + 1 = 27 + 1 = 28
+→ 28 × 28 × 16 feature maps</span>
+            </li>
+            <li>Max-pool output size: W=28, F=2, P=0, S=2.
+              <span class="calc">⌊(28 − 2) / 2⌋ + 1 = 13 + 1 = 14
+→ 14 × 14 × 16</span>
+            </li>
+            <li>Conv parameter count: F=5, Cᵢₙ=3, Cₒᵤₜ=16.
+              <span class="calc">(5 · 5 · 3 + 1) × 16 = (75 + 1) × 16 = 76 × 16 = 1,216</span>
+            </li>
+          </ol>
+        </div>
+        <div class="final-box">Conv output: 28×28×16 · After pool: 14×14×16 · Conv params: 1,216</div>
+      </div>
+
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Each of the 16 filters has 5·5·3 = 75 weights (it spans all 3 input channels) plus 1 bias → 76 per filter. Pooling has no trainable parameters. Weight sharing is what keeps the conv layer's parameter count tiny compared to a dense layer (which would have ~1.5 million weights here).</div>
+      </div>
+
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#cnn">Cheat sheet · CNN</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q4–5</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q3 ════════════════════════ -->
+  <div class="mf-card" data-topic="cnn">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q3</div>
+      <span class="mf-topic">CNN</span>
+      <div class="mf-q"><strong>Multi-layer CNN spatial size.</strong> Input 64 × 64. Apply Conv(F=3, S=1, P=1) → MaxPool(2×2, S=2) → Conv(F=3, S=1, P=0) → MaxPool(2×2, S=2). What is the final feature-map spatial size?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Conv 1 (F=3, S=1, P=1): ⌊(64 − 3 + 2)/1⌋ + 1 = 62 + 1 = <strong>64</strong> (same padding preserves size).</li>
+            <li>Pool 1: ⌊(64 − 2)/2⌋ + 1 = 31 + 1 = <strong>32</strong>.</li>
+            <li>Conv 2 (F=3, S=1, P=0): ⌊(32 − 3)/1⌋ + 1 = 29 + 1 = <strong>30</strong>.</li>
+            <li>Pool 2: ⌊(30 − 2)/2⌋ + 1 = 14 + 1 = <strong>15</strong>.</li>
+          </ol>
+        </div>
+        <div class="final-box">Final spatial size: 15 × 15</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">"Same padding" (P = (F−1)/2 with stride 1) preserves spatial size. Each pooling layer halves it. The second conv has P=0 ("valid padding") so it shrinks by F−1 = 2 pixels.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#cnn">Cheat sheet · CNN</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q4 ════════════════════════ -->
+  <div class="mf-card" data-topic="nn">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q4</div>
+      <span class="mf-topic">Backprop</span>
+      <div class="mf-q"><strong>Backprop with sigmoid output.</strong> A network with sigmoid output predicts ŷ = 0.8 for a training example with true label y = 1. Using MSE loss L = ½(y − ŷ)², compute the loss, the derivative dL/dŷ, the sigmoid derivative σ'(z), and the gradient dL/dz flowing back from the output.</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Loss: L = ½(1 − 0.8)² = ½(0.04) = <strong>0.02</strong>.</li>
+            <li>dL/dŷ = −(y − ŷ) = −(0.2) = <strong>−0.2</strong>. (The negative sign matters — predicted is below target, so increasing ŷ decreases loss.)</li>
+            <li>Sigmoid derivative at the output: σ'(z) = ŷ · (1 − ŷ) = 0.8 · 0.2 = <strong>0.16</strong>.</li>
+            <li>Chain rule: dL/dz = (dL/dŷ) · σ'(z) = −0.2 · 0.16 = <strong>−0.032</strong>.</li>
+          </ol>
+        </div>
+        <div class="final-box">L = 0.02 · dL/dŷ = −0.2 · σ'(z) = 0.16 · dL/dz = −0.032</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">The sigmoid derivative is tiny (max 0.25 at z = 0). Multiplying many such terms across layers shrinks the gradient toward zero — that's the vanishing gradient problem. ReLU's derivative is 1, which is why deep nets use it instead.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet · Backprop</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q2</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q5 ════════════════════════ -->
+  <div class="mf-card" data-topic="nn">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q5</div>
+      <span class="mf-topic">Activations</span>
+      <div class="mf-q"><strong>Cross-entropy + softmax.</strong> The output logits of a 3-class classifier are z = [2.0, 1.0, 0.1]. The true class is class 0. Compute (i) the softmax probabilities, (ii) the cross-entropy loss.</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Compute exponentials:
+              <span class="calc">e^2.0 = 7.389
+e^1.0 = 2.718
+e^0.1 = 1.105
+Sum    = 11.212</span>
+            </li>
+            <li>Softmax probabilities:
+              <span class="calc">p₀ = 7.389 / 11.212 ≈ 0.659
+p₁ = 2.718 / 11.212 ≈ 0.242
+p₂ = 1.105 / 11.212 ≈ 0.099</span>
+              Sanity check: 0.659 + 0.242 + 0.099 = 1.000 ✓
+            </li>
+            <li>Cross-entropy with one-hot label y = [1, 0, 0]:
+              <span class="calc">L = −Σ yᵢ log(pᵢ) = −log(p₀) = −log(0.659) ≈ 0.417</span>
+            </li>
+          </ol>
+        </div>
+        <div class="final-box">Probabilities ≈ [0.659, 0.242, 0.099] · Cross-entropy ≈ 0.417</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Softmax exponentiates and normalizes — the largest logit dominates. Cross-entropy only penalizes the probability assigned to the correct class. If p₀ were 1.0 the loss would be 0; if p₀ were near 0 the loss would explode (−log 0 = ∞), which is why cross-entropy gives such strong gradients for confidently-wrong predictions.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet · Softmax/CE</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q20</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q6 ════════════════════════ -->
+  <div class="mf-card" data-topic="nn">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q6</div>
+      <span class="mf-topic">Vanishing Gradient</span>
+      <div class="mf-q"><strong>Vanishing gradient.</strong> A sigmoid is in its "linear region" so σ'(z) ≈ 0.25 at every layer. In a 10-layer network, what is the maximum possible product of sigmoid derivatives along one backward path? How does this compare to using ReLU (assume all active)?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Sigmoid: each layer contributes σ'(z) ≤ 0.25 to the gradient product.
+              <span class="calc">Max product after 10 layers = 0.25¹⁰
+                       = (1/4)¹⁰
+                       = 1 / 1,048,576
+                       ≈ 9.54 × 10⁻⁷</span>
+            </li>
+            <li>ReLU (z &gt; 0 everywhere): derivative = 1.
+              <span class="calc">Product after 10 layers = 1¹⁰ = 1</span>
+            </li>
+            <li>Ratio: ReLU's gradient is roughly <strong>10⁶ × larger</strong> than sigmoid's at the earliest layer.</li>
+          </ol>
+        </div>
+        <div class="final-box">Sigmoid: ≈ 10⁻⁶ · ReLU: 1 · ReLU passes the signal ~1,000,000× more strongly</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Each sigmoid layer multiplies the gradient by ≤ 0.25, so 10 layers shrinks it by at least a factor of 4¹⁰ ≈ 10⁶. Early layers receive essentially zero gradient → they never learn. ReLU's slope of 1 in the active region preserves the gradient unchanged across many layers — exactly why deep networks switched to ReLU around 2010.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#nn">Cheat sheet · Vanishing gradient</a>
+        <a class="related-chip" href="evolution.html">Evolution · Sigmoid → ReLU</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q7 ════════════════════════ -->
+  <div class="mf-card" data-topic="seq">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q7</div>
+      <span class="mf-topic">Attention</span>
+      <div class="mf-q"><strong>Scaled dot-product attention.</strong> A self-attention layer with dₖ = 4 produces raw score matrix QKᵀ = [[6, 2], [1, 5]] (rows = queries, columns = keys). Compute the scaled scores, the softmax attention weights (per row), and identify what each query is "attending to."</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Scale by √dₖ = √4 = 2:
+              <span class="calc">[[6/2, 2/2], [1/2, 5/2]]
+= [[3.0, 1.0], [0.5, 2.5]]</span>
+            </li>
+            <li>Row 1 softmax (q₁ over keys):
+              <span class="calc">e^3.0 = 20.09, e^1.0 = 2.72
+Sum = 22.81
+[20.09/22.81, 2.72/22.81] ≈ [0.881, 0.119]</span>
+            </li>
+            <li>Row 2 softmax (q₂ over keys):
+              <span class="calc">e^0.5 = 1.65, e^2.5 = 12.18
+Sum = 13.83
+[1.65/13.83, 12.18/13.83] ≈ [0.119, 0.881]</span>
+            </li>
+            <li>Attention weight matrix:
+              <span class="calc">[[0.881, 0.119],
+ [0.119, 0.881]]</span>
+            </li>
+          </ol>
+        </div>
+        <div class="final-box">Query 1 → 88% attention on Key 1 · Query 2 → 88% attention on Key 2</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">The √dₖ scaling prevents large dot products from saturating softmax (which would give vanishing gradients). After scaling, softmax converts the raw similarities into normalized weights — Query 1 finds Key 1 most similar, Query 2 finds Key 2. The final output for each query is a weighted sum of the value vectors.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#attn">Cheat sheet · Attention</a>
+        <a class="related-chip" href="attention.html">Attention page</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q7</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q8 ════════════════════════ -->
+  <div class="mf-card" data-topic="seq">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q8</div>
+      <span class="mf-topic">Multi-Head Attention</span>
+      <div class="mf-q"><strong>Multi-head dimensions and parameters.</strong> A multi-head attention layer has model dimension d_model = 512 and h = 8 heads. (i) What are the per-head Q/K/V dimensions dₖ and dᵥ? (ii) How many parameters does the layer have, counting all four projection matrices Wq, Wk, Wv, Wo (ignore biases)?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Per-head dimensions:
+              <span class="calc">dₖ = dᵥ = d_model / h = 512 / 8 = 64</span>
+            </li>
+            <li>Each of Wq, Wk, Wv maps d_model → (h · dₖ) = d_model:
+              <span class="calc">Wq: 512 × 512 = 262,144 params
+Wk: 512 × 512 = 262,144
+Wv: 512 × 512 = 262,144</span>
+            </li>
+            <li>Output projection Wo also d_model × d_model:
+              <span class="calc">Wo: 512 × 512 = 262,144</span>
+            </li>
+            <li>Total:
+              <span class="calc">4 × 262,144 = 1,048,576 ≈ 1.05 M</span>
+            </li>
+          </ol>
+        </div>
+        <div class="final-box">dₖ = dᵥ = 64 · Total parameters ≈ 1.05 M (1,048,576)</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Multi-head splits the d_model dimensions across h heads, so the total compute is the same as one big head — but each head can specialize in a different relationship (syntax, coreference, position). The output projection Wo recombines all heads back into a d_model vector.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#attn">Cheat sheet · Multi-head</a>
+        <a class="related-chip" href="attention.html">Attention page</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q9 ════════════════════════ -->
+  <div class="mf-card" data-topic="seq">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q9</div>
+      <span class="mf-topic">RNN</span>
+      <div class="mf-q"><strong>RNN parameter count.</strong> An RNN has input dimension = 50, hidden dimension = 128, output dimension = 10. Compute the total number of weights (ignore biases) for W_hx (input→hidden), W_hh (hidden→hidden), and W_yh (hidden→output). Does the count depend on sequence length?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>W_hx (input → hidden): 50 × 128 = <strong>6,400</strong></li>
+            <li>W_hh (hidden → hidden): 128 × 128 = <strong>16,384</strong></li>
+            <li>W_yh (hidden → output): 128 × 10 = <strong>1,280</strong></li>
+            <li>Total: 6,400 + 16,384 + 1,280 = <strong>24,064</strong> weights</li>
+            <li>Sequence length: <strong>independent</strong> — the same three matrices are reused at every timestep (weight sharing).</li>
+          </ol>
+        </div>
+        <div class="final-box">Total: 24,064 weights · NOT a function of sequence length</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">An RNN is a single layer applied repeatedly. Whether the sentence is 5 tokens or 500, the same W_hx, W_hh, W_yh are reused. This is what makes RNNs feasible at all — otherwise parameters would explode with sequence length.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#rnn">Cheat sheet · RNN</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q6</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q10 ════════════════════════ -->
+  <div class="mf-card" data-topic="rl">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q10</div>
+      <span class="mf-topic">Q-Learning</span>
+      <div class="mf-q"><strong>Q-Learning Bellman update.</strong> An agent in state s takes action a, receives reward R = 5, and transitions to s'. Current Q(s, a) = 3. The max Q-value over next-state actions is max_{a'} Q(s', a') = 10. Learning rate α = 0.1, discount γ = 0.9. Compute the new Q(s, a). Also compute the TD target and TD error.</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>TD target = R + γ · max_{a'} Q(s', a'):
+              <span class="calc">TD target = 5 + 0.9 · 10 = 5 + 9 = 14</span>
+            </li>
+            <li>TD error = TD target − current Q:
+              <span class="calc">TD error = 14 − 3 = 11</span>
+            </li>
+            <li>New Q = Q + α · TD error:
+              <span class="calc">New Q(s, a) = 3 + 0.1 · 11 = 3 + 1.1 = 4.1</span>
+            </li>
+          </ol>
+        </div>
+        <div class="final-box">TD target = 14 · TD error = 11 · New Q(s, a) = 4.1</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">The TD target is what we now estimate Q(s, a) <em>should</em> be — based on what just happened (R = 5) plus the best future we expect (0.9 · 10). Our old estimate was 3, so we under-estimated by 11. We take a small step (α = 0.1) toward the new estimate to avoid jumping around due to noise.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#rl">Cheat sheet · RL</a>
+        <a class="related-chip" href="reinforcement.html">RL page</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q11</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q11 ════════════════════════ -->
+  <div class="mf-card" data-topic="rl">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q11</div>
+      <span class="mf-topic">RL — Multi-Step</span>
+      <div class="mf-q"><strong>Q-Learning over two steps.</strong> Q-table starts at Q(s, a) = 0 for all (s, a). Agent does: (1) takes action a₁ from s₀, receives R = 2, lands in s₁ (terminal, max Q(s₁, ·) = 0). (2) Episode 2: takes action a₁ from s₀ again, R = 2, lands in s₁. α = 0.5, γ = 0.9. Compute Q(s₀, a₁) after each episode.</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li><strong>Episode 1:</strong> Q(s₀, a₁) starts at 0. TD target = 2 + 0.9·0 = 2. TD error = 2 − 0 = 2.
+              <span class="calc">New Q(s₀, a₁) = 0 + 0.5 · 2 = 1.0</span>
+            </li>
+            <li><strong>Episode 2:</strong> Q(s₀, a₁) is now 1.0. Same transition. TD target = 2 + 0 = 2. TD error = 2 − 1.0 = 1.
+              <span class="calc">New Q(s₀, a₁) = 1.0 + 0.5 · 1 = 1.5</span>
+            </li>
+            <li>The Q-value approaches the true value (= 2 for this deterministic case) but doesn't reach it in one update — the learning rate α = 0.5 limits each step. With more episodes Q → 2.</li>
+          </ol>
+        </div>
+        <div class="final-box">After Ep 1: Q = 1.0 · After Ep 2: Q = 1.5 · Limit: → 2.0</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">Each update closes half the gap (because α = 0.5). The Q-value converges geometrically to the true return. Higher α = faster convergence but more sensitive to noise; lower α = slower but more stable.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#rl">Cheat sheet · Bellman</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q12 ════════════════════════ -->
+  <div class="mf-card" data-topic="unsup">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q12</div>
+      <span class="mf-topic">K-Means</span>
+      <div class="mf-q"><strong>K-Means two iterations.</strong> Five 1-D points: x = [1, 2, 4, 8, 9]. Start with K = 2 and initial centroids μ₁ = 1, μ₂ = 5. Trace iterations 1 and 2: assignment + centroid update. Has it converged?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li><strong>Iteration 1 — Assign each point to nearest centroid.</strong>
+              <span class="calc">x=1: |1−1|=0, |1−5|=4 → cluster 1
+x=2: |2−1|=1, |2−5|=3 → cluster 1
+x=4: |4−1|=3, |4−5|=1 → cluster 2
+x=8: |8−1|=7, |8−5|=3 → cluster 2
+x=9: |9−1|=8, |9−5|=4 → cluster 2
+Cluster 1 = {1, 2}, Cluster 2 = {4, 8, 9}</span>
+            </li>
+            <li><strong>Update centroids:</strong>
+              <span class="calc">μ₁ = (1 + 2) / 2 = 1.5
+μ₂ = (4 + 8 + 9) / 3 = 7.0</span>
+            </li>
+            <li><strong>Iteration 2 — Reassign.</strong>
+              <span class="calc">x=1: |1−1.5|=0.5, |1−7|=6   → cluster 1
+x=2: |2−1.5|=0.5, |2−7|=5   → cluster 1
+x=4: |4−1.5|=2.5, |4−7|=3   → cluster 1 (NOTE: moved!)
+x=8: |8−1.5|=6.5, |8−7|=1   → cluster 2
+x=9: |9−1.5|=7.5, |9−7|=2   → cluster 2
+Cluster 1 = {1, 2, 4}, Cluster 2 = {8, 9}</span>
+            </li>
+            <li><strong>Update centroids:</strong>
+              <span class="calc">μ₁ = (1+2+4)/3 ≈ 2.33
+μ₂ = (8+9)/2 = 8.5</span>
+            </li>
+            <li>Has it converged? Assignments changed (point 4 switched clusters), so <strong>no</strong> — need another iteration.</li>
+          </ol>
+        </div>
+        <div class="final-box">After Iter 2: {1, 2, 4} vs {8, 9} · μ ≈ (2.33, 8.5) · Not yet converged</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">K-Means alternates between (1) assigning every point to the nearest current centroid and (2) moving each centroid to the mean of its assigned points. Convergence = assignments stop changing. In this case the natural clusters are {1, 2, 4} (left cluster around 2.5) and {8, 9} (right cluster around 8.5).</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#unsup">Cheat sheet · K-Means</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q13</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q13 ════════════════════════ -->
+  <div class="mf-card" data-topic="unsup">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q13</div>
+      <span class="mf-topic">HAC</span>
+      <div class="mf-q"><strong>HAC with single-link and complete-link.</strong> Distance matrix for points P1, P2, P3, P4:
+        <table class="mtable" style="max-width:340px;margin-top:0.5rem">
+          <tr><th></th><th>P1</th><th>P2</th><th>P3</th><th>P4</th></tr>
+          <tr><th>P1</th><td>0</td><td>1</td><td>5</td><td>7</td></tr>
+          <tr><th>P2</th><td>1</td><td>0</td><td>4</td><td>6</td></tr>
+          <tr><th>P3</th><td>5</td><td>4</td><td>0</td><td>2</td></tr>
+          <tr><th>P4</th><td>7</td><td>6</td><td>2</td><td>0</td></tr>
+        </table>
+        Run HAC's first two merges using (i) <strong>single-link</strong> and (ii) <strong>complete-link</strong>.</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 (i) Single-Link (use MIN distance between clusters)</div>
+        <div class="mf-text">
+          <ol>
+            <li><strong>Merge 1:</strong> smallest distance = d(P1, P2) = 1 → merge into {P1, P2}.</li>
+            <li><strong>Update distances</strong> from {P1,P2} to others using MIN:
+              <span class="calc">d({P1,P2}, P3) = min(5, 4) = 4
+d({P1,P2}, P4) = min(7, 6) = 6
+d(P3, P4) = 2</span>
+            </li>
+            <li><strong>Merge 2:</strong> smallest remaining = d(P3, P4) = 2 → merge into {P3, P4}.</li>
+            <li>After two merges: <strong>{P1, P2} and {P3, P4}</strong>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 (ii) Complete-Link (use MAX distance between clusters)</div>
+        <div class="mf-text">
+          <ol>
+            <li><strong>Merge 1:</strong> same start, d(P1, P2) = 1 → merge into {P1, P2}.</li>
+            <li><strong>Update distances</strong> from {P1,P2} using MAX:
+              <span class="calc">d({P1,P2}, P3) = max(5, 4) = 5
+d({P1,P2}, P4) = max(7, 6) = 7
+d(P3, P4) = 2</span>
+            </li>
+            <li><strong>Merge 2:</strong> smallest remaining is still d(P3, P4) = 2 → merge into {P3, P4}.</li>
+            <li>After two merges: <strong>{P1, P2} and {P3, P4}</strong> — same outcome here.</li>
+          </ol>
+        </div>
+        <div class="final-box">Both linkages: {P1, P2} and {P3, P4} after two merges</div>
+      </div>
+
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">The first merge is always the closest pair regardless of linkage. The linkage rule only affects how we compute distance to the just-merged cluster. In this small example both rules agree because P3-P4 distance (2) is far smaller than anything else. They can diverge when cluster shapes are elongated.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#unsup">Cheat sheet · HAC</a>
+        <a class="related-chip" href="midterm-exam.html">Midterm exam · HAC</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q14 ════════════════════════ -->
+  <div class="mf-card" data-topic="unsup">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q14</div>
+      <span class="mf-topic">PCA</span>
+      <div class="mf-q"><strong>PCA explained variance.</strong> Covariance matrix eigenvalues (sorted): λ = [4.0, 2.0, 1.0, 0.5, 0.5]. (i) Compute the explained variance ratio of each component. (ii) How many components are needed to retain at least 90% of total variance?</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Total variance = sum of all eigenvalues:
+              <span class="calc">Σλ = 4.0 + 2.0 + 1.0 + 0.5 + 0.5 = 8.0</span>
+            </li>
+            <li>Explained variance ratio per component (λᵢ / Σλ):
+              <span class="calc">PC1: 4.0 / 8.0 = 0.500 (50.0%)
+PC2: 2.0 / 8.0 = 0.250 (25.0%)
+PC3: 1.0 / 8.0 = 0.125 (12.5%)
+PC4: 0.5 / 8.0 = 0.0625 (6.25%)
+PC5: 0.5 / 8.0 = 0.0625 (6.25%)</span>
+            </li>
+            <li>Cumulative variance:
+              <span class="calc">After PC1: 50%
+After PC2: 75%
+After PC3: 87.5%   ← still below 90%
+After PC4: 93.75%  ← crosses 90%</span>
+            </li>
+          </ol>
+        </div>
+        <div class="final-box">Need 4 components to retain ≥ 90% of variance (87.5% with 3, 93.75% with 4)</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">PCA orders components by eigenvalue (variance). The first component captures the most spread, the second the next-most orthogonal direction, etc. You pick k so the cumulative ratio crosses your target (typically 90% or 95%) — a way to reduce dimensions while keeping most of the information.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#unsup">Cheat sheet · PCA</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q19</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════ Q15 ════════════════════════ -->
+  <div class="mf-card" data-topic="gen">
+    <div class="mf-header" onclick="this.parentElement.classList.toggle('open')">
+      <div class="mf-num">Q15</div>
+      <span class="mf-topic">GAN</span>
+      <div class="mf-q"><strong>GAN discriminator loss.</strong> The discriminator outputs D(x) = 0.9 for a real image and D(G(z)) = 0.3 for a generated fake image. Using binary cross-entropy, compute the discriminator's loss on this single real+fake pair. The discriminator wants to <em>minimize</em> this loss (= maximize log-likelihood of correct labels).</div>
+      <div class="mf-chev">⌄</div>
+    </div>
+    <div class="mf-body">
+      <div class="mf-given"><strong>Formula</strong>
+        L_D = −[ log D(x) + log(1 − D(G(z))) ]
+      </div>
+      <div class="mf-section steps">
+        <div class="mf-section-head">📐 Steps</div>
+        <div class="mf-text">
+          <ol>
+            <li>Real-image term: log D(x) = log(0.9):
+              <span class="calc">log(0.9) ≈ −0.1054 (natural log)</span>
+            </li>
+            <li>Fake-image term: log(1 − D(G(z))) = log(1 − 0.3) = log(0.7):
+              <span class="calc">log(0.7) ≈ −0.3567</span>
+            </li>
+            <li>Discriminator loss (negate and sum):
+              <span class="calc">L_D = −(−0.1054 + −0.3567)
+    = −(−0.4621)
+    = 0.4621</span>
+            </li>
+          </ol>
+        </div>
+        <div class="final-box">L_D ≈ 0.462 (discriminator wants to push this toward 0)</div>
+      </div>
+      <div class="mf-section plain">
+        <div class="mf-section-head">💡 Why</div>
+        <div class="mf-text">The discriminator's loss penalizes two things: failing to say "real" on real (D(x) should approach 1) and failing to say "fake" on fake (D(G(z)) should approach 0). Here it scores 0.9 on real (good) and 0.3 on fake (also good — saying mostly "fake"), so the loss is modest. As training progresses, both terms approach 0 → loss → 0. The generator, in turn, wants to push D(G(z)) toward 1 to fool the discriminator.</div>
+      </div>
+      <div class="mf-section related">
+        <div class="mf-section-head">🔗 Related</div>
+        <a class="related-chip" href="cheatsheet.html#gen">Cheat sheet · GAN</a>
+        <a class="related-chip" href="generative-ai.html">Generative AI page</a>
+        <a class="related-chip" href="final-exam.html">Final exam · Q9</a>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function mfOpenAll() { document.querySelectorAll('.mf-card').forEach(c => c.classList.add('open')); }
+function mfCloseAll() { document.querySelectorAll('.mf-card').forEach(c => c.classList.remove('open')); }
+
+// Topic filter
+document.getElementById('mfTabs').addEventListener('click', e => {
+  if (!e.target.matches('.mf-tab')) return;
+  document.querySelectorAll('.mf-tab').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  const f = e.target.dataset.filter;
+  document.querySelectorAll('.mf-card').forEach(c => {
+    c.style.display = (f === 'all' || c.dataset.topic === f) ? '' : 'none';
+  });
+});
+</script>
+</body>
+</html>

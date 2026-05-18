@@ -16,6 +16,7 @@
     { href: 'midterm-exam.html',    label: 'Midterm Exam' },
     { href: 'evolution.html',       label: 'Evolution' },
     { href: 'final-exam.html',      label: 'Final Exam' },
+    { href: 'math-for-final.html',  label: 'Math for Final' },
     { href: 'cheatsheet.html',      label: 'Cheat Sheet' }
   ];
 
